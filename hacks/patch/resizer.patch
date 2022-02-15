@@ -1,0 +1,17 @@
+diff --git a/src/rsz/src/Resizer.cc b/src/rsz/src/Resizer.cc
+index 3cbe306e3..300c6c476 100644
+--- a/src/rsz/src/Resizer.cc
++++ b/src/rsz/src/Resizer.cc
+@@ -1691,9 +1691,11 @@ Resizer::resizeToTargetSlew(const Pin *drvr_pin,
+     ensureWireParasitic(drvr_pin);
+     // Includes net parasitic capacitance.
+     float load_cap = graph_delay_calc_->loadCap(drvr_pin, tgt_slew_dcalc_ap_);
+-    if (load_cap > 0.0) {
++    // DINESH-A: delay cells resize disabled
++    if (load_cap > 0.00 && (strncmp(cell->name(),"sky130_fd_sc_hd__clkdlybuf4s15_2",26) != 0)) {
+       LibertyCell *target_cell = findTargetCell(cell, load_cap, revisiting_inst);
+       if (target_cell != cell) {
++        //printf("Dinesh-A: Resizing : %s => %s %s Load_cap: %f \n",sdc_network_->pathName(drvr_pin),cell->name(),target_cell->name(),load_cap);
+         debugPrint(logger_, RSZ, "resize", 2, "{} {} -> {}",
+                    sdc_network_->pathName(drvr_pin),
+                    cell->name(),

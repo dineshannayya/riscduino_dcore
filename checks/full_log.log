@@ -1,0 +1,43 @@
+FULL RUN LOG:
+ Executing Step 0 of 8: Extracting GDS Files
+Step 0 done without fatal errors.
+ Executing Step 1 of 8: Project License Check
+{{LICENSE COMPLIANCE PASSED}} Apache-2.0 LICENSE file was found in project root
+ SPDX COMPLIANCE Found 1110 non-compliant files with the SPDX Standard. Check full log for more information
+SPDX COMPLIANCE: NON-COMPLIANT FILES PREVIEW: ['/home/dinesha/workarea/opencore/git/yifive_r0/README.md', '/home/dinesha/workarea/opencore/git/yifive_r0/spef/user_project_wrapper.spef', '/home/dinesha/workarea/opencore/git/yifive_r0/spef/wb_host.spef', '/home/dinesha/workarea/opencore/git/yifive_r0/spef/sdrc_top.spef', '/home/dinesha/workarea/opencore/git/yifive_r0/spef/wb_interconnect.spef', '/home/dinesha/workarea/opencore/git/yifive_r0/spef/scr1_top_wb.spef', '/home/dinesha/workarea/opencore/git/yifive_r0/spef/glbl_cfg.spef', '/home/dinesha/workarea/opencore/git/yifive_r0/spef/test.spef', '/home/dinesha/workarea/opencore/git/yifive_r0/spef/uart_core.spef', '/home/dinesha/workarea/opencore/git/yifive_r0/spef/clk_skew_adjust.spef', '/home/dinesha/workarea/opencore/git/yifive_r0/spef/clk_buf.spef', '/home/dinesha/workarea/opencore/git/yifive_r0/spef/spim_top.spef', '/home/dinesha/workarea/opencore/git/yifive_r0/openlane/default.cvcrc', '/home/dinesha/workarea/opencore/git/yifive_r0/openlane/scr_core/aa', '/home/dinesha/workarea/opencore/git/yifive_r0/openlane/scr_core/runs/scr_core/config.tcl', '/home/dinesha/workarea/opencore/git/yifive_r0/openlane/scr_core/runs/scr_core/tmp/magic_spice.tcl', '/home/dinesha/workarea/opencore/git/yifive_r0/openlane/scr_core/runs/scr_core/tmp/opt.lib', '/home/dinesha/workarea/opencore/git/yifive_r0/openlane/scr_core/runs/scr_core/tmp/trimmed.lib', '/home/dinesha/workarea/opencore/git/yifive_r0/openlane/scr_core/runs/scr_core/tmp/tracks_copy.info', '/home/dinesha/workarea/opencore/git/yifive_r0/openlane/scr_core/runs/scr_core/tmp/sky130_fd_sc_hd__tt_025C_1v80.no_pg.lib']
+ Executing Step 2 of 8: YAML File Check
+ YAML file valid!
+Step 2 done without fatal errors.
+ Detected Project Type is "digital"
+ Executing Step 3 of 8: Project Compliance Checks
+b'Going into /home/dinesha/workarea/opencore/git/yifive_r0/caravel'
+b'Removing manifest'
+b'Fetching manifest'
+b'Running sha1sum checks'
+ Manifest Checks Passed. Caravel Version Matches.
+ Makefile Checks Passed.
+ Documentation Checks Passed.
+ Executing Step 4 of 8: Fuzzy Consistency Checks
+instance caravel found
+instance user_project_wrapper found
+Design is complex and contains: 47 modules
+Design is complex and contains: 20 modules
+verilog Consistency Checks Passed.
+ Basic Hierarchy Checks Passed.
+{PROGRESS} Running Pins and Power Checks...
+Pins check passed
+Internal Power Checks Passed!
+Power Checks Passed
+ Fuzzy Consistency Checks Passed!
+Step 4 done without fatal errors.
+ Executing Step 5 of 8: XOR Consistency Checks
+ Running XOR Checks...
+Total XOR differences = 2488
+ XOR Checks on GDS Failed, Reason: XOR Differences count is 2488. Please view /home/dinesha/workarea/opencore/git/yifive_r0/checks/*.xor.* for more details.
+TEST FAILED AT STEP 5
+ Executing Step 6 of 8: DRC Violations Checks
+ Running Magic DRC Checks...
+Violation Message "All nwells must contain metal-connected N+ taps (nwell.4) "found 1 Times.
+ DRC Checks on GDS Failed, Reason: Total # of DRC violations is 1
+TEST FAILED AT STEP 6
+ SOME Checks FAILED !!!
