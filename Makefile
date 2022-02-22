@@ -18,6 +18,7 @@ CARAVEL_ROOT?=$(PWD)/caravel
 PRECHECK_ROOT?=${HOME}/mpw_precheck
 SIM ?= RTL
 DUMP ?= OFF
+RISC_CORE ?=0
 
 # Install lite version of caravel, (1): caravel-lite, (0): caravel
 CARAVEL_LITE?=1
@@ -57,7 +58,7 @@ RISCV_TEST_BRANCH =  e30978a71921159aec38eeefd848fca4ed39a826
 .PHONY: verify
 verify:
 	cd ./verilog/dv/ && \
-	export SIM=${SIM} DUMP=${DUMP} && \
+	export SIM=${SIM} DUMP=${DUMP} RISC_CORE=${RISC_CORE} && \
 		$(MAKE) -j$(THREADS)
 
 # Install DV setup
@@ -69,7 +70,7 @@ PATTERNS=$(shell cd verilog/dv && find * -maxdepth 0 -type d)
 DV_PATTERNS = $(foreach dv, $(PATTERNS), verify-$(dv))
 TARGET_PATH=$(shell pwd)
 PDK_PATH=${PDK_ROOT}/sky130A
-VERIFY_COMMAND="cd ${TARGET_PATH}/verilog/dv/$* && export SIM=${SIM} DUMP=${DUMP} && make"
+VERIFY_COMMAND="cd ${TARGET_PATH}/verilog/dv/$* && export SIM=${SIM} DUMP=${DUMP} RISC_CORE=${RISC_CORE} && make"
 $(DV_PATTERNS): verify-% : ./verilog/dv/% check-coremark_repo check-riscv_comp_repo check-riscv_test_repo
 	docker run -v ${TARGET_PATH}:${TARGET_PATH} -v ${PDK_PATH}:${PDK_PATH} \
                 -v ${CARAVEL_ROOT}:${CARAVEL_ROOT} \

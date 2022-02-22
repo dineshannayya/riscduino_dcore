@@ -4,6 +4,7 @@
 
 SIM ?= RTL
 DUMP ?= OFF
+RISC_CORE ?=0
 
 # PARAMETERS
 
@@ -47,7 +48,7 @@ else
             VECT_IRQ  ?= 0
             IPIC      ?= 0
             TCM       ?= 0
-            SIM_CFG_DEF  = YCR1_CFG_$(CFG)
+            SIM_CFG_DEF  = YCR_CFG_$(CFG)
         endif
     endif
 endif
@@ -136,7 +137,7 @@ UPRJ_RTL_PATH = $(UPRJ_VERILOG_PATH)/rtl
 UPRJ_GL_PATH = $(UPRJ_VERILOG_PATH)/gl
 UPRJ_BEHAVIOURAL_MODELS = $(root_dir)/../model
 UPRJ_BEHAVIOURAL_AGENTS = $(root_dir)/../agents
-UPRJ_INCLUDE_PATH1 = $(UPRJ_RTL_PATH)/yifive/ycr1c/src/includes
+UPRJ_INCLUDE_PATH1 = $(UPRJ_RTL_PATH)/yifive/ycr2c/src/includes
 UPRJ_INCLUDE_PATH2 = $(UPRJ_RTL_PATH)/sdram_ctrl/src/defs
 UPRJ_INCLUDE_PATH3 = $(UPRJ_RTL_PATH)/i2cm/src/includes
 UPRJ_INCLUDE_PATH4 = $(UPRJ_RTL_PATH)/usb1_host/src/includes
@@ -283,6 +284,7 @@ run_iverilog: $(test_info)
 	printf "" > $(test_results); \
         iverilog-vpi ../../../vpi/system/system.c; \
 	vvp  -M. -msystem  $(top_module).vvp \
+	+risc_core_id=$(RISC_CORE) \
 	+test_info=$(test_info) \
 	+test_results=$(test_results) \
 	| tee $(sim_results)  ;\
@@ -303,6 +305,7 @@ run_iverilog_wf: $(test_info)
 	printf "" > $(test_results); \
         iverilog-vpi ../../../vpi/system/system.c; \
 	vvp  -M. -msystem  $(top_module).vvp \
+	+risc_core_id=$(RISC_CORE) \
 	+test_info=$(test_info) \
 	+test_results=$(test_results) \
 	| tee $(sim_results)  ;\

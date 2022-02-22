@@ -29,7 +29,7 @@ UPRJ_RTL_PATH = $(UPRJ_VERILOG_PATH)/rtl
 UPRJ_GL_PATH = $(UPRJ_VERILOG_PATH)/gl
 UPRJ_BEHAVIOURAL_MODELS = ../model
 UPRJ_BEHAVIOURAL_AGENTS = ../agents
-UPRJ_INCLUDE_PATH1 = $(UPRJ_RTL_PATH)/yifive/ycr1c/src/includes
+UPRJ_INCLUDE_PATH1 = $(UPRJ_RTL_PATH)/yifive/ycr2c/src/includes
 UPRJ_INCLUDE_PATH2 = $(UPRJ_RTL_PATH)/sdram_ctrl/src/defs
 UPRJ_INCLUDE_PATH3 = $(UPRJ_RTL_PATH)/i2cm/src/includes
 UPRJ_INCLUDE_PATH4 = $(UPRJ_RTL_PATH)/usb1_host/src/includes
@@ -47,6 +47,7 @@ PDK_PATH?=/ef/tech/SW/sky130A
 ## Simulation mode: RTL/GL
 SIM?=RTL
 DUMP?=OFF
+RISC_CORE?=0
 
 .SUFFIXES:
 
@@ -92,7 +93,7 @@ else
 endif
 
 %.vcd: %.vvp
-	vvp $<
+	vvp $< +risc_core_id=$(RISC_CORE)
 
 %.elf: %.c $(CARAVEL_FIRMWARE_PATH)/sections.lds $(CARAVEL_FIRMWARE_PATH)/start.s
 	${GCC64_PREFIX}-gcc -I $(CARAVEL_PATH) -march=rv32imc -mabi=ilp32 -Wl,-Bstatic,-T,$(CARAVEL_FIRMWARE_PATH)/sections.lds,--strip-debug -ffreestanding -nostdlib -o $@ $(CARAVEL_FIRMWARE_PATH)/start.s $<

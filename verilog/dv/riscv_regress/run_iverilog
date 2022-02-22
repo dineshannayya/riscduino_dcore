@@ -18,7 +18,7 @@ iverilog -g2005-sv -DWFDUMP -DFUNCTIONAL -DSIM -I $PDK_ROOT/sky130A \
 -I ../../../../../verilog/rtl \
 -I ../../../../../verilog \
 -I ../../../agents    \
--I ../../../../../verilog/rtl/yifive/ycr1c/src/includes \
+-I ../../../../../verilog/rtl/yifive/ycr2c/src/includes \
 -I ../../../../../verilog/rtl/sdram_ctrl/src/defs \
 -I ../../../../../verilog/rtl/i2cm/src/includes \
 -I ../../../../../verilog/rtl/usb1_host/src/includes \

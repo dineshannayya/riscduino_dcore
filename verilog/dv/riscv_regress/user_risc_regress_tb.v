@@ -78,6 +78,9 @@
 `include "mt48lc8m8a2.v"
 `include "is62wvs1288.v"
 
+
+`define ADDR_SPACE_PINMUX  32'h3002_0000
+
 localparam [31:0]      YCR1_SIM_EXIT_ADDR      = 32'h0000_00F8;
 localparam [31:0]      YCR1_SIM_PRINT_ADDR     = 32'hF000_0000;
 localparam [31:0]      YCR1_SIM_EXT_IRQ_ADDR   = 32'hF000_0100;
@@ -157,6 +160,7 @@ module user_risc_regress_tb;
 
 	logic  [7:0]           tem_mem[0:4095];
 	logic  [31:0]          mem_data;
+	integer    d_risc_id;
 
 
 parameter P_FSM_C      = 4'b0000; // Command Phase Only
@@ -220,6 +224,8 @@ parameter P_QDDR   = 2'b11;
                 wbd_ext_we_i  ='h0;  // write
                 wbd_ext_dat_i ='h0;  // data output
                 wbd_ext_sel_i ='h0;  // byte enable
+   
+		$value$plusargs("risc_core_id=%d", d_risc_id);
 	end
 
 	`ifdef WFDUMP
@@ -230,7 +236,6 @@ parameter P_QDDR   = 2'b11;
 	   	$dumpvars(0, user_risc_regress_tb.u_top.u_riscv_top);
 	   	$dumpvars(0, user_risc_regress_tb.u_top.u_qspi_master);
 	   	$dumpvars(0, user_risc_regress_tb.u_top.u_intercon);
-	   	$dumpvars(0, user_risc_regress_tb.u_top.u_mbist);
 	   end
        `endif
 
@@ -289,7 +294,13 @@ parameter P_QDDR   = 2'b11;
 	        repeat (2) @(posedge clock);
 		#1;
 		// Remove WB and SPI Reset, Keep SDARM and CORE under Reset
-                wb_user_core_write('h3080_0000,'h5);
+               if(d_risc_id == 0) begin
+                    $display("STATUS: Working with Risc core 0");
+                    wb_user_core_write(`ADDR_SPACE_PINMUX+8'h8,'h11F);
+               end else begin
+                    $display("STATUS: Working with Risc core 1");
+                    wb_user_core_write(`ADDR_SPACE_PINMUX+8'h8,'h21F);
+               end
 
 		// CS#2 Switch to QSPI Mode
                 wb_user_core_write('h3080_0004,'h10); // Change the Bank Sel 10

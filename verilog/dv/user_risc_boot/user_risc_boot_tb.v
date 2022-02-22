@@ -78,6 +78,7 @@
 `include "uprj_netlists.v"
 `include "mt48lc8m8a2.v"
 
+`define ADDR_SPACE_PINMUX  32'h3002_0000
 module user_risc_boot_tb;
 	reg clock;
 	reg wb_rst_i;
@@ -105,6 +106,7 @@ module user_risc_boot_tb;
 	wire [7:0] mprj_io_0;
 	reg         test_fail;
 	reg [31:0] read_data;
+	integer    d_risc_id;
 
 
 
@@ -133,6 +135,8 @@ module user_risc_boot_tb;
 
 	initial begin
 
+		$value$plusargs("risc_core_id=%d", d_risc_id);
+
 		#200; // Wait for reset removal
 	        repeat (10) @(posedge clock);
 		$display("Monitor: Standalone User Risc Boot Test Started");
@@ -143,7 +147,13 @@ module user_risc_boot_tb;
 	        repeat (2) @(posedge clock);
 		#1;
 		// Remove all the reset
-                wb_user_core_write('h3080_0000,'hF);
+		if(d_risc_id == 0) begin
+		     $display("STATUS: Working with Risc core 0");
+                     wb_user_core_write(`ADDR_SPACE_PINMUX+8'h8,'h11F);
+		end else begin
+		     $display("STATUS: Working with Risc core 1");
+                     wb_user_core_write(`ADDR_SPACE_PINMUX+8'h8,'h21F);
+		end
 
 
 		// Repeat cycles of 1000 clock edges as needed to complete testbench

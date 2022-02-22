@@ -129,6 +129,8 @@ reg [15:0]     uart_tx_nu           ;
 reg [7:0]      uart_write_data [0:39];
 reg 	       uart_fifo_enable     ;	// fifo mode disable
 
+	integer    d_risc_id;
+
 integer i,j;
 
 	// External clock is used by default.  Make this artificially fast for the
@@ -171,6 +173,8 @@ begin
    uart_timeout            = 500;// wait time limit
    uart_fifo_enable        = 0;	// fifo mode disable
 
+   $value$plusargs("risc_core_id=%d", d_risc_id);
+
    #200; // Wait for reset removal
    repeat (10) @(posedge clock);
    $display("Monitor: Standalone User Uart Test Started");
@@ -184,7 +188,13 @@ begin
    repeat (2) @(posedge clock);
    #1;
    // Remove all the reset
-   wb_user_core_write('h3080_0000,'h1F);
+   if(d_risc_id == 0) begin
+	$display("STATUS: Working with Risc core 0");
+	wb_user_core_write(`ADDR_SPACE_PINMUX+8'h8,'h11F);
+   end else begin
+	$display("STATUS: Working with Risc core 1");
+	wb_user_core_write(`ADDR_SPACE_PINMUX+8'h8,'h21F);
+   end
 
    repeat (100) @(posedge clock);  // wait for Processor Get Ready
 

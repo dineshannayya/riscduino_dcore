@@ -164,11 +164,15 @@
 ////    3.4  Feb 14, 2022, Dinesh A                               ////
 ////         burst mode supported added in imem buffer inside     ////
 ////         riscv core                                           ////
-////    We have created seperate repo from this onwards           ////
-////      SRAM based SOC is spin-out to                           ////
-////      dineshannayya/riscduino_sram.git                        ////
-////    This repo will remove mbist + SRAM and RISC SRAM will be  ////
-////    replaced with DFRAM                                       ////
+////    3.5  Feb 22, 2022 Dinesh A                                ////
+////      A. To create more space in die, we have removed mbist   ////
+////         controller and 4x 2KB RAM                            ////
+////      B. Risc core will have core with common icache,dcache   ////
+////            TCM memory                                        ////
+////      C. Individual block reset are moved to pinmux to        ////
+////         support peripheral reset from Risc and WishBone      ////
+////         Host.                                                ////
+////                                                              ////
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
 //// Copyright (C) 2000 Authors and OPENCORES.ORG                 ////
@@ -394,7 +398,8 @@ wire                           wbd_uart_err_i                         ;  // erro
 //----------------------------------------------------
 //  CPU Configuration
 //----------------------------------------------------
-wire                           cpu_rst_n                              ;
+wire                           cpu_intf_rst_n                         ;
+wire  [1:0]                    cpu_core_rst_n                         ;
 wire                           qspim_rst_n                            ;
 wire                           sspim_rst_n                            ;
 wire                           uart_rst_n                             ; // uart reset
@@ -585,13 +590,6 @@ wb_host u_wb_host(
           .usb_clk                 (usb_clk                 ),
 
           .wbd_int_rst_n           (wbd_int_rst_n           ),
-          .cpu_rst_n               (cpu_rst_n               ),
-          .qspim_rst_n             (qspim_rst_n             ),
-          .sspim_rst_n             (sspim_rst_n             ), // spi reset
-          .uart_rst_n              (uart_rst_n              ), // uart reset
-          .i2cm_rst_n              (i2c_rst_n               ), // i2c reset
-          .usb_rst_n               (usb_rst_n               ), // usb reset
-          .bist_rst_n              (bist_rst_n              ), // BIST Reset  
 
     // Master Port
           .wbm_rst_i               (wb_rst_i                ),  
@@ -641,7 +639,7 @@ wb_host u_wb_host(
 //------------------------------------------------------------------------------
 // RISC V Core instance
 //------------------------------------------------------------------------------
-ycr1_top_wb u_riscv_top (
+ycr2_top_wb u_riscv_top (
 `ifdef USE_POWER_PINS
           .vccd1                   (vccd1                   ),// User area 1 1.8V supply
           .vssd1                   (vssd1                   ),// User area 1 digital ground
@@ -653,7 +651,8 @@ ycr1_top_wb u_riscv_top (
     // Reset
           .pwrup_rst_n             (wbd_int_rst_n           ),
           .rst_n                   (wbd_int_rst_n           ),
-          .cpu_rst_n               (cpu_rst_n               ),
+          .cpu_intf_rst_n          (cpu_intf_rst_n          ),
+          .cpu_core_rst_n          (cpu_core_rst_n          ),
           .riscv_debug             (riscv_debug             ),
 
     // Clock
@@ -1123,6 +1122,15 @@ pinmux u_pinmux(
         // Inputs
           .mclk                    (wbd_clk_pinmux_skew     ),
           .h_reset_n               (wbd_int_rst_n           ),
+
+	// Reset Control
+          .cpu_core_rst_n          (cpu_core_rst_n          ),
+          .cpu_intf_rst_n          (cpu_intf_rst_n          ),
+          .qspim_rst_n             (qspim_rst_n             ),
+          .sspim_rst_n             (sspim_rst_n             ),
+          .uart_rst_n              (uart_rst_n              ),
+          .i2cm_rst_n              (i2c_rst_n               ),
+          .usb_rst_n               (usb_rst_n               ),
 
         // Reg Bus Interface Signal
           .reg_cs                  (wbd_glbl_stb_o          ),

@@ -127,7 +127,7 @@ integer i,j;
 
 	`ifdef WFDUMP
 	   initial begin
-	   	$dumpfile("tb_top.vcd");
+	   	$dumpfile("simx.vcd");
 	   	$dumpvars(0, tb_top);
 	   end
        `endif
@@ -151,10 +151,13 @@ begin
    repeat (10) @(posedge clock);
    #1;
    // Enable I2M Block & WB Reset and Enable I2CM Mux Select
-   wb_user_core_write('h3080_0000,'hA1);
+   wb_user_core_write('h3080_0000,'h01);
 
    // Enable I2C Multi Functional Ports
    wb_user_core_write(`ADDR_SPACE_PINMUX+'h0038,'h200);
+
+   // Remove i2m reset
+   wb_user_core_write(`ADDR_SPACE_PINMUX+8'h8,'h010);
 
    repeat (100) @(posedge clock);  
 

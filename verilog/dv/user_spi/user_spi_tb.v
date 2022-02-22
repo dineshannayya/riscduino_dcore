@@ -101,6 +101,8 @@
  `define QSPIM_IMEM_RDATA          32'h1000002C
  `define QSPIM_SPI_STATUS          32'h10000030
 
+ `define ADDR_SPACE_PINMUX  32'h3002_0000
+
 module user_spi_tb;
 	reg clock;
 	reg wb_rst_i;
@@ -221,8 +223,8 @@ parameter P_QDDR   = 2'b11;
 
 	        repeat (2) @(posedge clock);
 		#1;
-		// Remove WB and SPI Reset, Keep SDARM and CORE under Reset
-                wb_user_core_write('h3080_0000,'h5);
+		// Remove only WB and SPI Reset
+                wb_user_core_write(`ADDR_SPACE_PINMUX+8'h8,'h2);
 
                 wb_user_core_write('h3080_0004,'h0); // Change the Bank Sel 0
 
