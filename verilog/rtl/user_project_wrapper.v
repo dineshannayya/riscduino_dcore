@@ -560,6 +560,7 @@ wire                           uartm_txd                              ;
 
 
 wire [3:0]                     spi_csn                                ;
+wire [1:0]                     cfg_riscv_debug_sel                    ;
 
 /////////////////////////////////////////////////////////
 // Clock Skew Ctrl
@@ -654,6 +655,7 @@ ycr2_top_wb u_riscv_top (
           .cpu_intf_rst_n          (cpu_intf_rst_n          ),
           .cpu_core_rst_n          (cpu_core_rst_n          ),
           .riscv_debug             (riscv_debug             ),
+	  .core_debug_sel          (cfg_riscv_debug_sel     ),
 
     // Clock
           .core_clk                (cpu_clk                 ),
@@ -1131,6 +1133,8 @@ pinmux u_pinmux(
           .uart_rst_n              (uart_rst_n              ),
           .i2cm_rst_n              (i2c_rst_n               ),
           .usb_rst_n               (usb_rst_n               ),
+
+	  .cfg_riscv_debug_sel     (cfg_riscv_debug_sel     ),
 
         // Reg Bus Interface Signal
           .reg_cs                  (wbd_glbl_stb_o          ),

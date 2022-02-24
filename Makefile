@@ -72,10 +72,8 @@ TARGET_PATH=$(shell pwd)
 PDK_PATH=${PDK_ROOT}/sky130A
 VERIFY_COMMAND="cd ${TARGET_PATH}/verilog/dv/$* && export SIM=${SIM} DUMP=${DUMP} RISC_CORE=${RISC_CORE} && make"
 $(DV_PATTERNS): verify-% : ./verilog/dv/% check-coremark_repo check-riscv_comp_repo check-riscv_test_repo
-	docker run -v ${TARGET_PATH}:${TARGET_PATH} -v ${PDK_PATH}:${PDK_PATH} \
-                -v ${CARAVEL_ROOT}:${CARAVEL_ROOT} \
-                -e TARGET_PATH=${TARGET_PATH} -e PDK_PATH=${PDK_PATH} \
-                -e CARAVEL_ROOT=${CARAVEL_ROOT} \
+	docker run -v ${TARGET_PATH}:${TARGET_PATH} \
+                -e TARGET_PATH=${TARGET_PATH}  \
                 -u $(id -u $$USER):$(id -g $$USER) dineshannayya/dv_setup:mpw5 \
                 sh -c $(VERIFY_COMMAND)
 				
@@ -187,6 +185,24 @@ check-riscv_test_repo:
 		git clone $(RISCV_TEST_REPO) $(RISCV_TEST_DIR); \
 		cd $(RISCV_TEST_DIR); git checkout $(RISCV_TEST_BRANCH); \
 	fi
+
+zip:
+	gzip -f def/*
+	gzip -f lef/*
+	gzip -f gds/*
+	gzip -f mag/*
+	gzip -f maglef/*
+	gzip -f spef/*
+	gzip -f spi/lvs/*
+
+unzip:
+	gzip -d def/*
+	gzip -d lef/*
+	gzip -d gds/*
+	gzip -d mag/*
+	gzip -d maglef/*
+	gzip -d spef/*
+	gzip -d spi/lvs/*
 
 .PHONY: help
 help:

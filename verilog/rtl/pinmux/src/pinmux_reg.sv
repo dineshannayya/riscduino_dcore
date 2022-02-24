@@ -73,6 +73,7 @@ module pinmux_reg (
 		       input  logic            i2cm_intr,
 
                        output logic [9:0]      cfg_pulse_1us,
+		       output logic [1:0]      cfg_riscv_debug_sel,
 		       
                        //---------------------------------------------------
                        // 6 PWM Configuration
@@ -347,7 +348,8 @@ gen_32b_reg  #(32'h0) u_reg_3	(
 	      .data_out   (reg_3         )
 	      );
 
-assign cfg_pulse_1us = reg_3[9:0];
+assign cfg_pulse_1us       = reg_3[9:0];
+assign cfg_riscv_debug_sel = reg_3[31:30];
 //-----------------------------------------------------------------------
 // Logic for gpio_data_in 
 //-----------------------------------------------------------------------

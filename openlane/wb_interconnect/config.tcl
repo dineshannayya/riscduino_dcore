@@ -118,8 +118,7 @@ set ::env(GLB_RT_L6_ADJUSTMENT) 0.1
 set ::env(GLB_RT_ALLOW_CONGESTION) 0
 set ::env(GLB_RT_OVERFLOW_ITERS) 200
 
-set ::env(GLB_RT_MINLAYER) 2
-set ::env(GLB_RT_MAXLAYER) 6
+set ::env(RT_MAX_LAYER) {met4}
 
 
 set ::env(QUIT_ON_TIMING_VIOLATIONS) "0"

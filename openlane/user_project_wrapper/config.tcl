@@ -44,7 +44,9 @@ set ::env(FP_PDN_CORE_RING) 1
 
 ## Source Verilog Files
 set ::env(VERILOG_FILES) "\
+	$proj_dir/../../verilog/rtl//yifive/ycr2c/src/top/ycr2_top_wb.sv \
 	$proj_dir/../../verilog/rtl/user_project_wrapper.v"
+
 
 ## Clock configurations
 set ::env(CLOCK_PORT) "user_clock2 wb_clk_i"
@@ -66,43 +68,43 @@ set ::env(SYNTH_READ_BLACKBOX_LIB) 1
 
 ### Black-box verilog and views
 set ::env(VERILOG_FILES_BLACKBOX) "\
-        $proj_dir/../../verilog/gl/qspim.v \
+        $proj_dir/../../verilog/gl/qspim_top.v \
         $proj_dir/../../verilog/gl/wb_interconnect.v \
         $proj_dir/../../verilog/gl/pinmux.v     \
-        $proj_dir/../../verilog/gl/mbist_wrapper.v     \
         $proj_dir/../../verilog/gl/uart_i2cm_usb_spi.v     \
 	$proj_dir/../../verilog/gl/wb_host.v \
-	$proj_dir/../../verilog/gl/yifive.v \
-	$proj_dir/../../verilog/rtl/sram_macros/sky130_sram_2kbyte_1rw1r_32x512_8.v \
+	$proj_dir/../../verilog/gl/ycr2_mintf.v \
+	$proj_dir/../../verilog/gl/ycr_core_top.v \
+	$::env(PDK_ROOT)/sky130A/libs.ref/sky130_sram_macros/verilog/sky130_sram_2kbyte_1rw1r_32x512_8.v \
 	"
 
 set ::env(EXTRA_LEFS) "\
-	$lef_root/qspim.lef \
+	$lef_root/qspim_top.lef \
 	$lef_root/pinmux.lef \
 	$lef_root/wb_interconnect.lef \
 	$lef_root/uart_i2cm_usb_spi.lef \
 	$lef_root/wb_host.lef \
-	$lef_root/mbist_wrapper.lef \
-	$lef_root/yifive.lef \
-	$lef_root/sky130_sram_2kbyte_1rw1r_32x512_8.lef \
+	$lef_root/ycr2_mintf.lef \
+	$lef_root/ycr_core_top.lef \
+	$::env(PDK_ROOT)/sky130A/libs.ref/sky130_sram_macros/lef/sky130_sram_2kbyte_1rw1r_32x512_8.lef \
 	"
 
 set ::env(EXTRA_GDS_FILES) "\
-	$gds_root/qspim.gds \
+	$gds_root/qspim_top.gds \
 	$gds_root/pinmux.gds \
 	$gds_root/wb_interconnect.gds \
 	$gds_root/uart_i2cm_usb_spi.gds \
 	$gds_root/wb_host.gds \
-	$gds_root/mbist_wrapper.gds \
-	$gds_root/yifive.gds \
-	$gds_root/sky130_sram_2kbyte_1rw1r_32x512_8.gds \
+	$gds_root/ycr2_mintf.gds \
+	$gds_root/ycr_core_top.gds \
+	$::env(PDK_ROOT)/sky130A/libs.ref/sky130_sram_macros/gds/sky130_sram_2kbyte_1rw1r_32x512_8.gds \
 	"
 
 set ::env(SYNTH_DEFINES) [list SYNTHESIS ]
 
-#set ::env(VERILOG_INCLUDE_DIRS) [glob $proj_dir/../../verilog/rtl/yifive/ycr1c/src/includes ]
+set ::env(VERILOG_INCLUDE_DIRS) [glob $script_dir/../../verilog/rtl/yifive/ycr2c/src/includes ]
 
-set ::env(GLB_RT_MAXLAYER) 5
+set ::env(RT_MAX_LAYER) {met5}
 
 set ::env(FP_PDN_CHECK_NODES) 0
 
@@ -118,57 +120,43 @@ set ::env(GND_NETS) "vssd1 vssd2 vssa1 vssa2"
 set ::env(VDD_PIN) "vccd1"
 set ::env(GND_PIN) "vssd1"
 
-set ::env(GLB_RT_OBS) " li1   150 2100  833.1  2516.54,\
-	                met1  150 2100  833.1  2516.54,\
-	                met2  150 2100  833.1  2516.54,\
-                        met3  150 2100  833.1  2516.54,\
-                        li1   950 2100 1633.1  2516.54,\
-                        met1  950 2100 1633.1  2516.54,\
-                        met2  950 2100 1633.1  2516.54,\
-                        met3  950 2100 1633.1  2516.54,\
-                        li1   150 3000  833.1 3416.54,\
-                        met1  150 3000  833.1 3416.54,\
-                        met2  150 3000  833.1 3416.54,\
-                        met3  150 3000  833.1 3416.54,\
-                        li1   950 3000 1633.1 3416.54,\
-                        met1  950 3000 1633.1 3416.54,\
-                        met2  950 3000 1633.1 3416.54,\
-                        met3  950 3000 1633.1 3416.54,\
-                        li1  150  1400  833.1  1816.54,\
-                        met1 150  1400  833.1  1816.54,\
-                        met2 150  1400  833.1  1816.54,\
-                        met3 150  1400  833.1  1816.54,\
-                        li1  150  800  833.1   1216.54,\
-                        met1 150  800  833.1   1216.54,\
-                        met2 150  800  833.1   1216.54,\
-                        met3 150  800  833.1   1216.54,\
-                        li1  150  200  833.1   616.54,\
-                        met1 150  200  833.1   616.54,\
-                        met2 150  200  833.1   616.54,\
-                        met3 150  200  833.1   616.54,\
+set ::env(GLB_RT_OBS) "                              \
+	                li1   150 150  833.1  566.54,\
+	                met1  150 150  833.1  566.54,\
+	                met2  150 150  833.1  566.54,\
+                        met3  150 150  833.1  566.54,\
+
+	                li1   900 150  1583.1 566.54,\
+	                met1  900 150  1583.1 566.54,\
+	                met2  900 150  1583.1 566.54,\
+                        met3  900 150  1583.1 566.54,\
+
+                        li1   150  800 833.1  1216.54,\
+                        met1  150  800 833.1  1216.54,\
+                        met2  150  800 833.1  1216.54,\
+                        met3  150  800 833.1  1216.54,\
 	                met5  0 0 2920 3520"
 
 set ::env(FP_PDN_POWER_STRAPS) "vccd1 vssd1 1, vccd2 vssd2 0, vdda1 vssa1 0, vdda2 vssa2 0"
 
-set ::env(FP_PDN_MACRO_HOOKS) " \
-	u_intercon vccd1 vssd1 \
-	u_pinmux vccd1 vssd1 \
-	u_qspi_master vccd1 vssd1 \
-	u_riscv_top vccd1 vssd1 \
-	u_tsram0_2kb vccd1 vssd1 \
-	u_icache_2kb vccd1 vssd1 \
-	u_dcache_2kb vccd1 vssd1 \
-	u_mbist vccd1 vssd1 \
-	u_sram0_2kb vccd1 vssd1 \
-	u_sram1_2kb vccd1 vssd1 \
-	u_sram2_2kb vccd1 vssd1 \
-	u_sram3_2kb vccd1 vssd1 \
-	u_uart_i2c_usb_spi vccd1 vssd1 \
-	u_wb_host vccd1 vssd1 "
+#set ::env(FP_PDN_MACRO_HOOKS) " \
+#	u_intercon vccd1 vssd1 \
+#	u_pinmux vccd1 vssd1 \
+#	u_qspi_master vccd1 vssd1 \
+#	u_riscv_top vccd1 vssd1 \
+#	u_tsram0_2kb vccd1 vssd1 \
+#	u_icache_2kb vccd1 vssd1 \
+#	u_dcache_2kb vccd1 vssd1 \
+#	u_sram0_2kb vccd1 vssd1 \
+#	u_sram1_2kb vccd1 vssd1 \
+#	u_sram2_2kb vccd1 vssd1 \
+#	u_sram3_2kb vccd1 vssd1 \
+#	u_uart_i2c_usb_spi vccd1 vssd1 \
+#	u_wb_host vccd1 vssd1 "
 
 
 # The following is because there are no std cells in the example wrapper project.
-set ::env(SYNTH_TOP_LEVEL) 1
+set ::env(SYNTH_TOP_LEVEL) 0
 set ::env(PL_RANDOM_GLB_PLACEMENT) 1
 
 set ::env(PL_RESIZER_DESIGN_OPTIMIZATIONS) 0
@@ -200,7 +188,7 @@ set ::env(FP_PDN_VSPACING) "15.5"
 set ::env(FP_PDN_VWIDTH) "3.1"
 
 set ::env(FP_PDN_HOFFSET) "10"
-set ::env(FP_PDN_HPITCH) "120"
+set ::env(FP_PDN_HPITCH) "100"
 set ::env(FP_PDN_HSPACING) "10"
 set ::env(FP_PDN_HWIDTH) "3.1"
 
