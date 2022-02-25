@@ -55,6 +55,7 @@ Riscduino is a Dual 32 bit RISC V based SOC design pin compatible to arudino pla
     * UART with 16Byte FIFO
     * USB 1.1 Host
     * I2C Master
+    * UART Master
     * Simple SPI Master
     * 6 Channel ADC (in Progress)
     * 6 PWM
@@ -133,6 +134,7 @@ Syntacore SCR1 (https://github.com/syntacore/scr1)
 Following Design changes are done on the basic version of syntacore RISC core
 ```
    * Some of the sv syntex are changed to standard verilog format to make compatibile with opensource tool iverilog & yosys
+   * local Instruction Memory is increased from 4 to 8 location
    * Instruction Request are changed from Single word to 4 Word Burst
    * Multiplication and Divsion are changed to improve timing
    * Additional pipe line stages added to improve the RISC timing closure near to 50Mhz
@@ -146,7 +148,7 @@ Following Design changes are done on the basic version of syntacore RISC core
 ### Block Diagram
 <table>
   <tr>
-    <td  align="center"><img src="./docs/source/_static/syntacore_blockdiagram.svg" ></td>
+    <td  align="center"><img src="./docs/source/_static/riscvcore_blockdiagram.png" ></td>
   </tr>
 </table>
 
