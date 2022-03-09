@@ -267,7 +267,7 @@ user_project_wrapper u_top(
 //  ----------------------------------------------------
 
    wire flash_clk = io_out[24];
-   wire flash_csb = io_out[28];
+   wire flash_csb = io_out[25];
    // Creating Pad Delay
    wire #1 io_oeb_29 = io_oeb[29];
    wire #1 io_oeb_30 = io_oeb[30];

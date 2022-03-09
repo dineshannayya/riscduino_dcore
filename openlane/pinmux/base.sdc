@@ -44,11 +44,16 @@ set_input_delay -min 2.0000 -clock [get_clocks {mclk}] -add_delay [get_ports {re
 set_input_delay -min 2.0000 -clock [get_clocks {mclk}] -add_delay [get_ports {reg_wr}]
 
 
-set_output_delay -max 4.0000 -clock [get_clocks {mclk}] -add_delay [get_ports {reg_ack}]
-set_output_delay -max 4.0000 -clock [get_clocks {mclk}] -add_delay [get_ports {reg_rdata[*]}]
+set_output_delay -max 1.0000 -clock [get_clocks {mclk}] -add_delay [get_ports {reg_ack}]
+set_output_delay -max 1.0000 -clock [get_clocks {mclk}] -add_delay [get_ports {reg_rdata[*]}]
 
-set_output_delay -min 2.0000 -clock [get_clocks {mclk}] -add_delay [get_ports {reg_ack}]
-set_output_delay -min 2.0000 -clock [get_clocks {mclk}] -add_delay [get_ports {reg_rdata[*]}]
+set_output_delay -min -3.0000 -clock [get_clocks {mclk}] -add_delay [get_ports {reg_ack}]
+set_output_delay -min -3.0000 -clock [get_clocks {mclk}] -add_delay [get_ports {reg_rdata[*]}]
+
+
+set_output_delay -max 1.0000 -clock [get_clocks {mclk}] -add_delay [get_ports {qspim_rst_n}]
+set_output_delay -min -3.000 -clock [get_clocks {mclk}] -add_delay [get_ports {qspim_rst_n}]
+
 ###############################################################################
 # Environment
 ###############################################################################

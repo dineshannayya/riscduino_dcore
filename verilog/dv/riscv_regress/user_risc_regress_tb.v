@@ -392,7 +392,7 @@ end
 //  ----------------------------------------------------
 
    wire flash_clk = io_out[24];
-   wire flash_csb = io_out[28];
+   wire flash_csb = io_out[25];
    // Creating Pad Delay
    wire #1 io_oeb_29 = io_oeb[29];
    wire #1 io_oeb_30 = io_oeb[30];
@@ -427,7 +427,7 @@ end
        );
 
 
-   wire spiram_csb = io_out[26];
+   wire spiram_csb = io_out[27];
 
    is62wvs1288 #(.mem_file_name("none"))
 	u_sram (

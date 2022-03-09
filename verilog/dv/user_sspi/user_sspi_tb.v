@@ -24,15 +24,7 @@
 ////                                                              ////
 ////  Description                                                 ////
 ////   This is a standalone test bench to validate the            ////
-////   Digital core.                                              ////
-////   1. User Risc core is booted using  compiled code of        ////
-////      user_risc_boot.c                                        ////
-////   2. User Risc core uses Serial Flash and SDRAM to boot      ////
-////   3. After successful boot, Risc core will check the UART    ////
-////      RX Data, If it's available then it loop back the same   ////
-////      data in uart tx                                         ////
-////   4. Test bench send random 40 character towards User uart   ////
-////      and expect same data to return back                     ////
+////   sspi interfaface through External WB i/F.                  ////
 ////                                                              ////
 ////  To Do:                                                      ////
 ////    nothing                                                   ////
@@ -41,7 +33,7 @@
 ////      - Dinesh Annayya, dinesha@opencores.org                 ////
 ////                                                              ////
 ////  Revision :                                                  ////
-////    0.1 - 16th Feb 2021, Dinesh A                             ////
+////    0.1 - 01 Oct 2021, Dinesh A                               ////
 ////                                                              ////
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
@@ -74,64 +66,49 @@
 
 `timescale 1 ns / 1 ns
 
-`include "s25fl256s.sv"
-`include "uprj_netlists.v"
-`include "mt48lc8m8a2.v"
-`include "uart_agent.v"
-
-
+// Note in caravel, 0x30XX_XXXX only come to user interface
+// So, using wb_host bank select we have changing MSB address [31:24] = 0x10
 `define ADDR_SPACE_UART    32'h3001_0000
+`define ADDR_SPACE_SSPI    32'h3001_00C0
 `define ADDR_SPACE_PINMUX  32'h3002_0000
 
+`define TB_GLBL    user_sspi_tb
 
-module user_uart_tb;
+`include "uprj_netlists.v"
+`include "is62wvs1288.v"
 
-reg            clock         ;
-reg            wb_rst_i      ;
-reg            power1, power2;
-reg            power3, power4;
 
-reg            wbd_ext_cyc_i;  // strobe/request
-reg            wbd_ext_stb_i;  // strobe/request
-reg [31:0]     wbd_ext_adr_i;  // address
-reg            wbd_ext_we_i;  // write
-reg [31:0]     wbd_ext_dat_i;  // data output
-reg [3:0]      wbd_ext_sel_i;  // byte enable
+module user_sspi_tb;
+	reg clock;
+	reg wb_rst_i;
+	reg power1, power2;
+	reg power3, power4;
 
-wire [31:0]    wbd_ext_dat_o;  // data input
-wire           wbd_ext_ack_o;  // acknowlegement
-wire           wbd_ext_err_o;  // error
+        reg        wbd_ext_cyc_i;  // strobe/request
+        reg        wbd_ext_stb_i;  // strobe/request
+        reg [31:0] wbd_ext_adr_i;  // address
+        reg        wbd_ext_we_i;  // write
+        reg [31:0] wbd_ext_dat_i;  // data output
+        reg [3:0]  wbd_ext_sel_i;  // byte enable
 
-// User I/O
-wire [37:0]    io_oeb        ;
-wire [37:0]    io_out        ;
-wire [37:0]    io_in         ;
+        wire [31:0] wbd_ext_dat_o;  // data input
+        wire        wbd_ext_ack_o;  // acknowlegement
+        wire        wbd_ext_err_o;  // error
 
-wire [37:0]    mprj_io       ;
-wire [7:0]     mprj_io_0     ;
-reg            test_fail     ;
-reg [31:0]     read_data     ;
-//----------------------------------
-// Uart Configuration
-// ---------------------------------
-reg [1:0]      uart_data_bit        ;
-reg	       uart_stop_bits       ; // 0: 1 stop bit; 1: 2 stop bit;
-reg	       uart_stick_parity    ; // 1: force even parity
-reg	       uart_parity_en       ; // parity enable
-reg	       uart_even_odd_parity ; // 0: odd parity; 1: even parity
+	// User I/O
+	wire [37:0] io_oeb;
+	wire [37:0] io_out;
+	wire [37:0] io_in;
 
-reg [7:0]      uart_data            ;
-reg [15:0]     uart_divisor         ;	// divided by n * 16
-reg [15:0]     uart_timeout         ;// wait time limit
 
-reg [15:0]     uart_rx_nu           ;
-reg [15:0]     uart_tx_nu           ;
-reg [7:0]      uart_write_data [0:39];
-reg 	       uart_fifo_enable     ;	// fifo mode disable
+	reg [1:0] spi_chip_no;
 
-	integer    d_risc_id;
+	wire gpio;
+	wire [37:0] mprj_io;
+	wire [7:0] mprj_io_0;
+	reg        test_fail;
+	reg [31:0] read_data;
 
-integer i,j;
 
 	// External clock is used by default.  Make this artificially fast for the
 	// simulation.  Normally this would be a slow clock and the digital PLL
@@ -152,118 +129,116 @@ integer i,j;
 	`ifdef WFDUMP
 	   initial begin
 	   	$dumpfile("simx.vcd");
-	   	$dumpvars(1, user_uart_tb);
-	   	$dumpvars(0, user_uart_tb.u_top);
+	   	$dumpvars(5, user_sspi_tb);
 	   end
        `endif
+
+	initial begin
+		$dumpon;
+
+		#200; // Wait for reset removal
+	        repeat (10) @(posedge clock);
+		$display("Monitor: Standalone User Risc Boot Test Started");
+
+		// Remove Wb Reset
+		wb_user_core_write('h3080_0000,'h1);
+
+                // Enable SPI Multi Functional Ports
+                wb_user_core_write(`ADDR_SPACE_PINMUX+'h0038,'h400);
+
+	        repeat (2) @(posedge clock);
+		#1;
+
+                // Remove the reset
+		// Remove WB and SPI/UART Reset, Keep CORE under Reset
+                wb_user_core_write(`ADDR_SPACE_PINMUX+8'h8,'h01F);
+
+
+		test_fail = 0;
+		sspi_init();
+	        repeat (200) @(posedge clock);
+                wb_user_core_write('h3080_0004,'h10); // Change the Bank Sel 10
+                $display("############################################");
+                $display("   Testing IS62/65WVS1288GALL SSRAM Read/Write Access       ");
+                $display("############################################");
+		// SSPI Indirect RAM READ ACCESS-
+		// Byte Read Option
+		// <Instr:0x3> <Addr:24Bit Address> <Read Data Out>
+                spi_chip_no = 2'b00; // Select the Chip Select to zero
+		sspi_dw_read_check(8'h03,24'h0000,32'h03020100);
+		sspi_dw_read_check(8'h03,24'h0004,32'h07060504);
+		sspi_dw_read_check(8'h03,24'h0008,32'h0b0a0908);
+		sspi_dw_read_check(8'h03,24'h000C,32'h0f0e0d0c);
+		sspi_dw_read_check(8'h03,24'h0010,32'h13121110);
+		sspi_dw_read_check(8'h03,24'h0014,32'h17161514);
+		sspi_dw_read_check(8'h03,24'h0018,32'h1B1A1918);
+		sspi_dw_read_check(8'h03,24'h001C,32'h1F1E1D1C);
+
+		sspi_dw_read_check(8'h03,24'h0040,32'h43424140);
+		sspi_dw_read_check(8'h03,24'h0044,32'h47464544);
+		sspi_dw_read_check(8'h03,24'h0048,32'h4B4A4948);
+		sspi_dw_read_check(8'h03,24'h004C,32'h4F4E4D4C);
+
+		sspi_dw_read_check(8'h03,24'h00a0,32'ha3a2a1a0);
+		sspi_dw_read_check(8'h03,24'h00a4,32'ha7a6a5a4);
+		sspi_dw_read_check(8'h03,24'h00a8,32'habaaa9a8);
+		sspi_dw_read_check(8'h03,24'h00aC,32'hafaeadac);
+
+		sspi_dw_read_check(8'h03,24'h0200,32'h11111111);
+		sspi_dw_read_check(8'h03,24'h0204,32'h22222222);
+		sspi_dw_read_check(8'h03,24'h0208,32'h33333333);
+		sspi_dw_read_check(8'h03,24'h020C,32'h44444444);
+
+		// SPI Write
+		sspi_dw_write(8'h02,24'h0000,32'h00112233);
+		sspi_dw_write(8'h02,24'h0004,32'h44556677);
+		sspi_dw_write(8'h02,24'h0008,32'h8899AABB);
+		sspi_dw_write(8'h02,24'h000C,32'hCCDDEEFF);
+
+		sspi_dw_write(8'h02,24'h0200,32'h11223344);
+		sspi_dw_write(8'h02,24'h0204,32'h55667788);
+		sspi_dw_write(8'h02,24'h0208,32'h99AABBCC);
+		sspi_dw_write(8'h02,24'h020C,32'hDDEEFF00);
+
+		// SPI Read Check
+		sspi_dw_read_check(8'h03,24'h0000,32'h00112233);
+		sspi_dw_read_check(8'h03,24'h0004,32'h44556677);
+		sspi_dw_read_check(8'h03,24'h0008,32'h8899AABB);
+		sspi_dw_read_check(8'h03,24'h000C,32'hCCDDEEFF);
+
+		sspi_dw_read_check(8'h03,24'h0200,32'h11223344);
+		sspi_dw_read_check(8'h03,24'h0204,32'h55667788);
+		sspi_dw_read_check(8'h03,24'h0208,32'h99AABBCC);
+		sspi_dw_read_check(8'h03,24'h020C,32'hDDEEFF00);
+
+
+		repeat (100) @(posedge clock);
+			// $display("+1000 cycles");
+
+          	if(test_fail == 0) begin
+		   `ifdef GL
+	    	       $display("Monitor: SPI Master Mode (GL) Passed");
+		   `else
+		       $display("Monitor: SPI Master Mode (RTL) Passed");
+		   `endif
+	        end else begin
+		    `ifdef GL
+	    	        $display("Monitor: SPI Master Mode (GL) Failed");
+		    `else
+		        $display("Monitor: SPI Master Mode (RTL) Failed");
+		    `endif
+		 end
+	    	$display("###################################################");
+	        $finish;
+	end
 
 	initial begin
 		wb_rst_i <= 1'b1;
 		#100;
 		wb_rst_i <= 1'b0;	    	// Release reset
 	end
-initial
-begin
-   uart_data_bit           = 2'b11;
-   uart_stop_bits          = 0; // 0: 1 stop bit; 1: 2 stop bit;
-   uart_stick_parity       = 0; // 1: force even parity
-   uart_parity_en          = 0; // parity enable
-   uart_even_odd_parity    = 1; // 0: odd parity; 1: even parity
-   uart_divisor            = 15;// divided by n * 16
-   uart_timeout            = 500;// wait time limit
-   uart_fifo_enable        = 0;	// fifo mode disable
-
-   $value$plusargs("risc_core_id=%d", d_risc_id);
-
-   #200; // Wait for reset removal
-   repeat (10) @(posedge clock);
-   $display("Monitor: Standalone User Uart Test Started");
-   
-   // Remove Wb Reset
-   wb_user_core_write('h3080_0000,'h1);
-
-   // Enable UART Multi Functional Ports
-   wb_user_core_write(`ADDR_SPACE_PINMUX+'h0038,'h100);
-   
-   repeat (2) @(posedge clock);
-   #1;
-   // Remove all the reset
-   if(d_risc_id == 0) begin
-	$display("STATUS: Working with Risc core 0");
-	wb_user_core_write(`ADDR_SPACE_PINMUX+8'h8,'h11F);
-   end else begin
-	$display("STATUS: Working with Risc core 1");
-	wb_user_core_write(`ADDR_SPACE_PINMUX+8'h8,'h21F);
-   end
-
-   repeat (100) @(posedge clock);  // wait for Processor Get Ready
-
-   tb_uart.uart_init;
-   wb_user_core_write(`ADDR_SPACE_UART+8'h0,{3'h0,2'b00,1'b1,1'b1,1'b1});  
-   tb_uart.control_setup (uart_data_bit, uart_stop_bits, uart_parity_en, uart_even_odd_parity, 
-	                          uart_stick_parity, uart_timeout, uart_divisor);
-
-   repeat (30000) @(posedge clock);  // wait for Processor Get Ready
-   
-   
-   for (i=0; i<40; i=i+1)
-   	uart_write_data[i] = $random;
-   
-   
-   
-   fork
-      begin
-         for (i=0; i<40; i=i+1)
-         begin
-           $display ("\n... UART Agent Writing char %x ...", uart_write_data[i]);
-            user_uart_tb.tb_uart.write_char (uart_write_data[i]);
-         end
-      end
-   
-      begin
-         for (j=0; j<40; j=j+1)
-         begin
-           user_uart_tb.tb_uart.read_char_chk(uart_write_data[j]);
-         end
-      end
-      join
-   
-      #100
-      tb_uart.report_status(uart_rx_nu, uart_tx_nu);
-   
-      test_fail = 0;
-
-      // Check 
-      // if all the 40 byte transmitted
-      // if all the 40 byte received
-      // if no error 
-      if(uart_tx_nu != 40) test_fail = 1;
-      if(uart_rx_nu != 40) test_fail = 1;
-      if(tb_uart.err_cnt != 0) test_fail = 1;
-
-      $display("###################################################");
-      if(test_fail == 0) begin
-         `ifdef GL
-             $display("Monitor: Standalone User UART Test (GL) Passed");
-         `else
-             $display("Monitor: Standalone User UART Test (RTL) Passed");
-         `endif
-      end else begin
-          `ifdef GL
-              $display("Monitor: Standalone User UART Test (GL) Failed");
-          `else
-              $display("Monitor: Standalone User UART Test (RTL) Failed");
-          `endif
-       end
-      $display("###################################################");
-      #100
-      $finish;
-end
-
-
 wire USER_VDD1V8 = 1'b1;
 wire VSS = 1'b0;
-
 
 user_project_wrapper u_top(
 `ifdef USE_POWER_PINS
@@ -303,66 +278,45 @@ user_project_wrapper u_top(
 `ifndef GL // Drive Power for Hold Fix Buf
     // All standard cell need power hook-up for functionality work
     initial begin
+
     end
 `endif    
-
 
 //------------------------------------------------------
 //  Integrate the Serial flash with qurd support to
 //  user core using the gpio pads
 //  ----------------------------------------------------
+   wire flash_io1;
+   wire flash_clk = io_out[16];
+   wire spiram_csb = io_out[13];
+   tri  #1 flash_io0 = io_out[15];
+   assign io_in[14] = flash_io1;
 
-   wire flash_clk = io_out[24];
-   wire flash_csb = io_out[25];
-   // Creating Pad Delay
-   wire #1 io_oeb_29 = io_oeb[29];
-   wire #1 io_oeb_30 = io_oeb[30];
-   wire #1 io_oeb_31 = io_oeb[31];
-   wire #1 io_oeb_32 = io_oeb[32];
-   tri  #1 flash_io0 = (io_oeb_29== 1'b0) ? io_out[29] : 1'bz;
-   tri  #1 flash_io1 = (io_oeb_30== 1'b0) ? io_out[30] : 1'bz;
-   tri  #1 flash_io2 = (io_oeb_31== 1'b0) ? io_out[31] : 1'bz;
-   tri  #1 flash_io3 = (io_oeb_32== 1'b0) ? io_out[32] : 1'bz;
-
-   assign io_in[29] = flash_io0;
-   assign io_in[30] = flash_io1;
-   assign io_in[31] = flash_io2;
-   assign io_in[32] = flash_io3;
+   tri  #1 flash_io2 = 1'b1;
+   tri  #1 flash_io3 = 1'b1;
 
 
-   // Quard flash
-     s25fl256s #(.mem_file_name("user_uart.hex"),
-	         .otp_file_name("none"), 
-                 .TimingModel("S25FL512SAGMFI010_F_30pF")) 
-		 u_spi_flash_256mb
-       (
-           // Data Inputs/Outputs
-       .SI      (flash_io0),
-       .SO      (flash_io1),
-       // Controls
-       .SCK     (flash_clk),
-       .CSNeg   (flash_csb),
-       .WPNeg   (flash_io2),
-       .HOLDNeg (flash_io3),
-       .RSTNeg  (!wb_rst_i)
-
-       );
+   is62wvs1288 #(.mem_file_name("flash1.hex"))
+	u_sfram (
+         // Data Inputs/Outputs
+           .io0     (flash_io0),
+           .io1     (flash_io1),
+           // Controls
+           .clk    (flash_clk),
+           .csb    (spiram_csb),
+           .io2    (flash_io2),
+           .io3    (flash_io3)
+    );
 
 
-//---------------------------
-//  UART Agent integration
-// --------------------------
-wire uart_txd,uart_rxd;
-
-assign uart_txd   = io_out[2];
-assign io_in[1]  = uart_rxd ;
- 
-uart_agent tb_uart(
-	.mclk                (clock              ),
-	.txd                 (uart_rxd           ),
-	.rxd                 (uart_txd           )
-	);
-
+//----------------------------------------------------
+//  Task
+// --------------------------------------------------
+task test_err;
+begin
+     test_fail = 1;
+end
+endtask
 
 task wb_user_core_write;
 input [31:0] address;
@@ -385,7 +339,7 @@ begin
   wbd_ext_we_i  ='h0;  // write
   wbd_ext_dat_i ='h0;  // data output
   wbd_ext_sel_i ='h0;  // byte enable
-  $display("DEBUG WB USER ACCESS WRITE Address : %x, Data : %x",address,data);
+  $display("STATUS: WB USER ACCESS WRITE Address : 0x%x, Data : 0x%x",address,data);
   repeat (2) @(posedge clock);
 end
 endtask
@@ -413,10 +367,45 @@ begin
   wbd_ext_we_i  ='h0;  // write
   wbd_ext_dat_i ='h0;  // data output
   wbd_ext_sel_i ='h0;  // byte enable
-  $display("DEBUG WB USER ACCESS READ Address : %x, Data : %x",address,data);
+  //$display("STATUS: WB USER ACCESS READ  Address : 0x%x, Data : 0x%x",address,data);
   repeat (2) @(posedge clock);
 end
 endtask
+
+task  wb_user_core_read_check;
+input [31:0] address;
+output [31:0] data;
+input [31:0] cmp_data;
+reg    [31:0] data;
+begin
+  repeat (1) @(posedge clock);
+  #1;
+  wbd_ext_adr_i =address;  // address
+  wbd_ext_we_i  ='h0;  // write
+  wbd_ext_dat_i ='0;  // data output
+  wbd_ext_sel_i ='hF;  // byte enable
+  wbd_ext_cyc_i ='h1;  // strobe/request
+  wbd_ext_stb_i ='h1;  // strobe/request
+  wait(wbd_ext_ack_o == 1);
+  data  = wbd_ext_dat_o;  
+  repeat (1) @(posedge clock);
+  #1;
+  wbd_ext_cyc_i ='h0;  // strobe/request
+  wbd_ext_stb_i ='h0;  // strobe/request
+  wbd_ext_adr_i ='h0;  // address
+  wbd_ext_we_i  ='h0;  // write
+  wbd_ext_dat_i ='h0;  // data output
+  wbd_ext_sel_i ='h0;  // byte enable
+  if(data !== cmp_data) begin
+     $display("ERROR : WB USER ACCESS READ  Address : 0x%x, Exd: 0x%x Rxd: 0x%x ",address,cmp_data,data);
+     user_sspi_tb.test_fail = 1;
+  end else begin
+     $display("STATUS: WB USER ACCESS READ  Address : 0x%x, Data : 0x%x",address,data);
+  end
+  repeat (2) @(posedge clock);
+end
+endtask
+
 
 `ifdef GL
 
@@ -465,5 +454,7 @@ end
 
 `endif
 **/
+`include "sspi_task.v"
+
 endmodule
 `default_nettype wire

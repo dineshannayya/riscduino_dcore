@@ -451,10 +451,10 @@ pwm  u_pwm_5 (
 *
 *  Additional Pad used for Externam ROM/RAM
 *                sflash_sck          digital_io[24]
-*                sflash_ss[3]        digital_io[25]
-*                sflash_ss[2]        digital_io[26]
-*                sflash_ss[1]        digital_io[27]
-*                sflash_ss[0]        digital_io[28]
+*                sflash_ss[0]        digital_io[25]
+*                sflash_ss[1]        digital_io[26]
+*                sflash_ss[2]        digital_io[27]
+*                sflash_ss[3]        digital_io[28]
 *                sflash_io0          digital_io[29]
 *                sflash_io1          digital_io[30]
 *                sflash_io2          digital_io[31]
@@ -669,10 +669,10 @@ always_comb begin
 
      // Serial Flash
      digital_io_out[24] = sflash_sck   ;
-     digital_io_out[25] = sflash_ss[3] ;
-     digital_io_out[26] = sflash_ss[2] ;
-     digital_io_out[27] = sflash_ss[1] ;
-     digital_io_out[28] = sflash_ss[0] ;
+     digital_io_out[25] = sflash_ss[0] ;
+     digital_io_out[26] = sflash_ss[1] ;
+     digital_io_out[27] = sflash_ss[2] ;
+     digital_io_out[28] = sflash_ss[3] ;
      digital_io_out[29] = sflash_do[0] ;
      digital_io_out[30] = sflash_do[1] ;
      digital_io_out[31] = sflash_do[2] ;

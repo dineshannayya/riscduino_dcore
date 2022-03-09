@@ -17,6 +17,8 @@
 
 `timescale 1 ns / 1 ps
 
+`define FULL_CHIP_SIM
+
 `include "uprj_netlists.v"
 `include "caravel_netlists.v"
 `include "spiflash.v"
@@ -49,7 +51,7 @@ module wb_port_tb;
 
 	`ifdef WFDUMP
 	initial begin
-		$dumpfile("wb_port.vcd");
+		$dumpfile("simx.vcd");
 		$dumpvars(1, wb_port_tb);
 		$dumpvars(2, wb_port_tb.uut);
 		//$dumpvars(1, wb_port_tb.uut.mprj);

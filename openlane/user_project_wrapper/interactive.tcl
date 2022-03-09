@@ -223,7 +223,7 @@ proc run_power_grid_generation {args} {
 					set ground [lindex $hooks 1]			 
 					if { $power == $::env(VDD_NET) && $ground == $::env(GND_NET) } {
 						set ::env(FP_PDN_ENABLE_MACROS_GRID) 1
-                                                set ::env(FP_PDN_IRDROP) "1"
+                                                set ::env(FP_PDN_IRDROP) "0"
 						puts_info "Connecting $instance_name to $power and $ground nets."
 						lappend ::env(FP_PDN_MACROS) $instance_name
 					}

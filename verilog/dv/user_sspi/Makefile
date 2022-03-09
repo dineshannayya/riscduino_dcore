@@ -42,7 +42,7 @@ GCC64_PREFIX?=riscv64-unknown-elf
 ## RISCV GCC 
 GCC_PATH?=/ef/apps/bin
 GCC_PREFIX?=riscv32-unknown-elf
-PDK_PATH?=/ef/tech/SW/sky130A
+PDK_PATH?=/opt/pdk/sky130A
 
 ## Simulation mode: RTL/GL
 SIM?=RTL
@@ -50,7 +50,7 @@ DUMP?=OFF
 
 .SUFFIXES:
 
-PATTERN = user_spi
+PATTERN = user_sspi
 
 all:  ${PATTERN:=.vcd}
 

@@ -172,7 +172,21 @@
 ////      C. Individual block reset are moved to pinmux to        ////
 ////         support peripheral reset from Risc and WishBone      ////
 ////         Host.                                                ////
-////                                                              ////
+////    3.6  Feb 19, Dinesh A                                     ////
+////       A.  Changed Module: wb_host                            ////
+////       wishbone slave clock generation config increase from   ////
+////       3 to 4 bit support clock source selection              ////
+////       B.  Changed Module: qspim                              ////
+//////      1. Bug fix in spi rise and fall pulse relation w.r.t  ////
+////           spi_clk. Note: Previous version work only with     ////
+////           spi clock config = 0x2                             ////
+////        2. spi_oen generation fix for different spi mode      ////
+////        3. spi_csn de-assertion fix for different spi clk div ////
+////    3.7  Mar 2 2022, Dinesh A                                 ////
+////       1. qspi cs# port mapping changed from io 28:25 to 25:28////
+////       2. sspi, bug fix in reg access and endian support added////
+////       3. Wishbone interconnect now support cross-connect     ////
+////          feature
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
 //// Copyright (C) 2000 Authors and OPENCORES.ORG                 ////
@@ -866,7 +880,7 @@ sky130_sram_2kbyte_1rw1r_32x512_8 u_dcache_2kb(
 * *******************************************************/
 
 qspim_top
-#                             (
+#(
 `ifndef SYNTHESIS
     .WB_WIDTH  (WB_WIDTH                                    )
 `endif

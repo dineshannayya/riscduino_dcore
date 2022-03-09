@@ -102,6 +102,7 @@
      `include "lib/sync_wbb.sv"
      `include "lib/sync_fifo2.sv"
      `include "wb_interconnect/src/wb_arb.sv"
+     `include "wb_interconnect/src/wb_slave_port.sv"
      `include "wb_interconnect/src/wb_interconnect.sv"
 
      `include "yifive/ycr2c/src/core/pipeline/ycr_pipe_hdu.sv"

@@ -103,7 +103,7 @@
 
  `define ADDR_SPACE_PINMUX  32'h3002_0000
 
-module user_spi_tb;
+module user_qspi_tb;
 	reg clock;
 	reg wb_rst_i;
 	reg power1, power2;
@@ -207,7 +207,7 @@ parameter P_QDDR   = 2'b11;
 	`ifdef WFDUMP
 	   initial begin
 	   	$dumpfile("simx.vcd");
-	   	$dumpvars(5, user_spi_tb);
+	   	$dumpvars(5, user_qspi_tb);
 	   end
        `endif
 
@@ -1229,7 +1229,7 @@ user_project_wrapper u_top(
 //  ----------------------------------------------------
 
    wire flash_clk = io_out[24];
-   wire flash_csb = io_out[28];
+   wire flash_csb = io_out[25];
    // Creating Pad Delay
    wire #1 io_oeb_29 = io_oeb[29];
    wire #1 io_oeb_30 = io_oeb[30];
@@ -1263,7 +1263,7 @@ user_project_wrapper u_top(
 
        );
 
-   wire spiram_csb = io_out[26];
+   wire spiram_csb = io_out[27];
 
    is62wvs1288 #(.mem_file_name("flash1.hex"))
 	u_sfram (
@@ -1358,7 +1358,7 @@ begin
   wbd_ext_sel_i ='h0;  // byte enable
   if(data !== cmp_data) begin
      $display("ERROR : WB USER ACCESS READ  Address : 0x%x, Exd: 0x%x Rxd: 0x%x ",address,cmp_data,data);
-     user_spi_tb.test_fail = 1;
+     user_qspi_tb.test_fail = 1;
   end else begin
      $display("STATUS: WB USER ACCESS READ  Address : 0x%x, Data : 0x%x",address,data);
   end

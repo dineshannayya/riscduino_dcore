@@ -14,9 +14,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-## PDK 
-PDK_PATH = $(PDK_ROOT)/sky130A
-
 ## Caravel Pointers
 CARAVEL_ROOT ?= ../../../caravel
 CARAVEL_PATH ?= $(CARAVEL_ROOT)
@@ -25,92 +22,78 @@ CARAVEL_VERILOG_PATH  = $(CARAVEL_PATH)/verilog
 CARAVEL_RTL_PATH = $(CARAVEL_VERILOG_PATH)/rtl
 CARAVEL_BEHAVIOURAL_MODELS = $(CARAVEL_VERILOG_PATH)/dv/caravel
 
+
 ## User Project Pointers
 UPRJ_VERILOG_PATH ?= ../../../verilog
 UPRJ_RTL_PATH = $(UPRJ_VERILOG_PATH)/rtl
 UPRJ_GL_PATH = $(UPRJ_VERILOG_PATH)/gl
-UPRJ_BEHAVIOURAL_MODELS = ../
+UPRJ_BEHAVIOURAL_MODELS = ../model
+UPRJ_BEHAVIOURAL_AGENTS = ../agents
 UPRJ_INCLUDE_PATH1 = $(UPRJ_RTL_PATH)/yifive/ycr2c/src/includes
 UPRJ_INCLUDE_PATH2 = $(UPRJ_RTL_PATH)/sdram_ctrl/src/defs
 UPRJ_INCLUDE_PATH3 = $(UPRJ_RTL_PATH)/i2cm/src/includes
 UPRJ_INCLUDE_PATH4 = $(UPRJ_RTL_PATH)/usb1_host/src/includes
 UPRJ_INCLUDE_PATH5 = $(UPRJ_RTL_PATH)/mbist/include
+
+## YIFIVE FIRMWARE
+YIFIVE_FIRMWARE_PATH = $(UPRJ_VERILOG_PATH)/dv/firmware
+GCC64_PREFIX?=riscv64-unknown-elf
+
 ## RISCV GCC 
 GCC_PATH?=/ef/apps/bin
 GCC_PREFIX?=riscv32-unknown-elf
-GCC64_PREFIX?=riscv64-unknown-elf
+PDK_PATH?=/ef/tech/SW/sky130A
 
 ## Simulation mode: RTL/GL
-SIM_DEFINES = -DFUNCTIONAL -DSIM
 SIM?=RTL
 DUMP?=OFF
 
 .SUFFIXES:
 
-PATTERN = wb_port
+PATTERN = user_qspi
 
 all:  ${PATTERN:=.vcd}
 
-hex:  ${PATTERN:=.hex}
 
 vvp:  ${PATTERN:=.vvp}
 
-%.vvp: %_tb.v %.hex
+%.vvp: %_tb.v
 ifeq ($(SIM),RTL)
    ifeq ($(DUMP),OFF)
-	iverilog -g2005-sv $(SIM_DEFINES) -I $(PDK_PATH) \
+	iverilog -g2005-sv -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
 	-I $(CARAVEL_BEHAVIOURAL_MODELS) -I $(CARAVEL_RTL_PATH) \
 	-I $(UPRJ_BEHAVIOURAL_MODELS)    -I $(UPRJ_RTL_PATH) -I $(UPRJ_VERILOG_PATH) \
+	-I $(UPRJ_BEHAVIOURAL_AGENTS)    \
 	-I $(UPRJ_INCLUDE_PATH1)    -I $(UPRJ_INCLUDE_PATH2) -I $(UPRJ_INCLUDE_PATH3) \
 	-I $(UPRJ_INCLUDE_PATH4) -I $(UPRJ_INCLUDE_PATH5) \
 	$< -o $@ 
     else  
-	iverilog -g2005-sv -DWFDUMP $(SIM_DEFINES) -I $(PDK_PATH) \
+	iverilog -g2005-sv -DWFDUMP -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
 	-I $(CARAVEL_BEHAVIOURAL_MODELS) -I $(CARAVEL_RTL_PATH) \
 	-I $(UPRJ_BEHAVIOURAL_MODELS)    -I $(UPRJ_RTL_PATH) -I $(UPRJ_VERILOG_PATH) \
+	-I $(UPRJ_BEHAVIOURAL_AGENTS)    \
 	-I $(UPRJ_INCLUDE_PATH1)    -I $(UPRJ_INCLUDE_PATH2) -I $(UPRJ_INCLUDE_PATH3) \
 	-I $(UPRJ_INCLUDE_PATH4) -I $(UPRJ_INCLUDE_PATH5) \
 	$< -o $@ 
    endif
 else  
-	iverilog $(SIM_DEFINES) -DGL -I $(PDK_PATH) \
+	iverilog -g2005-sv -DFUNCTIONAL -DSIM -DGL -I $(PDK_PATH) \
 	-I $(CARAVEL_BEHAVIOURAL_MODELS) -I $(CARAVEL_RTL_PATH) -I $(CARAVEL_VERILOG_PATH) \
-	-I $(UPRJ_BEHAVIOURAL_MODELS) -I$(UPRJ_GL_PATH)  -I$(UPRJ_RTL_PATH)  -I $(UPRJ_VERILOG_PATH) \
+	-I $(UPRJ_BEHAVIOURAL_MODELS) -I $(UPRJ_GL_PATH) \
+	-I $(UPRJ_BEHAVIOURAL_AGENTS)    \
 	$< -o $@ 
 endif
 
 %.vcd: %.vvp
 	vvp $<
 
-%.elf: %.c $(CARAVEL_FIRMWARE_PATH)/sections.lds $(CARAVEL_FIRMWARE_PATH)/start.s 
-	${GCC64_PREFIX}-gcc -I $(CARAVEL_PATH) -march=rv32imc -mabi=ilp32 -Wl,-Bstatic,-T,$(CARAVEL_FIRMWARE_PATH)/sections.lds,--strip-debug -ffreestanding -nostdlib -o $@ $(CARAVEL_FIRMWARE_PATH)/start.s $<
+%.hex: 
+	echo @"This is user boot test, noting to compile the mangment core code"
 
-%.hex: %.elf
-	${GCC64_PREFIX}-objcopy -O verilog $< $@ 
-	# to fix flash base address
-	sed -i 's/@10000000/@00000000/g' $@
-
-%.bin: %.elf
-	${GCC64_PREFIX}-objcopy -O binary $< /dev/stdout | tail -c +1048577 > $@
-
-check-env:
-ifndef PDK_ROOT
-	$(error PDK_ROOT is undefined, please export it before running make)
-endif
-ifeq (,$(wildcard $(PDK_ROOT)/sky130A))
-	$(error $(PDK_ROOT)/sky130A not found, please install pdk before running make)
-endif
-#ifeq (,$(wildcard $(GCC64_PREFIX)-gcc ))
-#	$(error $(GCC64_PREFIX)-gcc is not found, please export GCC_PATH and GCC_PREFIX before running make)
-#endif
-# check for efabless style installation
-ifeq (,$(wildcard $(PDK_ROOT)/sky130A/libs.ref/*/verilog))
-SIM_DEFINES := ${SIM_DEFINES} -DEF_STYLE
-endif
 
 # ---- Clean ----
 
 clean:
-	rm -f *.elf *.hex *.bin *.vvp *.vcd *.log
+	rm -f *.vvp *.vcd *.log *.fst
 
 .PHONY: clean hex all

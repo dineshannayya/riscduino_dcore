@@ -20,11 +20,11 @@ set ::env(PDK) "sky130A"
 set ::env(STD_CELL_LIBRARY) "sky130_fd_sc_hd"
 
 # YOU ARE NOT ALLOWED TO CHANGE ANY VARIABLES DEFINED IN THE FIXED WRAPPER CFGS 
-source $::env(CARAVEL_ROOT)/openlane/user_project_wrapper_empty/fixed_wrapper_cfgs.tcl
+source $::env(CARAVEL_ROOT)/openlane/user_project_wrapper/fixed_wrapper_cfgs.tcl
 
 
 # YOU CAN CHANGE ANY VARIABLES DEFINED IN THE DEFAULT WRAPPER CFGS BY OVERRIDING THEM IN THIS CONFIG.TCL
-source $::env(CARAVEL_ROOT)/openlane/user_project_wrapper_empty/default_wrapper_cfgs.tcl
+source $::env(CARAVEL_ROOT)/openlane/user_project_wrapper/default_wrapper_cfgs.tcl
 
 
 set script_dir [file dirname [file normalize [info script]]]
@@ -71,7 +71,7 @@ set ::env(VERILOG_FILES_BLACKBOX) "\
         $proj_dir/../../verilog/gl/qspim_top.v \
         $proj_dir/../../verilog/gl/wb_interconnect.v \
         $proj_dir/../../verilog/gl/pinmux.v     \
-        $proj_dir/../../verilog/gl/uart_i2cm_usb_spi.v     \
+        $proj_dir/../../verilog/gl/uart_i2c_usb_spi_top.v     \
 	$proj_dir/../../verilog/gl/wb_host.v \
 	$proj_dir/../../verilog/gl/ycr2_mintf.v \
 	$proj_dir/../../verilog/gl/ycr_core_top.v \
@@ -82,7 +82,7 @@ set ::env(EXTRA_LEFS) "\
 	$lef_root/qspim_top.lef \
 	$lef_root/pinmux.lef \
 	$lef_root/wb_interconnect.lef \
-	$lef_root/uart_i2cm_usb_spi.lef \
+	$lef_root/uart_i2c_usb_spi_top.lef \
 	$lef_root/wb_host.lef \
 	$lef_root/ycr2_mintf.lef \
 	$lef_root/ycr_core_top.lef \
@@ -93,7 +93,7 @@ set ::env(EXTRA_GDS_FILES) "\
 	$gds_root/qspim_top.gds \
 	$gds_root/pinmux.gds \
 	$gds_root/wb_interconnect.gds \
-	$gds_root/uart_i2cm_usb_spi.gds \
+	$gds_root/uart_i2c_usb_spi_top.gds \
 	$gds_root/wb_host.gds \
 	$gds_root/ycr2_mintf.gds \
 	$gds_root/ycr_core_top.gds \
@@ -104,6 +104,7 @@ set ::env(SYNTH_DEFINES) [list SYNTHESIS ]
 
 set ::env(VERILOG_INCLUDE_DIRS) [glob $script_dir/../../verilog/rtl/yifive/ycr2c/src/includes ]
 
+set ::env(GLB_RT_MAXLAYER) 6
 set ::env(RT_MAX_LAYER) {met5}
 
 set ::env(FP_PDN_CHECK_NODES) 0
@@ -176,9 +177,8 @@ set ::env(QUIT_ON_MAGIC_DRC) "0"
 set ::env(QUIT_ON_NEGATIVE_WNS) "0"
 set ::env(QUIT_ON_SLEW_VIOLATIONS) "0"
 set ::env(QUIT_ON_TIMING_VIOLATIONS) "0"
-set ::env(QUIT_ON_TR_DRC) "0"
 
-set ::env(FP_PDN_IRDROP) "1"
+set ::env(FP_PDN_IRDROP) "0"
 set ::env(FP_PDN_HORIZONTAL_HALO) "10"
 set ::env(FP_PDN_VERTICAL_HALO) "10"
 
