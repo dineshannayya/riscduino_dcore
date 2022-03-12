@@ -74,6 +74,8 @@ VERIFY_COMMAND="cd ${TARGET_PATH}/verilog/dv/$* && export SIM=${SIM} DUMP=${DUMP
 $(DV_PATTERNS): verify-% : ./verilog/dv/% check-coremark_repo check-riscv_comp_repo check-riscv_test_repo
 	docker run -v ${TARGET_PATH}:${TARGET_PATH} \
                 -e TARGET_PATH=${TARGET_PATH}  \
+		-v ${CARAVEL_ROOT}:${CARAVEL_ROOT} \
+		-e CARAVEL_ROOT=${CARAVEL_ROOT} \
                 -u $(id -u $$USER):$(id -g $$USER) riscduino/dv_setup:mpw5 \
                 sh -c $(VERIFY_COMMAND)
 				

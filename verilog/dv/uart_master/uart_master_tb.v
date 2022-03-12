@@ -88,6 +88,8 @@ reg            test_fail     ;
 
 	initial begin
 
+		$display("Test Started ...");
+		$dumpon;
 		// Repeat cycles of 1000 clock edges as needed to complete testbench
 		repeat (400) begin
 			repeat (1000) @(posedge clock);

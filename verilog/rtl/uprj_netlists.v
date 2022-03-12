@@ -42,7 +42,9 @@
      `include "libs.ref/sky130_fd_sc_hvl/verilog/sky130_fd_sc_hvl.v"
 
 
-     `include "sram_macros/sky130_sram_2kbyte_1rw1r_32x512_8.v"
+     `ifndef FULL_CHIP_SIM 
+        `include "sram_macros/sky130_sram_2kbyte_1rw1r_32x512_8.v"
+     `endif
      `include "pinmux/src/pinmux.sv"
      `include "pinmux/src/pinmux_reg.sv"
      `include "pinmux/src/gpio_intr.sv"
