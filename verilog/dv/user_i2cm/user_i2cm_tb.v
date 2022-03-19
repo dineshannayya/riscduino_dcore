@@ -65,16 +65,9 @@
 
 `timescale 1 ns / 1 ns
 
-`include "s25fl256s.sv"
 `include "uprj_netlists.v"
-`include "mt48lc8m8a2.v"
 `include "i2c_slave_model.v"
-
-
-`define ADDR_SPACE_UART  32'h3001_0000
-`define ADDR_SPACE_I2CM  32'h3001_0040
-`define ADDR_SPACE_PINMUX  32'h3002_0000
-
+`include "user_reg_map.v"
 
 module tb_top;
 
@@ -151,13 +144,13 @@ begin
    repeat (10) @(posedge clock);
    #1;
    // Enable I2M Block & WB Reset and Enable I2CM Mux Select
-   wb_user_core_write('h3080_0000,'h01);
+   wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h01);
 
    // Enable I2C Multi Functional Ports
-   wb_user_core_write(`ADDR_SPACE_PINMUX+'h0038,'h200);
+   wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GPIO_MULTI_FUNC,'h200);
 
    // Remove i2m reset
-   wb_user_core_write(`ADDR_SPACE_PINMUX+8'h8,'h010);
+   wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h010);
 
    repeat (100) @(posedge clock);  
 
@@ -352,48 +345,6 @@ user_project_wrapper u_top(
 
     end
 `endif    
-//------------------------------------------------------
-//  Integrate the Serial flash with qurd support to
-//  user core using the gpio pads
-//  ----------------------------------------------------
-
-   wire flash_clk = io_out[24];
-   wire flash_csb = io_out[25];
-   // Creating Pad Delay
-   wire #1 io_oeb_29 = io_oeb[29];
-   wire #1 io_oeb_30 = io_oeb[30];
-   wire #1 io_oeb_31 = io_oeb[31];
-   wire #1 io_oeb_32 = io_oeb[32];
-   tri  #1 flash_io0 = (io_oeb_29== 1'b0) ? io_out[29] : 1'bz;
-   tri  #1 flash_io1 = (io_oeb_30== 1'b0) ? io_out[30] : 1'bz;
-   tri  #1 flash_io2 = (io_oeb_31== 1'b0) ? io_out[31] : 1'bz;
-   tri  #1 flash_io3 = (io_oeb_32== 1'b0) ? io_out[32] : 1'bz;
-
-   assign io_in[29] = flash_io0;
-   assign io_in[30] = flash_io1;
-   assign io_in[31] = flash_io2;
-   assign io_in[32] = flash_io3;
-
-
-   // Quard flash
-     s25fl256s #(.mem_file_name("user_uart.hex"),
-	         .otp_file_name("none"), 
-                 .TimingModel("S25FL512SAGMFI010_F_30pF")) 
-		 u_spi_flash_256mb
-       (
-           // Data Inputs/Outputs
-       .SI      (flash_io0),
-       .SO      (flash_io1),
-       // Controls
-       .SCK     (flash_clk),
-       .CSNeg   (flash_csb),
-       .WPNeg   (flash_io2),
-       .HOLDNeg (flash_io3),
-       .RSTNeg  (!wb_rst_i)
-
-       );
-
-
 
 //---------------------------
 // I2C

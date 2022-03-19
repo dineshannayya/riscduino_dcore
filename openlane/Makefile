@@ -35,12 +35,12 @@ $(BLOCKS) : % : ./%/config.tcl FORCE
 	@sleep 1
 
 	@if [ -f ./$*/interactive.tcl ]; then\
-		docker run -it -v $(OPENLANE_ROOT):/openLANE_flow \
+		docker run -it  \
 		-v $(PWD)/..:/project \
 		-u $(shell id -u $(USER)):$(shell id -g $(USER)) \
 		$(OPENLANE_IMAGE_NAME) sh -c $(OPENLANE_INTERACTIVE_COMMAND);\
 	else\
-		docker run -it -v $(OPENLANE_ROOT):/openLANE_flow \
+		docker run -it  \
 		-v $(PWD)/..:/project \
 		-u $(shell id -u $(USER)):$(shell id -g $(USER)) \
 		$(OPENLANE_IMAGE_NAME) sh -c $(OPENLANE_BASIC_COMMAND);\

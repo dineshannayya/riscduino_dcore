@@ -17,12 +17,6 @@
 
 `timescale 1 ns / 1 ps
 
-`define FULL_CHIP_SIM
-
-`include "uprj_netlists.v"
-`include "caravel_netlists.v"
-`include "spiflash.v"
-
 module wb_port_tb;
 	reg clock;
 	reg RSTB;
@@ -53,7 +47,7 @@ module wb_port_tb;
 	initial begin
 		$dumpfile("simx.vcd");
 		$dumpvars(1, wb_port_tb);
-		$dumpvars(2, wb_port_tb.uut);
+		//$dumpvars(0, wb_port_tb.uut.soc);
 		//$dumpvars(1, wb_port_tb.uut.mprj);
 		$dumpvars(1, wb_port_tb.uut.mprj.u_wb_host);
 		$dumpvars(2, wb_port_tb.uut.mprj.u_pinmux);
@@ -64,7 +58,7 @@ module wb_port_tb;
 
 		// Repeat cycles of 1000 clock edges as needed to complete testbench
 		repeat (30) begin
-			repeat (1000) @(posedge clock);
+			repeat (2000) @(posedge clock);
 			// $display("+1000 cycles");
 		end
 		$display("%c[1;31m",27);

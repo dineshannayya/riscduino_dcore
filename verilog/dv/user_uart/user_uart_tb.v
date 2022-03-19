@@ -74,14 +74,9 @@
 
 `timescale 1 ns / 1 ns
 
-`include "s25fl256s.sv"
 `include "uprj_netlists.v"
-`include "mt48lc8m8a2.v"
 `include "uart_agent.v"
-
-
-`define ADDR_SPACE_UART    32'h3001_0000
-`define ADDR_SPACE_PINMUX  32'h3002_0000
+`include "user_reg_map.v"
 
 
 module user_uart_tb;
@@ -180,20 +175,20 @@ begin
    $display("Monitor: Standalone User Uart Test Started");
    
    // Remove Wb Reset
-   wb_user_core_write('h3080_0000,'h1);
+   wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h1);
 
    // Enable UART Multi Functional Ports
-   wb_user_core_write(`ADDR_SPACE_PINMUX+'h0038,'h100);
+   wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GPIO_MULTI_FUNC,'h100);
    
    repeat (2) @(posedge clock);
    #1;
    // Remove all the reset
    if(d_risc_id == 0) begin
 	$display("STATUS: Working with Risc core 0");
-	wb_user_core_write(`ADDR_SPACE_PINMUX+8'h8,'h11F);
+	wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h11F);
    end else begin
 	$display("STATUS: Working with Risc core 1");
-	wb_user_core_write(`ADDR_SPACE_PINMUX+8'h8,'h21F);
+	wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h21F);
    end
 
    repeat (100) @(posedge clock);  // wait for Processor Get Ready
@@ -466,4 +461,5 @@ end
 `endif
 **/
 endmodule
+`include "s25fl256s.sv"
 `default_nettype wire

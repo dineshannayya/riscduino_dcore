@@ -16,29 +16,13 @@
  */
 
 // This include is relative to $CARAVEL_PATH (see Makefile)
-#include "verilog/dv/caravel/defs.h"
-#include "verilog/dv/caravel/stub.c"
+#include <defs.h>
+#include <stub.c>
+#include "../c_func/inc/user_reg_map.h"
 
 // User Project Slaves (0x3000_0000)
 
-#define reg_mprj_wbhost_reg0 (*(volatile uint32_t*)0x30800000)
-
-#define reg_mprj_globl_reg0  (*(volatile uint32_t*)0x30020000)
-#define reg_mprj_globl_reg1  (*(volatile uint32_t*)0x30020004)
-#define reg_mprj_globl_reg2  (*(volatile uint32_t*)0x30020008)
-#define reg_mprj_globl_reg3  (*(volatile uint32_t*)0x3002000C)
-#define reg_mprj_globl_reg4  (*(volatile uint32_t*)0x30020010)
-#define reg_mprj_globl_reg5  (*(volatile uint32_t*)0x30020014)
-#define reg_mprj_globl_reg6  (*(volatile uint32_t*)0x30020018)
-#define reg_mprj_globl_reg7  (*(volatile uint32_t*)0x3002001C)
-#define reg_mprj_globl_reg8  (*(volatile uint32_t*)0x30020020)
-#define reg_mprj_globl_reg9  (*(volatile uint32_t*)0x30020024)
-#define reg_mprj_globl_reg10 (*(volatile uint32_t*)0x30020028)
-#define reg_mprj_globl_reg11 (*(volatile uint32_t*)0x3002002C)
-#define reg_mprj_globl_reg12 (*(volatile uint32_t*)0x30020030)
-#define reg_mprj_globl_reg13 (*(volatile uint32_t*)0x30020034)
-#define reg_mprj_globl_reg14 (*(volatile uint32_t*)0x30020038)
-#define reg_mprj_globl_reg15 (*(volatile uint32_t*)0x3002003C)
+#define reg_mprj_wbhost_reg0 (*(volatile uint32_t*)0x30080000)
 
 #define reg_mprj_uart_reg0 (*(volatile uint32_t*)0x30010000)
 #define reg_mprj_uart_reg1 (*(volatile uint32_t*)0x30010004)
@@ -52,7 +36,6 @@
 
 #define GPIO_MODE_USER_STD_BIDIRECTIONAL_PULLUP   0x1C00
 
-#define SC_SIM_OUTPORT (0xf0000000)
 
 /*
          RiscV Hello World test.
@@ -80,38 +63,36 @@ void main()
 	Input: 0000_0001_0000_1111 (0x0402) = GPIO_MODE_USER_STD_INPUT_NOPULL
 	| DM     | VTRIP | SLOW  | AN_POL | AN_SEL | AN_EN | MOD_SEL | INP_DIS | HOLDH | OEB_N | MGMT_EN |
 	| 001    | 0     | 0     | 0      | 0      | 0     | 0       | 0       | 0     | 1     | 0       |
-
-	Input: 0000_0001_0000_1111 (0x1800) = GPIO_MODE_USER_STD_BIDIRECTIONAL
-	| DM     | VTRIP | SLOW  | AN_POL | AN_SEL | AN_EN | MOD_SEL | INP_DIS | HOLDH | OEB_N | MGMT_EN |
-	| 110    | 0     | 0     | 0      | 0      | 0     | 0       | 0       | 0     | 0     | 0       |
 	*/
 
 	/* Set up the housekeeping SPI to be connected internally so	*/
 	/* that external pin changes don't affect it.			*/
 
-	reg_spimaster_config = 0xa002;	// Enable, prescaler = 2,
+    reg_spi_enable = 1;
+    reg_wb_enable = 1;
+	// reg_spimaster_config = 0xa002;	// Enable, prescaler = 2,
                                         // connect to housekeeping SPI
 
 	// Connect the housekeeping SPI to the SPI master
 	// so that the CSB line is not left floating.  This allows
 	// all of the GPIO pins to be used for user functions.
-        reg_mprj_io_31 = GPIO_MODE_MGMT_STD_OUTPUT;
-        reg_mprj_io_30 = GPIO_MODE_MGMT_STD_OUTPUT;
-        reg_mprj_io_29 = GPIO_MODE_MGMT_STD_OUTPUT;
-        reg_mprj_io_28 = GPIO_MODE_MGMT_STD_OUTPUT;
-        reg_mprj_io_27 = GPIO_MODE_MGMT_STD_OUTPUT;
-        reg_mprj_io_26 = GPIO_MODE_MGMT_STD_OUTPUT;
-        reg_mprj_io_25 = GPIO_MODE_MGMT_STD_OUTPUT;
-        reg_mprj_io_24 = GPIO_MODE_MGMT_STD_OUTPUT;
-        reg_mprj_io_23 = GPIO_MODE_MGMT_STD_OUTPUT;
-        reg_mprj_io_22 = GPIO_MODE_MGMT_STD_OUTPUT;
-        reg_mprj_io_21 = GPIO_MODE_MGMT_STD_OUTPUT;
-        reg_mprj_io_20 = GPIO_MODE_MGMT_STD_OUTPUT;
-        reg_mprj_io_19 = GPIO_MODE_MGMT_STD_OUTPUT;
-        reg_mprj_io_18 = GPIO_MODE_MGMT_STD_OUTPUT;
-        reg_mprj_io_17 = GPIO_MODE_MGMT_STD_OUTPUT;
-        reg_mprj_io_16 = GPIO_MODE_MGMT_STD_OUTPUT;
 
+    reg_mprj_io_31 = GPIO_MODE_MGMT_STD_OUTPUT;
+    reg_mprj_io_30 = GPIO_MODE_MGMT_STD_OUTPUT;
+    reg_mprj_io_29 = GPIO_MODE_MGMT_STD_OUTPUT;
+    reg_mprj_io_28 = GPIO_MODE_MGMT_STD_OUTPUT;
+    reg_mprj_io_27 = GPIO_MODE_MGMT_STD_OUTPUT;
+    reg_mprj_io_26 = GPIO_MODE_MGMT_STD_OUTPUT;
+    reg_mprj_io_25 = GPIO_MODE_MGMT_STD_OUTPUT;
+    reg_mprj_io_24 = GPIO_MODE_MGMT_STD_OUTPUT;
+    reg_mprj_io_23 = GPIO_MODE_MGMT_STD_OUTPUT;
+    reg_mprj_io_22 = GPIO_MODE_MGMT_STD_OUTPUT;
+    reg_mprj_io_21 = GPIO_MODE_MGMT_STD_OUTPUT;
+    reg_mprj_io_20 = GPIO_MODE_MGMT_STD_OUTPUT;
+    reg_mprj_io_19 = GPIO_MODE_MGMT_STD_OUTPUT;
+    reg_mprj_io_18 = GPIO_MODE_MGMT_STD_OUTPUT;
+    reg_mprj_io_17 = GPIO_MODE_MGMT_STD_OUTPUT;
+    reg_mprj_io_16 = GPIO_MODE_MGMT_STD_OUTPUT;
 
      /* Apply configuration */
     reg_mprj_xfer = 1;
@@ -178,11 +159,11 @@ void main()
 
 
     // Remove All Reset
-    reg_mprj_globl_reg2 = 0x11F;
+    reg_pinmux_gbl_cfg0 = 0x11F;
 
     // Enable UART Multi Functional Ports
 
-    reg_mprj_globl_reg14 = 0x100;
+    reg_pinmux_gpio_multi_func = 0x100;
 
     // configure the user uart
     reg_mprj_uart_reg0  = 0x7;

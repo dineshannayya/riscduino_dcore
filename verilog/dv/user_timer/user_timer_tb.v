@@ -24,7 +24,7 @@
 ////                                                              ////
 ////  Description                                                 ////
 ////   This is a standalone test bench to validate the            ////
-////   sspi interfaface through External WB i/F.                  ////
+////   timer interfaface through External WB i/F.                 ////
 ////                                                              ////
 ////  To Do:                                                      ////
 ////    nothing                                                   ////
@@ -66,16 +66,13 @@
 
 `timescale 1 ns / 1 ns
 
-
-`define TB_GLBL    user_sspi_tb
+`define TB_GLBL    user_timer_tb
 
 `include "uprj_netlists.v"
-`include "is62wvs1288.v"
 `include "user_reg_map.v"
 
 
-
-module user_sspi_tb;
+module user_timer_tb;
 	reg clock;
 	reg wb_rst_i;
 	reg power1, power2;
@@ -105,6 +102,9 @@ module user_sspi_tb;
 	wire [7:0] mprj_io_0;
 	reg        test_fail;
 	reg [31:0] read_data;
+	reg [31:0] OneUsPeriod;
+        integer    test_step;
+        wire       clock_mon;
 
 
 	// External clock is used by default.  Make this artificially fast for the
@@ -114,6 +114,7 @@ module user_sspi_tb;
 	always #12.5 clock <= (clock === 1'b0);
 
 	initial begin
+		OneUsPeriod = 1;
 		clock = 0;
                 wbd_ext_cyc_i ='h0;  // strobe/request
                 wbd_ext_stb_i ='h0;  // strobe/request
@@ -126,7 +127,8 @@ module user_sspi_tb;
 	`ifdef WFDUMP
 	   initial begin
 	   	$dumpfile("simx.vcd");
-	   	$dumpvars(5, user_sspi_tb);
+	   	$dumpvars(1, `TB_GLBL);
+	   	$dumpvars(0, `TB_GLBL.u_top.u_pinmux);
 	   end
        `endif
 
@@ -140,9 +142,6 @@ module user_sspi_tb;
 		// Remove Wb Reset
 		wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h1);
 
-                // Enable SPI Multi Functional Ports
-                wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GPIO_MULTI_FUNC,'h400);
-
 	        repeat (2) @(posedge clock);
 		#1;
 
@@ -150,79 +149,94 @@ module user_sspi_tb;
 		// Remove WB and SPI/UART Reset, Keep CORE under Reset
                 wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h01F);
 
+		// config 1us based on system clock - 1000/25ns = 40 
+                wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG1,39);
+
+		// Enable Timer Interrupt
+                wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_INTR_MSK,'h700);
 
 		test_fail = 0;
-		sspi_init();
 	        repeat (200) @(posedge clock);
-                wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_BANK_SEL,'h1000); // Change the Bank Sel 1000
-                $display("############################################");
-                $display("   Testing IS62/65WVS1288GALL SSRAM Read/Write Access       ");
-                $display("############################################");
-		// SSPI Indirect RAM READ ACCESS-
-		// Byte Read Option
-		// <Instr:0x3> <Addr:24Bit Address> <Read Data Out>
-                spi_chip_no = 2'b00; // Select the Chip Select to zero
-		sspi_dw_read_check(8'h03,24'h0000,32'h03020100);
-		sspi_dw_read_check(8'h03,24'h0004,32'h07060504);
-		sspi_dw_read_check(8'h03,24'h0008,32'h0b0a0908);
-		sspi_dw_read_check(8'h03,24'h000C,32'h0f0e0d0c);
-		sspi_dw_read_check(8'h03,24'h0010,32'h13121110);
-		sspi_dw_read_check(8'h03,24'h0014,32'h17161514);
-		sspi_dw_read_check(8'h03,24'h0018,32'h1B1A1918);
-		sspi_dw_read_check(8'h03,24'h001C,32'h1F1E1D1C);
+                wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_BANK_SEL,'h1000); // Change the Bank Sel 10
 
-		sspi_dw_read_check(8'h03,24'h0040,32'h43424140);
-		sspi_dw_read_check(8'h03,24'h0044,32'h47464544);
-		sspi_dw_read_check(8'h03,24'h0048,32'h4B4A4948);
-		sspi_dw_read_check(8'h03,24'h004C,32'h4F4E4D4C);
+	        $display("Step-1, Timer-0: 1us * 100 = 100us; Timer-1: 200us; Timer-2: 300us");
+	        test_step = 1;
+                wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_CFG_TIMER0,'h0001_0063);
+                wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_CFG_TIMER1,'h0001_00C7);
+                wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_CFG_TIMER2,'h0001_012B);
+	        timer_monitor(OneUsPeriod*100,OneUsPeriod*200,OneUsPeriod*300);
 
-		sspi_dw_read_check(8'h03,24'h00a0,32'ha3a2a1a0);
-		sspi_dw_read_check(8'h03,24'h00a4,32'ha7a6a5a4);
-		sspi_dw_read_check(8'h03,24'h00a8,32'habaaa9a8);
-		sspi_dw_read_check(8'h03,24'h00aC,32'hafaeadac);
+		$display("Checking the Timer Interrupt generation and clearing");
 
-		sspi_dw_read_check(8'h03,24'h0200,32'h11111111);
-		sspi_dw_read_check(8'h03,24'h0204,32'h22222222);
-		sspi_dw_read_check(8'h03,24'h0208,32'h33333333);
-		sspi_dw_read_check(8'h03,24'h020C,32'h44444444);
+		// Disable the Timer - To avoid multiple interrupt generation
+		// during status check and interrupt clearing
+                wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_CFG_TIMER0,'h0000_0063);
+                wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_CFG_TIMER1,'h0000_00C7);
+                wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_CFG_TIMER2,'h0000_012B);
 
-		// SPI Write
-		sspi_dw_write(8'h02,24'h0000,32'h00112233);
-		sspi_dw_write(8'h02,24'h0004,32'h44556677);
-		sspi_dw_write(8'h02,24'h0008,32'h8899AABB);
-		sspi_dw_write(8'h02,24'h000C,32'hCCDDEEFF);
+                wb_user_core_read(`ADDR_SPACE_PINMUX+`PINMUX_GBL_INTR,read_data);
+		if((u_top.u_pinmux.irq_lines[10:8] == 3'b111) && (read_data[10:8] == 3'b111)) begin
+		    $display("STATUS: Timer Interrupt detected ");
+		    // Clearing the Timer Interrupt
+                    wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_INTR,'h700);
+                    wb_user_core_read(`ADDR_SPACE_PINMUX+`PINMUX_GBL_INTR,read_data);
+		    if((u_top.u_pinmux.irq_lines[10:8] == 3'b111) && (read_data[10:8] == 3'b000)) begin
+		       $display("ERROR: Timer Interrupt not cleared ");
+		       test_fail = 1;
+		    end else begin
+		       $display("STATUS: Timer Interrupt cleared ");
+		    end
+	        end else begin
+		    $display("ERROR: Timer interrupt not detected ");
+		    test_fail = 1;
+	        end
 
-		sspi_dw_write(8'h02,24'h0200,32'h11223344);
-		sspi_dw_write(8'h02,24'h0204,32'h55667788);
-		sspi_dw_write(8'h02,24'h0208,32'h99AABBCC);
-		sspi_dw_write(8'h02,24'h020C,32'hDDEEFF00);
+	        $display("Step-2, Timer-0: 1us * 200 = 200us; Timer-1: 300us; Timer-2: 400us");
+	        test_step = 2;
+                wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_CFG_TIMER0,'h0001_00C7);
+                wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_CFG_TIMER1,'h0001_012B);
+                wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_CFG_TIMER2,'h0001_018F);
+	        timer_monitor(OneUsPeriod*200,OneUsPeriod*300,OneUsPeriod*400);
 
-		// SPI Read Check
-		sspi_dw_read_check(8'h03,24'h0000,32'h00112233);
-		sspi_dw_read_check(8'h03,24'h0004,32'h44556677);
-		sspi_dw_read_check(8'h03,24'h0008,32'h8899AABB);
-		sspi_dw_read_check(8'h03,24'h000C,32'hCCDDEEFF);
+		$display("Checking the Timer Interrupt generation and clearing");
 
-		sspi_dw_read_check(8'h03,24'h0200,32'h11223344);
-		sspi_dw_read_check(8'h03,24'h0204,32'h55667788);
-		sspi_dw_read_check(8'h03,24'h0208,32'h99AABBCC);
-		sspi_dw_read_check(8'h03,24'h020C,32'hDDEEFF00);
+		// Disable the Timer - To avoid multiple interrupt generation
+		// during status check and interrupt clearing
+                wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_CFG_TIMER0,'h0000_0063);
+                wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_CFG_TIMER1,'h0000_00C7);
+                wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_CFG_TIMER2,'h0000_012B);
 
+                wb_user_core_read(`ADDR_SPACE_PINMUX+`PINMUX_GBL_INTR,read_data);
+		if((u_top.u_pinmux.irq_lines[10:8] == 3'b111) && (read_data[10:8] == 3'b111)) begin
+		    $display("STATUS: Timer Interrupt detected ");
+		    // Clearing the Timer Interrupt
+                    wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_INTR,'h700);
+                    wb_user_core_read(`ADDR_SPACE_PINMUX+`PINMUX_GBL_INTR,read_data);
+		    if((u_top.u_pinmux.irq_lines[10:8] == 3'b111) && (read_data[10:8] == 3'b000)) begin
+		       $display("ERROR: Timer Interrupt not cleared ");
+		       test_fail = 1;
+		    end else begin
+		       $display("STATUS: Timer Interrupt cleared ");
+		    end
+	        end else begin
+		    $display("ERROR: Timer interrupt not detected ");
+		    test_fail = 1;
+	        end
 
 		repeat (100) @(posedge clock);
 			// $display("+1000 cycles");
 
           	if(test_fail == 0) begin
 		   `ifdef GL
-	    	       $display("Monitor: SPI Master Mode (GL) Passed");
+	    	       $display("Monitor: Timer Mode (GL) Passed");
 		   `else
-		       $display("Monitor: SPI Master Mode (RTL) Passed");
+		       $display("Monitor: Timer Mode (RTL) Passed");
 		   `endif
 	        end else begin
 		    `ifdef GL
-	    	        $display("Monitor: SPI Master Mode (GL) Failed");
+	    	        $display("Monitor: Timer Mode (GL) Failed");
 		    `else
-		        $display("Monitor: SPI Master Mode (RTL) Failed");
+		        $display("Monitor: Timer Mode (RTL) Failed");
 		    `endif
 		 end
 	    	$display("###################################################");
@@ -236,6 +250,57 @@ module user_sspi_tb;
 	end
 wire USER_VDD1V8 = 1'b1;
 wire VSS = 1'b0;
+
+wire timer_intr0 = u_top.u_pinmux.timer_intr[0];
+wire timer_intr1 = u_top.u_pinmux.timer_intr[1];
+wire timer_intr2 = u_top.u_pinmux.timer_intr[2];
+
+// Monitor the Timer interrupt interval
+task timer_monitor;
+input [31:0] timer0_period;
+input [31:0] timer1_period;
+input [31:0] timer2_period;
+begin
+   force clock_mon = timer_intr0;
+   check_clock_period("Timer0",timer0_period);
+   release clock_mon;
+
+   force clock_mon = timer_intr1;
+   check_clock_period("Timer1",timer1_period);
+   release clock_mon;
+
+   force clock_mon = timer_intr2;
+   check_clock_period("Timer1",timer2_period);
+   release clock_mon;
+
+end
+endtask
+
+
+//----------------------------------
+// Check the clock period
+//----------------------------------
+task check_clock_period;
+input [127:0] clk_name;
+input [31:0] clk_period; // in NS
+time prev_t, next_t, periodd;
+begin
+    $timeformat(-12,3,"ns",10);
+   repeat(1) @(posedge clock_mon);
+   repeat(1) @(posedge clock_mon);
+   prev_t  = $realtime;
+   repeat(2) @(posedge clock_mon);
+   next_t  = $realtime;
+   periodd = (next_t-prev_t)/2;
+   periodd = (periodd)/1e3;
+   if(clk_period != periodd) begin
+       $display("STATUS: FAIL => %s Exp Period: %d us Rxd: %d us",clk_name,clk_period,periodd);
+       test_fail = 1;
+   end else begin
+       $display("STATUS: PASS => %s  Period: %d us ",clk_name,clk_period);
+   end
+end
+endtask
 
 user_project_wrapper u_top(
 `ifdef USE_POWER_PINS
@@ -279,31 +344,6 @@ user_project_wrapper u_top(
     end
 `endif    
 
-//------------------------------------------------------
-//  Integrate the Serial flash with qurd support to
-//  user core using the gpio pads
-//  ----------------------------------------------------
-   wire flash_io1;
-   wire flash_clk = io_out[16];
-   wire spiram_csb = io_out[13];
-   tri  #1 flash_io0 = io_out[15];
-   assign io_in[14] = flash_io1;
-
-   tri  #1 flash_io2 = 1'b1;
-   tri  #1 flash_io3 = 1'b1;
-
-
-   is62wvs1288 #(.mem_file_name("flash1.hex"))
-	u_sfram (
-         // Data Inputs/Outputs
-           .io0     (flash_io0),
-           .io1     (flash_io1),
-           // Controls
-           .clk    (flash_clk),
-           .csb    (spiram_csb),
-           .io2    (flash_io2),
-           .io3    (flash_io3)
-    );
 
 
 //----------------------------------------------------
@@ -395,7 +435,7 @@ begin
   wbd_ext_sel_i ='h0;  // byte enable
   if(data !== cmp_data) begin
      $display("ERROR : WB USER ACCESS READ  Address : 0x%x, Exd: 0x%x Rxd: 0x%x ",address,cmp_data,data);
-     user_sspi_tb.test_fail = 1;
+     `TB_GLBL.test_fail = 1;
   end else begin
      $display("STATUS: WB USER ACCESS READ  Address : 0x%x, Data : 0x%x",address,data);
   end
@@ -413,14 +453,6 @@ wire [31:0] wbd_spi_adr_i   = u_top.u_spi_master.wbd_adr_i;
 wire [31:0] wbd_spi_dat_i   = u_top.u_spi_master.wbd_dat_i;
 wire [31:0] wbd_spi_dat_o   = u_top.u_spi_master.wbd_dat_o;
 wire [3:0]  wbd_spi_sel_i   = u_top.u_spi_master.wbd_sel_i;
-
-wire        wbd_sdram_stb_i = u_top.u_sdram_ctrl.wb_stb_i;
-wire        wbd_sdram_ack_o = u_top.u_sdram_ctrl.wb_ack_o;
-wire        wbd_sdram_we_i  = u_top.u_sdram_ctrl.wb_we_i;
-wire [31:0] wbd_sdram_adr_i = u_top.u_sdram_ctrl.wb_addr_i;
-wire [31:0] wbd_sdram_dat_i = u_top.u_sdram_ctrl.wb_dat_i;
-wire [31:0] wbd_sdram_dat_o = u_top.u_sdram_ctrl.wb_dat_o;
-wire [3:0]  wbd_sdram_sel_i = u_top.u_sdram_ctrl.wb_sel_i;
 
 wire        wbd_uart_stb_i  = u_top.u_uart_i2c_usb.reg_cs;
 wire        wbd_uart_ack_o  = u_top.u_uart_i2c_usb.reg_ack;
@@ -451,7 +483,6 @@ end
 
 `endif
 **/
-`include "sspi_task.v"
 
 endmodule
 `default_nettype wire
