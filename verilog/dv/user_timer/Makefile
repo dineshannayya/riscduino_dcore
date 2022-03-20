@@ -46,6 +46,10 @@ PDK_PATH?=/opt/pdk/sky130A
 SIM?=RTL
 DUMP?=OFF
 
+### To Enable IVERILOG FST DUMP
+export IVERILOG_DUMPER = fst
+
+
 .SUFFIXES:
 
 PATTERN = user_timer

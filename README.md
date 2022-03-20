@@ -47,7 +47,7 @@ Riscduino is a Dual 32 bit RISC V based SOC design pin compatible to arudino pla
 # Key features
 ```
     * Open sourced under Apache-2.0 License (see LICENSE file) - unrestricted commercial use allowed.
-    * Dual Core  32 Bit RISC-V core
+    * Dual 32 Bit RISC-V core
     * 2KB SRAM for instruction cache 
     * 2KB SRAM for data cache
     * 2KB SRAM for Tightly coupled memory - For Data Memory
@@ -59,6 +59,7 @@ Riscduino is a Dual 32 bit RISC V based SOC design pin compatible to arudino pla
     * Simple SPI Master
     * 6 Channel ADC (in Progress)
     * 6 PWM
+    * 3 Timer (16 Bit), 1us/1ms/1second resolution
     * Pin Compatbible to arudino uno
     * Wishbone compatible design
     * Written in System Verilog
@@ -110,14 +111,14 @@ Carvel SOC provides 38 GPIO pins for user functionality. Riscduino SOC GPIO Pin 
   <tr align="center"> <td> Pin-28          </td> <td> PC5/ADC5/SCL           </td> <td>  A5             </td> <td> digital_io[23]/analog_io[16]         </td></tr>
   <tr align="center"> <td colspan="4">   Additional Pad used for Externam ROM/RAM/USB </td></tr>
   <tr align="center"> <td> Sflash          </td> <td> sflash_sck             </td> <td>                 </td> <td> digital_io[24]                       </td></tr>
-  <tr align="center"> <td> SFlash          </td> <td> sflash_ss              </td> <td>                 </td> <td> digital_io[25]                       </td></tr>
-  <tr align="center"> <td> SFlash          </td> <td> sflash_io0             </td> <td>                 </td> <td> digital_io[26]                       </td></tr>
-  <tr align="center"> <td> SFlash          </td> <td> sflash_io1             </td> <td>                 </td> <td> digital_io[27]                       </td></tr>
-  <tr align="center"> <td> SFlash          </td> <td> sflash_io2             </td> <td>                 </td> <td> digital_io[28]                       </td></tr>
-  <tr align="center"> <td> SFlash          </td> <td> sflash_io3             </td> <td>                 </td> <td> digital_io[29]                       </td></tr>
-  <tr align="center"> <td> SSRAM           </td> <td> Reserved               </td> <td>                 </td> <td> digital_io[30]                       </td></tr>
-  <tr align="center"> <td> SSRAM           </td> <td> Reserved               </td> <td>                 </td> <td> digital_io[31]                       </td></tr>
-  <tr align="center"> <td> SSRAM           </td> <td> Reserved               </td> <td>                 </td> <td> digital_io[32]                       </td></tr>
+  <tr align="center"> <td> SFlash          </td> <td> sflash_ss0             </td> <td>                 </td> <td> digital_io[25]                       </td></tr>
+  <tr align="center"> <td> SFlash          </td> <td> sflash_ss1             </td> <td>                 </td> <td> digital_io[26]                       </td></tr>
+  <tr align="center"> <td> SFlash          </td> <td> sflash_ss2             </td> <td>                 </td> <td> digital_io[27]                       </td></tr>
+  <tr align="center"> <td> SFlash          </td> <td> sflash_ss3             </td> <td>                 </td> <td> digital_io[28]                       </td></tr>
+  <tr align="center"> <td> SFlash          </td> <td> sflash_io0             </td> <td>                 </td> <td> digital_io[29]                       </td></tr>
+  <tr align="center"> <td> SFlash          </td> <td> sflash_io1             </td> <td>                 </td> <td> digital_io[30]                       </td></tr>
+  <tr align="center"> <td> SFlash          </td> <td> sflash_io2             </td> <td>                 </td> <td> digital_io[31]                       </td></tr>
+  <tr align="center"> <td> SFlash          </td> <td> sflash_io3             </td> <td>                 </td> <td> digital_io[32]                       </td></tr>
   <tr align="center"> <td> SSRAM           </td> <td> Reserved               </td> <td>                 </td> <td> digital_io[33]                       </td></tr>
   <tr align="center"> <td> SSRAM           </td> <td> uartm rxd              </td> <td>                 </td> <td> digital_io[34]                       </td></tr>
   <tr align="center"> <td> SSRAM           </td> <td> uartm txd              </td> <td>                 </td> <td> digital_io[35]                       </td></tr>
@@ -134,8 +135,8 @@ Syntacore SCR1 (https://github.com/syntacore/scr1)
 Following Design changes are done on the basic version of syntacore RISC core
 ```
    * Some of the sv syntex are changed to standard verilog format to make compatibile with opensource tool iverilog & yosys
-   * local Instruction Memory is increased from 4 to 8 location
-   * Instruction Request are changed from Single word to 4 Word Burst
+   * local Instruction Memory depth increased from 4 to 8 location
+   * Instruction Mem Request are changed from Single word to 4 Word Burst
    * Multiplication and Divsion are changed to improve timing
    * Additional pipe line stages added to improve the RISC timing closure near to 50Mhz
    * 2KB instruction cache 
@@ -539,10 +540,18 @@ Examples:
 ``` sh
     make verify-wb_port  
     make verify-risc_boot
+    make verify-uart_master
+    make verify-user_basic
     make verify-user_uart
     make verify-user_spi
     make verify-user_i2cm
     make verify-user_risc_boot
+    make verify-user_pwm
+    make verify-user_timer
+    make verify-user_sspi
+    make verify-user_qspi
+    make verify-user_usb
+    make verify-user_uart_master
     make verify-wb_port SIM=RTL DUMP=OFF
     make verify-wb_port SIM=RTL DUMP=ON
     make verify-riscv_regress
@@ -586,11 +595,7 @@ Riscduino Soc flow uses Openlane tool sets.
 
 ## Contacts
 
-Report an issue: <https://github.com/dineshannayya/riscduino/issues>
+Report an issue: <https://github.com/dineshannayya/riscduino_dcore/issues>
 
 # Documentation
 * **Syntacore Link** - https://github.com/syntacore/scr1
-
-
-
-

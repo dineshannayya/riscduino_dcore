@@ -50,6 +50,10 @@ SIM?=RTL
 DUMP?=OFF
 RISC_CORE?=0
 
+### To Enable IVERILOG FST DUMP
+export IVERILOG_DUMPER = fst
+
+
 .SUFFIXES:
 
 PATTERN = user_usb
