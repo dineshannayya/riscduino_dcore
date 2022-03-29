@@ -166,6 +166,15 @@ Following Design changes are done on the basic version of syntacore RISC core
 ```
 
 
+# 6 Channel SAR ADC
+ In Process - Looking for community help ...
+
+<table>
+  <tr>
+    <td  align="center"><img src="./docs/source/_static/6-Channel-SAR-ADC.png" ></td>
+  </tr>
+
+</table>
 
 # SOC Memory Map
 
