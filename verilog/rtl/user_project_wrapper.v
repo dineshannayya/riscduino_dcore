@@ -196,6 +196,8 @@
 ////         3. Risc fuse_mhartid is removed and internal tied    ////
 ////            inside risc core                                  ////
 ////         4. caravel wb addressing issue restrict to 0x300FFFFF////
+////    4.1  April 1 2022, Dinesh A                               ////
+////         1. sram lanuch phase control added inside risc core  ////
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
 //// Copyright (C) 2000 Authors and OPENCORES.ORG                 ////
@@ -581,7 +583,14 @@ wire                           uartm_txd                              ;
 
 
 wire [3:0]                     spi_csn                                ;
-wire [1:0]                     cfg_riscv_debug_sel                    ;
+
+//--------------------------------------------------------------------------
+// Pinmux Risc core config
+// -------------------------------------------------------------------------
+wire [15:0]                    cfg_riscv_ctrl;
+wire [3:0]                     cfg_riscv_sram_lphase   = cfg_riscv_ctrl[3:0];
+wire [2:0]                     cfg_riscv_cache_ctrl    = cfg_riscv_ctrl[6:4];
+wire [1:0]                     cfg_riscv_debug_sel     = cfg_riscv_ctrl[9:8];
 
 /////////////////////////////////////////////////////////
 // Clock Skew Ctrl
@@ -677,6 +686,8 @@ ycr2_top_wb u_riscv_top (
           .cpu_core_rst_n          (cpu_core_rst_n          ),
           .riscv_debug             (riscv_debug             ),
 	  .core_debug_sel          (cfg_riscv_debug_sel     ),
+	  .cfg_sram_lphase         (cfg_riscv_sram_lphase   ),
+	  .cfg_cache_ctrl          (cfg_riscv_cache_ctrl    ),
 
     // Clock
           .core_clk                (cpu_clk                 ),
@@ -1151,7 +1162,7 @@ pinmux u_pinmux(
           .i2cm_rst_n              (i2c_rst_n               ),
           .usb_rst_n               (usb_rst_n               ),
 
-	  .cfg_riscv_debug_sel     (cfg_riscv_debug_sel     ),
+	  .cfg_riscv_ctrl          (cfg_riscv_ctrl          ),
 
         // Reg Bus Interface Signal
           .reg_cs                  (wbd_glbl_stb_o          ),

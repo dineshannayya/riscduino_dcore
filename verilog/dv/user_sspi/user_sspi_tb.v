@@ -64,14 +64,13 @@
 
 `default_nettype wire
 
-`timescale 1 ns / 1 ns
+`timescale 1 ns/1 ps
 
+`include "sram_macros/sky130_sram_2kbyte_1rw1r_32x512_8.v"
+`include "is62wvs1288.v"
 
 `define TB_GLBL    user_sspi_tb
 
-`include "uprj_netlists.v"
-`include "is62wvs1288.v"
-`include "user_reg_map.v"
 
 
 

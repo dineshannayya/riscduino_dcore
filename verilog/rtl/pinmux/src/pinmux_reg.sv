@@ -72,7 +72,7 @@ module pinmux_reg (
 		       input  logic            i2cm_intr,
 
                        output logic [9:0]      cfg_pulse_1us,
-		       output logic [1:0]      cfg_riscv_debug_sel,
+		       output logic [15:0]     cfg_riscv_ctrl,
 		       
                        //---------------------------------------------------
                        // 6 PWM Configuration
@@ -317,7 +317,7 @@ gen_32b_reg  #(32'h0) u_reg_2	(
 	      );
 
 assign cfg_pulse_1us       = reg_2[9:0];
-assign cfg_riscv_debug_sel = reg_2[31:30];
+assign cfg_riscv_ctrl      = reg_2[31:16];
 
 //-----------------------------------------------------------------------
 //   reg-3 : Global Interrupt Mask
@@ -715,7 +715,7 @@ gen_32b_reg  #(32'h8273_8343) u_reg_22	(
 //-----------------------------------------
 // Software Reg-2, Release date: <DAY><MONTH><YEAR>
 // ----------------------------------------
-gen_32b_reg  #(32'h1603_2022) u_reg_23	(
+gen_32b_reg  #(32'h0104_2022) u_reg_23	(
 	      //List of Inputs
 	      .reset_n    (h_reset_n     ),
 	      .clk        (mclk          ),
@@ -728,9 +728,9 @@ gen_32b_reg  #(32'h1603_2022) u_reg_23	(
 	      );
 
 //-----------------------------------------
-// Software Reg-3: Poject Revison 3.9 = 0003900
+// Software Reg-3: Poject Revison 4.1 = 0004100
 // ----------------------------------------
-gen_32b_reg  #(32'h0003_9000) u_reg_24	(
+gen_32b_reg  #(32'h0004_1000) u_reg_24	(
 	      //List of Inputs
 	      .reset_n    (h_reset_n     ),
 	      .clk        (mclk          ),

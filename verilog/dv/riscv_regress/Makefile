@@ -1,10 +1,32 @@
-#------------------------------------------------------------------------------
-# Makefile for SCR1
-#------------------------------------------------------------------------------
 
-SIM ?= RTL
-DUMP ?= OFF
-RISC_CORE ?=0
+# ---- Include Partitioned Makefiles ----
+
+CONFIG = caravel_user_project
+ 
+#######################################################################
+## Caravel Verilog for Integration Tests
+#######################################################################
+
+export root_dir := $(shell pwd)
+export bld_dir  := $(root_dir)/build/$(current_goal)_$(BUS)_$(CFG)_$(ARCH)_IPIC_$(IPIC)_TCM_$(TCM)_VIRQ_$(VECT_IRQ)_TRACE_$(TRACE)
+DESIGNS?=${root_dir}/../../..
+
+UPRJ_TESTS_PATH = $(root_dir)
+
+export USER_PROJECT_VERILOG ?=  $(DESIGNS)/verilog
+## YIFIVE FIRMWARE
+YIFIVE_FIRMWARE_PATH = $(USER_PROJECT_VERILOG)/dv/firmware
+GCC64_PREFIX?=riscv64-unknown-elf
+
+
+## Simulation mode: RTL/GL
+SIM?=RTL
+DUMP?=OFF
+RISC_CORE?=0
+
+### To Enable IVERILOG FST DUMP
+export IVERILOG_DUMPER = fst
+
 
 # PARAMETERS
 
@@ -118,38 +140,16 @@ ifeq ($(current_goal),)
 endif
 
 
-export root_dir := $(shell pwd)
-export bld_dir  := $(root_dir)/build/$(current_goal)_$(BUS)_$(CFG)_$(ARCH)_IPIC_$(IPIC)_TCM_$(TCM)_VIRQ_$(VECT_IRQ)_TRACE_$(TRACE)
-
-## Caravel Pointers related to build directory
-CARAVEL_ROOT ?= $(root_dir)/../../../caravel
-CARAVEL_PATH ?= $(CARAVEL_ROOT)
-CARAVEL_FIRMWARE_PATH = $(CARAVEL_PATH)/verilog/dv/caravel
-CARAVEL_VERILOG_PATH  = $(CARAVEL_PATH)/verilog
-CARAVEL_RTL_PATH = $(CARAVEL_VERILOG_PATH)/rtl
-CARAVEL_BEHAVIOURAL_MODELS = $(CARAVEL_VERILOG_PATH)/dv/caravel
-
 
 ## User Project Pointers
-UPRJ_VERILOG_PATH ?= $(root_dir)/../../../verilog
-UPRJ_TESTS_PATH = $(root_dir)
-UPRJ_RTL_PATH = $(UPRJ_VERILOG_PATH)/rtl
-UPRJ_GL_PATH = $(UPRJ_VERILOG_PATH)/gl
-UPRJ_BEHAVIOURAL_MODELS = $(root_dir)/../model
-UPRJ_BEHAVIOURAL_AGENTS = $(root_dir)/../agents
-UPRJ_INCLUDE_PATH1 = $(UPRJ_RTL_PATH)/yifive/ycr2c/src/includes
-UPRJ_INCLUDE_PATH2 = $(UPRJ_RTL_PATH)/sdram_ctrl/src/defs
-UPRJ_INCLUDE_PATH3 = $(UPRJ_RTL_PATH)/i2cm/src/includes
-UPRJ_INCLUDE_PATH4 = $(UPRJ_RTL_PATH)/usb1_host/src/includes
-UPRJ_INCLUDE_PATH5 = $(UPRJ_RTL_PATH)/mbist/include
 
-sv_list            = ../../user_risc_regress_tb.v
+sv_list            = $(root_dir)/user_risc_regress_tb.v
 top_module         = user_risc_regress_tb
 
 # TB Paths
-export sim_dir  := $(UPRJ_TESTS_PATH)
+export sim_dir  := $(root_dir)
 export tst_dir  := $(sim_dir)/tests
-export inc_dir  := $(UPRJ_VERILOG_PATH)/dv/firmware
+export inc_dir  := $(sim_dir)/../firmware
 
 test_results := $(bld_dir)/test_results.txt
 test_info    := $(bld_dir)/test_info
@@ -274,11 +274,8 @@ run_modelsim: $(test_info)
 run_iverilog: $(test_info)
 	cd $(bld_dir); \
 	iverilog -g2005-sv -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
-	-I $(CARAVEL_BEHAVIOURAL_MODELS) -I $(CARAVEL_RTL_PATH) \
-	-I $(UPRJ_BEHAVIOURAL_MODELS)    -I $(UPRJ_RTL_PATH) -I $(UPRJ_VERILOG_PATH) \
-	-I $(UPRJ_BEHAVIOURAL_AGENTS)    \
-	-I $(UPRJ_INCLUDE_PATH1)    -I $(UPRJ_INCLUDE_PATH2) -I $(UPRJ_INCLUDE_PATH3) \
-	-I $(UPRJ_INCLUDE_PATH4) -I $(UPRJ_INCLUDE_PATH5) -I $(UPRJ_TESTS_PATH) \
+	-I $(UPRJ_TESTS_PATH) \
+	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.$(CONFIG) \
 	$(sv_list) \
 	-o $(top_module).vvp; \
 	printf "" > $(test_results); \
@@ -295,11 +292,8 @@ run_iverilog: $(test_info)
 run_iverilog_wf: $(test_info)
 	cd $(bld_dir); \
 	iverilog -g2005-sv -DWFDUMP -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
-	-I $(CARAVEL_BEHAVIOURAL_MODELS) -I $(CARAVEL_RTL_PATH) \
-	-I $(UPRJ_BEHAVIOURAL_MODELS)    -I $(UPRJ_RTL_PATH) -I $(UPRJ_VERILOG_PATH) \
-	-I $(UPRJ_BEHAVIOURAL_AGENTS)    \
-	-I $(UPRJ_INCLUDE_PATH1)    -I $(UPRJ_INCLUDE_PATH2) -I $(UPRJ_INCLUDE_PATH3) \
-	-I $(UPRJ_INCLUDE_PATH4) -I $(UPRJ_INCLUDE_PATH5) -I $(UPRJ_TESTS_PATH) \
+	-I $(UPRJ_TESTS_PATH) \
+	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.$(CONFIG) \
 	$(sv_list) \
 	-o $(top_module).vvp; \
 	printf "" > $(test_results); \

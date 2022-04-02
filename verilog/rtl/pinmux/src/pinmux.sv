@@ -59,7 +59,7 @@ module pinmux (
                        output logic            i2cm_rst_n       ,
                        output logic            usb_rst_n        ,
 
-		       output logic [1:0]      cfg_riscv_debug_sel,
+		       output logic [15:0]     cfg_riscv_ctrl,
 
 		       // Reg Bus Interface Signal
                        input logic             reg_cs,
@@ -365,7 +365,7 @@ pinmux_reg u_pinmux_reg(
           .i2cm_rst_n                   (i2cm_rst_n              ),
           .usb_rst_n                    (usb_rst_n               ),
 
-	  .cfg_riscv_debug_sel          (cfg_riscv_debug_sel     ),
+	  .cfg_riscv_ctrl               (cfg_riscv_ctrl          ),
 
 
       // Reg read/write Interface Inputs

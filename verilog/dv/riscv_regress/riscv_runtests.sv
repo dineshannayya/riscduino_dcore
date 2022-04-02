@@ -107,9 +107,9 @@ always @(posedge clk) begin
 
 	        // Flush the content of dcache for signature validation at app
 	        // memory	
-	        force u_top.u_riscv_top.u_mintf.u_intf.u_dcache.cfg_force_flush = 1'b1;
-	        wait(u_top.u_riscv_top.u_mintf.u_intf.u_dcache.force_flush_done == 1'b1);
-	        release u_top.u_riscv_top.u_mintf.u_intf.u_dcache.cfg_force_flush;
+	        force u_top.u_riscv_top.u_intf.u_dcache.cfg_force_flush = 1'b1;
+	        wait(u_top.u_riscv_top.u_intf.u_dcache.force_flush_done == 1'b1);
+	        release u_top.u_riscv_top.u_intf.u_dcache.cfg_force_flush;
 	        repeat (2000) @(posedge clock); // wait data to flush in pipe
 		$display("STATUS: Checking Complaince Test Status .... ");
                 test_running <= 1'b0;

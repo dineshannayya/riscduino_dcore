@@ -72,11 +72,10 @@
 
 `default_nettype wire
 
-`timescale 1 ns / 1 ns
+`timescale 1 ns/1 ps
 
-`include "uprj_netlists.v"
+`include "sram_macros/sky130_sram_2kbyte_1rw1r_32x512_8.v"
 `include "uart_agent.v"
-`include "user_reg_map.v"
 
 
 module user_uart_tb;

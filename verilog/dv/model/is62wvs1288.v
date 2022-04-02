@@ -43,7 +43,8 @@
 //
 
 module is62wvs1288 #(
-	parameter mem_file_name = "firmware.hex"
+	//parameter mem_file_name = "firmware.hex"
+	parameter mem_file_name = "none"
 )(
 	input csb,
 	input clk,

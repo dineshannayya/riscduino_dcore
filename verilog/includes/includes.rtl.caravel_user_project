@@ -1,9 +1,12 @@
 # Caravel user project includes
++incdir+$(USER_PROJECT_VERILOG)/rtl/
 +incdir+$(USER_PROJECT_VERILOG)/rtl/i2cm/src/includes
 +incdir+$(USER_PROJECT_VERILOG)/rtl/usb1_host/src/includes
 +incdir+$(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/includes
++incdir+$(USER_PROJECT_VERILOG)/dv/bfm
 +incdir+$(USER_PROJECT_VERILOG)/dv/model
 +incdir+$(USER_PROJECT_VERILOG)/dv/agents
+$(USER_PROJECT_VERILOG)/rtl/user_reg_map.v
 -v $(USER_PROJECT_VERILOG)/rtl/pinmux/src/pinmux.sv
 -v $(USER_PROJECT_VERILOG)/rtl/pinmux/src/pinmux_reg.sv
 -v $(USER_PROJECT_VERILOG)/rtl/pinmux/src/gpio_intr.sv
@@ -87,9 +90,11 @@
 -v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/top/ycr_timer.sv
 -v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/top/ycr_dmem_wb.sv
 -v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/top/ycr_imem_wb.sv
--v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/top/ycr2_mcore_router.sv
--v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/top/ycr2_intf.sv
--v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/top/ycr2_mintf.sv
+-v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/top/ycr_intf.sv
+-v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/top/ycr_sram_mux.sv
+-v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/top/ycr2_router.sv
+-v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/top/ycr2_iconnect.sv
+-v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/top/ycr2_cross_bar.sv
 -v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/top/ycr2_top_wb.sv
 -v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/top/ycr_icache_router.sv
 -v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/top/ycr_dcache_router.sv

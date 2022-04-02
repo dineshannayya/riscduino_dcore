@@ -74,9 +74,7 @@
 
 `timescale 1 ns/10 ps
 
-`include "uprj_netlists.v"
-`include "user_reg_map.v"
-
+`include "sram_macros/sky130_sram_2kbyte_1rw1r_32x512_8.v"
 
 module user_basic_tb;
 parameter CLK1_PERIOD = 10;
@@ -242,8 +240,8 @@ begin
          wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h1);
 
 	 wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_1,read_data,32'h8273_8343);
-	 wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_2,read_data,32'h1603_2022);
-	 wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_3,read_data,32'h0003_9000);
+	 wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_2,read_data,32'h0104_2022);
+	 wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_3,read_data,32'h0004_1000);
 
       end
    

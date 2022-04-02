@@ -74,11 +74,7 @@
 
 `timescale 1 ns / 1 ns
 
-`include "uprj_netlists.v"
-`include "mt48lc8m8a2.v"
-`include "user_reg_map.v"
-
-`define ADDR_SPACE_PINMUX  32'h3002_0000
+`include "sram_macros/sky130_sram_2kbyte_1rw1r_32x512_8.v"
 module user_risc_boot_tb;
 	reg clock;
 	reg wb_rst_i;

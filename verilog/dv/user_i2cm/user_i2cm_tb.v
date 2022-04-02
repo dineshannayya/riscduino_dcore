@@ -65,9 +65,8 @@
 
 `timescale 1 ns / 1 ns
 
-`include "uprj_netlists.v"
+`include "sram_macros/sky130_sram_2kbyte_1rw1r_32x512_8.v"
 `include "i2c_slave_model.v"
-`include "user_reg_map.v"
 
 module tb_top;
 

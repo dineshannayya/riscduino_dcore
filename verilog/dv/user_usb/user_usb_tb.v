@@ -38,17 +38,17 @@
 
 `default_nettype wire
 
-`timescale 1 ns / 1 ns
+`timescale 1 ns / 1 ps
 
 `define TB_GLBL    user_usb_tb
 `define USB_BFM    u_usb_agent
 
-`include "user_reg_map.v"
-`include "uprj_netlists.v"
 `include "usb_agents.v"
 `include "test_control.v"
 `include "usb1d_defines.v"
 `include "usbd_files.v"
+
+`include "sram_macros/sky130_sram_2kbyte_1rw1r_32x512_8.v"
 
 module user_usb_tb;
 
