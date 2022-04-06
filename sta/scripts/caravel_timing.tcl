@@ -1,7 +1,7 @@
 
-        set ::env(USER_ROOT)    "/home/dinesha/workarea/opencore/git/riscduino"
-        set ::env(CARAVEL_ROOT) "/home/dinesha/workarea/efabless/MPW-4/caravel_openframe"
-        set ::env(CARAVEL_PDK_ROOT)     "/opt/pdk_mpw4"
+        set ::env(USER_ROOT)    ".."
+        set ::env(CARAVEL_ROOT) "/home/dinesha/workarea/efabless/MPW-5/caravel"
+        set ::env(CARAVEL_PDK_ROOT)     "/opt/pdk_mpw5"
 
         read_liberty $::env(CARAVEL_PDK_ROOT)/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib	
 	read_liberty $::env(CARAVEL_PDK_ROOT)/sky130A/libs.ref/sky130_sram_macros/lib/sky130_sram_2kbyte_1rw1r_32x512_8_TT_1p8V_25C.lib	
@@ -43,13 +43,14 @@
 	read_verilog $::env(CARAVEL_ROOT)/verilog/gl/caravel.v	
 
 	# User project netlist
-        read_verilog $::env(USER_ROOT)/verilog/gl/qspim.v
-        read_verilog $::env(USER_ROOT)/verilog/gl/yifive.v  
-        read_verilog $::env(USER_ROOT)/verilog/gl/uart_i2cm_usb_spi.v
+        read_verilog $::env(USER_ROOT)/verilog/gl/qspim_top.v
+        read_verilog $::env(USER_ROOT)/verilog/gl/ycr2_iconnect.v
+        read_verilog $::env(USER_ROOT)/verilog/gl/ycr_intf.v
+        read_verilog $::env(USER_ROOT)/verilog/gl/ycr_core_top.v
+        read_verilog $::env(USER_ROOT)/verilog/gl/uart_i2c_usb_spi_top.v
         read_verilog $::env(USER_ROOT)/verilog/gl/wb_host.v  
         read_verilog $::env(USER_ROOT)/verilog/gl/wb_interconnect.v
         read_verilog $::env(USER_ROOT)/verilog/gl/pinmux.v
-        read_verilog $::env(USER_ROOT)/verilog/gl/mbist_wrapper.v
         read_verilog $::env(USER_ROOT)/verilog/gl/user_project_wrapper.v  
 
 
@@ -144,15 +145,17 @@
 	read_spef -path gpio_defaults_block_37              $::env(CARAVEL_ROOT)/spef/gpio_defaults_block.spef	
 
 	## User Project Spef
-        read_spef -path mprj/u_mbist                       $::env(USER_ROOT)/spef/mbist_wrapper.spef
 
-        read_spef -path mprj/u_riscv_top         $::env(USER_ROOT)/spef/ycr1_top_wb.spef
-        read_spef -path mprj/u_pinmux            $::env(USER_ROOT)/spef/pinmux.spef
-        read_spef -path mprj/u_qspi_master       $::env(USER_ROOT)/spef/qspim_top.spef
-        read_spef -path mprj/u_uart_i2c_usb_spi  $::env(USER_ROOT)/spef/uart_i2c_usb_spi_top.spef
-        read_spef -path mprj/u_wb_host           $::env(USER_ROOT)/spef/wb_host.spef
-        read_spef -path mprj/u_intercon          $::env(USER_ROOT)/spef/wb_interconnect.spef
-        read_spef -path mprj                     $::env(USER_ROOT)/spef/user_project_wrapper.spef  
+        read_spef -path mprj/u_riscv_top.u_connect            $::env(USER_ROOT)/spef/ycr2_iconnect.spef
+        read_spef -path mprj/u_riscv_top.u_intf               $::env(USER_ROOT)/spef/ycr_intf.spef
+        read_spef -path mprj/u_riscv_top.i_core_top_0         $::env(USER_ROOT)/spef/ycr_core_top.spef
+        read_spef -path mprj/u_riscv_top.i_core_top_1         $::env(USER_ROOT)/spef/ycr_core_top.spef
+        read_spef -path mprj/u_pinmux                         $::env(USER_ROOT)/spef/pinmux.spef
+        read_spef -path mprj/u_qspi_master                    $::env(USER_ROOT)/spef/qspim_top.spef
+        read_spef -path mprj/u_uart_i2c_usb_spi               $::env(USER_ROOT)/spef/uart_i2c_usb_spi_top.spef
+        read_spef -path mprj/u_wb_host                        $::env(USER_ROOT)/spef/wb_host.spef
+        read_spef -path mprj/u_intercon                       $::env(USER_ROOT)/spef/wb_interconnect.spef
+        read_spef -path mprj                                  $::env(USER_ROOT)/spef/user_project_wrapper.spef  
 
 
 	read_sdc -echo ./sdc/caravel.sdc	
