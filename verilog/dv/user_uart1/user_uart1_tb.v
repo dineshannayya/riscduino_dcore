@@ -78,7 +78,7 @@
 `include "uart_agent.v"
 
 
-module user_uart_tb;
+module user_uart1_tb;
 
 reg            clock         ;
 reg            wb_rst_i      ;
@@ -146,7 +146,7 @@ integer i,j;
 	`ifdef WFDUMP
 	   initial begin
 	   	$dumpfile("simx.vcd");
-	   	$dumpvars(0, user_uart_tb);
+	   	$dumpvars(0, user_uart1_tb);
 	   end
        `endif
 
@@ -176,23 +176,29 @@ begin
    wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h1);
 
    // Enable UART Multi Functional Ports
-   wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GPIO_MULTI_FUNC,'h100);
+   wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GPIO_MULTI_FUNC,'h200);
    
    repeat (2) @(posedge clock);
    #1;
    // Remove all the reset
    if(d_risc_id == 0) begin
 	$display("STATUS: Working with Risc core 0");
-	wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h11F);
-   end else begin
+	wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h143);
+   end else if(d_risc_id == 1) begin
 	$display("STATUS: Working with Risc core 1");
-	wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h21F);
+	wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h243);
+   end else if(d_risc_id == 2) begin
+	$display("STATUS: Working with Risc core 2");
+	wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h443);
+   end else if(d_risc_id == 3) begin
+	$display("STATUS: Working with Risc core 2");
+	wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h84F);
    end
 
    repeat (100) @(posedge clock);  // wait for Processor Get Ready
 
    tb_uart.uart_init;
-   wb_user_core_write(`ADDR_SPACE_UART0+8'h0,{3'h0,2'b00,1'b1,1'b1,1'b1});  
+   wb_user_core_write(`ADDR_SPACE_UART1+8'h0,{3'h0,2'b00,1'b1,1'b1,1'b1});  
    tb_uart.control_setup (uart_data_bit, uart_stop_bits, uart_parity_en, uart_even_odd_parity, 
 	                          uart_stick_parity, uart_timeout, uart_divisor);
 
@@ -209,14 +215,14 @@ begin
          for (i=0; i<40; i=i+1)
          begin
            $display ("\n... UART Agent Writing char %x ...", uart_write_data[i]);
-            user_uart_tb.tb_uart.write_char (uart_write_data[i]);
+            tb_uart.write_char (uart_write_data[i]);
          end
       end
    
       begin
          for (j=0; j<40; j=j+1)
          begin
-           user_uart_tb.tb_uart.read_char_chk(uart_write_data[j]);
+           tb_uart.read_char_chk(uart_write_data[j]);
          end
       end
       join
@@ -347,8 +353,8 @@ user_project_wrapper u_top(
 // --------------------------
 wire uart_txd,uart_rxd;
 
-assign uart_txd   = io_out[2];
-assign io_in[1]  = uart_rxd ;
+assign uart_txd   = io_out[5];
+assign io_in[3]  = uart_rxd ;
  
 uart_agent tb_uart(
 	.mclk                (clock              ),

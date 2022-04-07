@@ -198,6 +198,9 @@
 ////         4. caravel wb addressing issue restrict to 0x300FFFFF////
 ////    4.1  April 1 2022, Dinesh A                               ////
 ////         1. sram lanuch phase control added inside risc core  ////
+////    4.2  April 6 2022, Dinesh A                               ////
+////         1. SSPI CS# increased from 1 to 4                    ////
+////         2. uart port increase to two                         ////
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
 //// Copyright (C) 2000 Authors and OPENCORES.ORG                 ////
@@ -410,7 +413,7 @@ wire                           wbd_glbl_err_i                         ; // error
 //    Global Register Wishbone Interface
 //---------------------------------------------------------------------
 wire                           wbd_uart_stb_o                         ; // strobe/request
-wire   [7:0]                   wbd_uart_adr_o                         ; // address
+wire   [8:0]                   wbd_uart_adr_o                         ; // address
 wire                           wbd_uart_we_o                          ; // write
 wire   [31:0]                  wbd_uart_dat_o                         ; // data output
 wire   [3:0]                   wbd_uart_sel_o                         ; // byte enable
@@ -427,7 +430,7 @@ wire                           cpu_intf_rst_n                         ;
 wire  [1:0]                    cpu_core_rst_n                         ;
 wire                           qspim_rst_n                            ;
 wire                           sspim_rst_n                            ;
-wire                           uart_rst_n                             ; // uart reset
+wire [1:0]                     uart_rst_n                             ; // uart reset
 wire                           i2c_rst_n                              ; // i2c reset
 wire                           usb_rst_n                              ; // i2c reset
 wire                           bist_rst_n                             ; // i2c reset
@@ -509,8 +512,8 @@ wire                           usb_dp_i                               ;
 wire                           usb_dn_i                               ;
 
 // UART I/F
-wire                           uart_txd                               ;
-wire                           uart_rxd                               ;
+wire       [1:0]               uart_txd                               ;
+wire       [1:0]               uart_rxd                               ;
 
 // I2CM I/F
 wire                           i2cm_clk_o                             ;
@@ -568,7 +571,7 @@ wire  [31:0]                   sram1_dout1                            ; // Read 
 wire                           sspim_sck                              ; // clock out
 wire                           sspim_so                               ; // serial data out
 wire                           sspim_si                               ; // serial data in
-wire                           sspim_ssn                              ; // cs_n
+wire    [3:0]                  sspim_ssn                              ; // cs_n
 
 
 wire                           usb_intr_o                             ;
@@ -1099,7 +1102,7 @@ uart_i2c_usb_spi_top   u_uart_i2c_usb_spi (
         // Reg Bus Interface Signal
           .reg_cs                  (wbd_uart_stb_o          ),
           .reg_wr                  (wbd_uart_we_o           ),
-          .reg_addr                (wbd_uart_adr_o[7:0]     ),
+          .reg_addr                (wbd_uart_adr_o[8:0]     ),
           .reg_wdata               (wbd_uart_dat_o          ),
           .reg_be                  (wbd_uart_sel_o          ),
 
@@ -1217,7 +1220,7 @@ pinmux u_pinmux(
 
        // SPI MASTER
           .spim_sck                (sspim_sck               ),
-          .spim_ss                 (sspim_ssn               ),
+          .spim_ssn                (sspim_ssn               ),
           .spim_miso               (sspim_so                ),
           .spim_mosi               (sspim_si                ),
 

@@ -19,7 +19,8 @@ create_clock -name cpu_ref_clk -period 10.0000  [get_pins {mprj/u_wb_host/u_cpu_
 create_clock -name cpu_clk     -period 20.0000  [get_pins {mprj/u_wb_host/cpu_clk}]
 create_clock -name rtc_clk     -period 50.0000  [get_pins {mprj/u_wb_host/rtc_clk}]
 create_clock -name usb_clk     -period 20.0000  [get_pins {mprj/u_wb_host/usb_clk}]
-create_clock -name uarts_clk   -period 100.0000 [get_pins {mprj/u_uart_i2c_usb_spi/u_uart_core.u_lineclk_buf.u_mux/X}]
+create_clock -name uarts0_clk  -period 100.0000 [get_pins {mprj/u_uart_i2c_usb_spi/u_uart0_core.u_lineclk_buf.u_mux/X}]
+create_clock -name uarts1_clk  -period 100.0000 [get_pins {mprj/u_uart_i2c_usb_spi/u_uart0_core.u_lineclk_buf.u_mux/X}]
 create_clock -name uartm_clk   -period 100.0000 [get_pins {mprj/u_wb_host/u_uart2wb.u_core.u_uart_clk.u_mux/X}]
 
 
@@ -75,7 +76,8 @@ set_clock_groups -name async_clock -asynchronous \
  -group [get_clocks {cpu_ref_clk}]\
  -group [get_clocks {rtc_clk}]\
  -group [get_clocks {usb_clk}]\
- -group [get_clocks {uarts_clk}]\
+ -group [get_clocks {uarts0_clk}]\
+ -group [get_clocks {uarts1_clk}]\
  -group [get_clocks {uartm_clk}]\
  -comment {Async Clock group}
 

@@ -151,7 +151,7 @@ integer i,j;
 	`ifdef WFDUMP
 	   initial begin
 	   	$dumpfile("simx.vcd");
-	   	$dumpvars(4, user_basic_tb);
+	   	$dumpvars(0, user_basic_tb);
 	   end
        `endif
 
@@ -240,8 +240,8 @@ begin
          wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h1);
 
 	 wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_1,read_data,32'h8273_8343);
-	 wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_2,read_data,32'h0104_2022);
-	 wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_3,read_data,32'h0004_1000);
+	 wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_2,read_data,32'h0604_2022);
+	 wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_3,read_data,32'h0004_2000);
 
       end
    
