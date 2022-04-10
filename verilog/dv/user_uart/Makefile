@@ -67,9 +67,15 @@ ifeq ($(SIM),RTL)
 	$< -o $@ 
    endif
 else  
-	iverilog -g2012 -DFUNCTIONAL -DSIM -DGL -I $(PDK_PATH) \
-	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.$(CONFIG) \
+   ifeq ($(DUMP),OFF)
+	iverilog -g2012 -DFUNCTIONAL -DUSE_POWER_PINS -DGL -I $(PDK_PATH) \
+	-f$(USER_PROJECT_VERILOG)/includes/includes.gl.$(CONFIG) \
 	$< -o $@ 
+    else  
+	iverilog -g2012 -DWFDUMP -DFUNCTIONAL -DUSE_POWER_PINS -DGL -I $(PDK_PATH) \
+	-f$(USER_PROJECT_VERILOG)/includes/includes.gl.$(CONFIG) \
+	$< -o $@ 
+   endif
 endif
 
 %.vcd: %.vvp
@@ -81,4 +87,4 @@ endif
 clean:
 	rm -f *.elf *.hex *.bin *.vvp *.vcd *.log *.dump
 
-.PHONY: clean hex all
+.PHONY: clean all

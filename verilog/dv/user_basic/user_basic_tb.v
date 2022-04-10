@@ -151,7 +151,12 @@ integer i,j;
 	`ifdef WFDUMP
 	   initial begin
 	   	$dumpfile("simx.vcd");
-	   	$dumpvars(0, user_basic_tb);
+	   	$dumpvars(1, user_basic_tb);
+	   	$dumpvars(1, user_basic_tb.u_top);
+	   	$dumpvars(1, user_basic_tb.u_top.u_wb_host);
+	   	$dumpvars(1, user_basic_tb.u_top.u_intercon);
+	   	$dumpvars(1, user_basic_tb.u_top.u_intercon);
+	   	$dumpvars(1, user_basic_tb.u_top.u_pinmux);
 	   end
        `endif
 
@@ -179,6 +184,7 @@ begin
           // cfg_rtc_clk_ctrl     = reg_0[19:12];
           // cfg_cpu_clk_ctrl     = reg_0[23:20];
           // cfg_usb_clk_ctrl     = reg_0[31:24];
+
 	  $display("Step-1, CPU: CLOCK1, RTC: CLOCK2 *2, USB: CLOCK2, WBS:CLOCK1");
 	  test_step = 1;
           wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,{8'h0,4'h0,8'h0,4'h0,8'h00});
@@ -233,7 +239,7 @@ begin
 	  test_step = 10;
           wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,{8'h89,4'hF,8'hFF,4'hF,8'h00});
 	  clock_monitor(5*CLK2_PERIOD,257*CLK2_PERIOD,11*CLK2_PERIOD,5*CLK2_PERIOD);
-
+  
          $display("###################################################");
          $display("Monitor: Checking the chip signature :");
          // Remove Wb/PinMux Reset
@@ -416,6 +422,7 @@ begin
   wbd_ext_cyc_i ='h1;  // strobe/request
   wbd_ext_stb_i ='h1;  // strobe/request
   wait(wbd_ext_ack_o == 1);
+  repeat (1) @(negedge clock);
   data  = wbd_ext_dat_o;  
   repeat (1) @(posedge clock);
   #1;
@@ -445,6 +452,7 @@ begin
   wbd_ext_cyc_i ='h1;  // strobe/request
   wbd_ext_stb_i ='h1;  // strobe/request
   wait(wbd_ext_ack_o == 1);
+  repeat (1) @(negedge clock);
   data  = wbd_ext_dat_o;  
   repeat (1) @(posedge clock);
   #1;
@@ -466,29 +474,21 @@ endtask
 
 `ifdef GL
 
-wire        wbd_spi_stb_i   = u_top.u_spi_master.wbd_stb_i;
-wire        wbd_spi_ack_o   = u_top.u_spi_master.wbd_ack_o;
-wire        wbd_spi_we_i    = u_top.u_spi_master.wbd_we_i;
-wire [31:0] wbd_spi_adr_i   = u_top.u_spi_master.wbd_adr_i;
-wire [31:0] wbd_spi_dat_i   = u_top.u_spi_master.wbd_dat_i;
-wire [31:0] wbd_spi_dat_o   = u_top.u_spi_master.wbd_dat_o;
-wire [3:0]  wbd_spi_sel_i   = u_top.u_spi_master.wbd_sel_i;
+wire        wbd_spi_stb_i   = u_top.u_qspi_master.wbd_stb_i;
+wire        wbd_spi_ack_o   = u_top.u_qspi_master.wbd_ack_o;
+wire        wbd_spi_we_i    = u_top.u_qspi_master.wbd_we_i;
+wire [31:0] wbd_spi_adr_i   = u_top.u_qspi_master.wbd_adr_i;
+wire [31:0] wbd_spi_dat_i   = u_top.u_qspi_master.wbd_dat_i;
+wire [31:0] wbd_spi_dat_o   = u_top.u_qspi_master.wbd_dat_o;
+wire [3:0]  wbd_spi_sel_i   = u_top.u_qspi_master.wbd_sel_i;
 
-wire        wbd_sdram_stb_i = u_top.u_sdram_ctrl.wb_stb_i;
-wire        wbd_sdram_ack_o = u_top.u_sdram_ctrl.wb_ack_o;
-wire        wbd_sdram_we_i  = u_top.u_sdram_ctrl.wb_we_i;
-wire [31:0] wbd_sdram_adr_i = u_top.u_sdram_ctrl.wb_addr_i;
-wire [31:0] wbd_sdram_dat_i = u_top.u_sdram_ctrl.wb_dat_i;
-wire [31:0] wbd_sdram_dat_o = u_top.u_sdram_ctrl.wb_dat_o;
-wire [3:0]  wbd_sdram_sel_i = u_top.u_sdram_ctrl.wb_sel_i;
-
-wire        wbd_uart_stb_i  = u_top.u_uart_i2c_usb.reg_cs;
-wire        wbd_uart_ack_o  = u_top.u_uart_i2c_usb.reg_ack;
-wire        wbd_uart_we_i   = u_top.u_uart_i2c_usb.reg_wr;
-wire [7:0]  wbd_uart_adr_i  = u_top.u_uart_i2c_usb.reg_addr;
-wire [7:0]  wbd_uart_dat_i  = u_top.u_uart_i2c_usb.reg_wdata;
-wire [7:0]  wbd_uart_dat_o  = u_top.u_uart_i2c_usb.reg_rdata;
-wire        wbd_uart_sel_i  = u_top.u_uart_i2c_usb.reg_be;
+wire        wbd_uart_stb_i  = u_top.u_uart_i2c_usb_spi.reg_cs;
+wire        wbd_uart_ack_o  = u_top.u_uart_i2c_usb_spi.reg_ack;
+wire        wbd_uart_we_i   = u_top.u_uart_i2c_usb_spi.reg_wr;
+wire [8:0]  wbd_uart_adr_i  = u_top.u_uart_i2c_usb_spi.reg_addr;
+wire [7:0]  wbd_uart_dat_i  = u_top.u_uart_i2c_usb_spi.reg_wdata;
+wire [7:0]  wbd_uart_dat_o  = u_top.u_uart_i2c_usb_spi.reg_rdata;
+wire        wbd_uart_sel_i  = u_top.u_uart_i2c_usb_spi.reg_be;
 
 `endif
 

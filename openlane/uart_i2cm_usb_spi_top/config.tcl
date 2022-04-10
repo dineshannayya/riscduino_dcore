@@ -72,6 +72,7 @@ set ::env(VERILOG_FILES) "\
     $script_dir/../../verilog/rtl/lib/ctech_cells.sv     \
     "
 
+set ::env(SYNTH_NO_FLAT) {1}
 set ::env(SYNTH_READ_BLACKBOX_LIB) 1
 set ::env(VERILOG_INCLUDE_DIRS) [glob $script_dir/../../verilog/rtl/i2cm/src/includes $script_dir/../../verilog/rtl/usb1_host/src/includes ]
 set ::env(SYNTH_DEFINES) [list SYNTHESIS ]
