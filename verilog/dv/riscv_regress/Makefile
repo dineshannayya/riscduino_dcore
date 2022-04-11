@@ -200,7 +200,7 @@ TARGETS += hello
 
 
 # Targets
-.PHONY: tests run_iverilog run_iverilog_wf run_modelsim run_modelsim_wlf run_vcs run_ncsim run_verilator run_verilator_wf
+.PHONY: tests run_iverilog run_modelsim run_modelsim_wlf run_vcs run_ncsim run_verilator run_verilator_wf
 
 default: clean_test_list run_iverilog
 
@@ -272,6 +272,8 @@ run_modelsim: $(test_info)
 	printf "$$(cat $(test_results)) \n"
 
 run_iverilog: $(test_info)
+ifeq ($(SIM),RTL)
+   ifeq ($(DUMP),OFF)
 	cd $(bld_dir); \
 	iverilog -g2005-sv -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
 	-I $(UPRJ_TESTS_PATH) \
@@ -288,8 +290,7 @@ run_iverilog: $(test_info)
 	printf "Simulation performed on $$(vvp -V) \n" ;\
 	printf "                          Test               | build | simulation \n" ; \
 	printf "$$(cat $(test_results)) \n"
-
-run_iverilog_wf: $(test_info)
+    else  
 	cd $(bld_dir); \
 	iverilog -g2005-sv -DWFDUMP -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
 	-I $(UPRJ_TESTS_PATH) \
@@ -306,6 +307,45 @@ run_iverilog_wf: $(test_info)
 	printf "Simulation performed on $$(vvp -V) \n" ;\
 	printf "                          Test               | build | simulation \n" ; \
 	printf "$$(cat $(test_results)) \n"
+   endif
+else  
+   ifeq ($(DUMP),OFF)
+	cd $(bld_dir); \
+	iverilog -g2005-sv -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
+	-I $(UPRJ_TESTS_PATH) \
+	-f$(USER_PROJECT_VERILOG)/includes/includes.gl.$(CONFIG) \
+	$(sv_list) \
+	-o $(top_module).vvp; \
+	printf "" > $(test_results); \
+        iverilog-vpi ../../../vpi/system/system.c; \
+	vvp  -M. -msystem  $(top_module).vvp \
+	+risc_core_id=$(RISC_CORE) \
+	+test_info=$(test_info) \
+	+test_results=$(test_results) \
+	| tee $(sim_results)  ;\
+	printf "Simulation performed on $$(vvp -V) \n" ;\
+	printf "                          Test               | build | simulation \n" ; \
+	printf "$$(cat $(test_results)) \n"
+    else  
+	cd $(bld_dir); \
+	iverilog -g2005-sv -DWFDUMP -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
+	-I $(UPRJ_TESTS_PATH) \
+	-f$(USER_PROJECT_VERILOG)/includes/includes.gl.$(CONFIG) \
+	$(sv_list) \
+	-o $(top_module).vvp; \
+	printf "" > $(test_results); \
+        iverilog-vpi ../../../vpi/system/system.c; \
+	vvp  -M. -msystem  $(top_module).vvp \
+	+risc_core_id=$(RISC_CORE) \
+	+test_info=$(test_info) \
+	+test_results=$(test_results) \
+	| tee $(sim_results)  ;\
+	printf "Simulation performed on $$(vvp -V) \n" ;\
+	printf "                          Test               | build | simulation \n" ; \
+	printf "$$(cat $(test_results)) \n"
+
+   endif
+endif
 
 run_modelsim_wlf: $(test_info)
 	$(MAKE) -C $(root_dir)/sim build_modelsim_wlf SIM_CFG_DEF=$(SIM_CFG_DEF) SIM_TRACE_DEF=$(SIM_TRACE_DEF) SIM_BUILD_OPTS=$(SIM_BUILD_OPTS); \
