@@ -699,3 +699,9 @@ Report an issue: <https://github.com/dineshannayya/riscduino_dcore/issues>
 
 # Documentation
 * **Syntacore Link** - https://github.com/syntacore/scr1
+
+News on Riscduino
+===============
+* **Riscduino Aim** - https://www.youtube.com/watch?v=lFVnicPhTI0
+
+
