@@ -19,7 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOC.
 - [Overview](#overview)
 - [Riscduino Block Diagram](#Riscduino-block-diagram)
 - [Key Feature](#key-features)
-- [Riscduino derivatives] (#riscduino-derivatives)
+- [Riscduino derivatives](#riscduino-derivatives)
 - [MPW Shuttle on Riscduino](#mpw-shuttle-on-riscduino)
 - [Sub IP Feature](#sub-ip-features)
 - [SOC Memory Map](#soc-memory-map)
