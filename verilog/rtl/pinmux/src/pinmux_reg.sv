@@ -266,8 +266,8 @@ wire   sw_rd_en_31 = sw_rd_en & (sw_addr == 5'h1F);
 //    3 -  Riscdunio (MPW-5)
 
 wire [15:0] manu_id      =  16'h8268; // Asci value of RD
-wire [3:0]  total_core   =  4'h02;
-wire [3:0]  chip_id      =  4'h03;
+wire [3:0]  total_core   =  4'h2;
+wire [3:0]  chip_id      =  4'h3;
 wire [7:0]  chip_rev     =  8'h01;
 
 assign reg_0 = {manu_id,total_core,chip_id,chip_rev};

@@ -20,7 +20,6 @@
 ////                                                              ////
 ////  This file is part of the YIFive cores project               ////
 ////  https://github.com/dineshannayya/yifive_r0.git              ////
-////  http://www.opencores.org/cores/yifive/                      ////
 ////                                                              ////
 ////  Description                                                 ////
 ////   This is a standalone test bench to validate the            ////
@@ -413,21 +412,21 @@ endtask
 
 `ifdef GL
 
-wire        wbd_spi_stb_i   = u_top.u_spi_master.wbd_stb_i;
-wire        wbd_spi_ack_o   = u_top.u_spi_master.wbd_ack_o;
-wire        wbd_spi_we_i    = u_top.u_spi_master.wbd_we_i;
-wire [31:0] wbd_spi_adr_i   = u_top.u_spi_master.wbd_adr_i;
-wire [31:0] wbd_spi_dat_i   = u_top.u_spi_master.wbd_dat_i;
-wire [31:0] wbd_spi_dat_o   = u_top.u_spi_master.wbd_dat_o;
-wire [3:0]  wbd_spi_sel_i   = u_top.u_spi_master.wbd_sel_i;
+wire        wbd_spi_stb_i   = u_top.u_qspi_master.wbd_stb_i;
+wire        wbd_spi_ack_o   = u_top.u_qspi_master.wbd_ack_o;
+wire        wbd_spi_we_i    = u_top.u_qspi_master.wbd_we_i;
+wire [31:0] wbd_spi_adr_i   = u_top.u_qspi_master.wbd_adr_i;
+wire [31:0] wbd_spi_dat_i   = u_top.u_qspi_master.wbd_dat_i;
+wire [31:0] wbd_spi_dat_o   = u_top.u_qspi_master.wbd_dat_o;
+wire [3:0]  wbd_spi_sel_i   = u_top.u_qspi_master.wbd_sel_i;
 
-wire        wbd_uart_stb_i  = u_top.u_uart_i2c_usb.reg_cs;
-wire        wbd_uart_ack_o  = u_top.u_uart_i2c_usb.reg_ack;
-wire        wbd_uart_we_i   = u_top.u_uart_i2c_usb.reg_wr;
-wire [7:0]  wbd_uart_adr_i  = u_top.u_uart_i2c_usb.reg_addr;
-wire [7:0]  wbd_uart_dat_i  = u_top.u_uart_i2c_usb.reg_wdata;
-wire [7:0]  wbd_uart_dat_o  = u_top.u_uart_i2c_usb.reg_rdata;
-wire        wbd_uart_sel_i  = u_top.u_uart_i2c_usb.reg_be;
+wire        wbd_uart_stb_i  = u_top.u_uart_i2c_usb_spi.reg_cs;
+wire        wbd_uart_ack_o  = u_top.u_uart_i2c_usb_spi.reg_ack;
+wire        wbd_uart_we_i   = u_top.u_uart_i2c_usb_spi.reg_wr;
+wire [8:0]  wbd_uart_adr_i  = u_top.u_uart_i2c_usb_spi.reg_addr;
+wire [7:0]  wbd_uart_dat_i  = u_top.u_uart_i2c_usb_spi.reg_wdata;
+wire [7:0]  wbd_uart_dat_o  = u_top.u_uart_i2c_usb_spi.reg_rdata;
+wire        wbd_uart_sel_i  = u_top.u_uart_i2c_usb_spi.reg_be;
 
 `endif
 

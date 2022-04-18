@@ -24,13 +24,18 @@ CONFIG = caravel_user_project
 #######################################################################
 
 DESIGNS?=../../..
+TOOLS?=/opt/riscv64i/
 
 export USER_PROJECT_VERILOG ?=  $(DESIGNS)/verilog
+## YIFIVE FIRMWARE
+YIFIVE_FIRMWARE_PATH = $(USER_PROJECT_VERILOG)/dv/firmware
+GCC64_PREFIX?=riscv64-unknown-elf
 
 
 ## Simulation mode: RTL/GL
 SIM?=RTL
 DUMP?=OFF
+RISC_CORE?=0
 
 ### To Enable IVERILOG FST DUMP
 export IVERILOG_DUMPER = fst

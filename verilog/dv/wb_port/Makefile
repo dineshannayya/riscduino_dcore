@@ -23,6 +23,7 @@ BLOCKS := $(shell basename $(PWDD))
 
 DESIGNS?=../../..
 CONFIG = caravel_user_project
+TOOLS?=/opt/riscv64i/
 
 ########################################################
 #include $(MCW_ROOT)/verilog/dv/make/env.makefile
@@ -50,7 +51,8 @@ export VERILOG_PATH = $(CORE_VERILOG_PATH)
 ## Compiler Information 
 #######################################################################
 
-export GCC_PATH?=      $(TOOLS)/bin
+export TOOLS     ?=  /opt/riscv64i 
+export GCC_PATH  ?=  $(TOOLS)/bin
 export GCC_PREFIX?=    riscv64-unknown-linux-gnu
 
 
@@ -160,18 +162,18 @@ ifeq ($(SIM),RTL)
         -f$(VERILOG_PATH)/includes/includes.rtl.caravel \
         -f$(USER_PROJECT_VERILOG)/includes/includes.rtl.$(CONFIG) -o $@ $<
    endif
-endif 
+endif
 
-## GL
+##GL
 ifeq ($(SIM),GL)
-    ifeq ($(CONFIG),caravel_user_project)
-		iverilog -Ttyp -DFUNCTIONAL -DGL -DUSE_POWER_PINS -DUNIT_DELAY=#0.1 \
+   ifeq ($(DUMP),OFF)
+	iverilog -Ttyp -DFUNCTIONAL -DGL -DUSE_POWER_PINS -DUNIT_DELAY=#0.1 \
         -f$(VERILOG_PATH)/includes/includes.gl.caravel \
         -f$(USER_PROJECT_VERILOG)/includes/includes.gl.$(CONFIG) -o $@ $<
     else
-		iverilog -Ttyp -DFUNCTIONAL -DGL -DUSE_POWER_PINS -DUNIT_DELAY=#0.1 \
-        -f$(VERILOG_PATH)/includes/includes.gl.$(CONFIG) \
-		-f$(CARAVEL_PATH)/gl/__user_project_wrapper.v -o $@ $<
+	iverilog -Ttyp -DWFDUMP -DFUNCTIONAL -DGL -DUSE_POWER_PINS -DUNIT_DELAY=#0.1 \
+        -f$(VERILOG_PATH)/includes/includes.gl.caravel \
+        -f$(USER_PROJECT_VERILOG)/includes/includes.gl.$(CONFIG) -o $@ $<
     endif
 endif 
 

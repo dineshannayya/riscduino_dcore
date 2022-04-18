@@ -20,7 +20,6 @@
 ////                                                              ////
 ////  This file is part of the YIFive cores project               ////
 ////  https://github.com/dineshannayya/yifive_r0.git              ////
-////  http://www.opencores.org/cores/yifive/                      ////
 ////                                                              ////
 ////  Description                                                 ////
 ////   This is a standalone test bench to validate the            ////
