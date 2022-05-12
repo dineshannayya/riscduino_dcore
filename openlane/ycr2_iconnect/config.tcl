@@ -83,7 +83,8 @@ set ::env(PL_TIME_DRIVEN) "1"
 #set ::env(FP_PDN_HWIDTH) "3.1"
 
 
-set ::env(GLB_RT_MAXLAYER) 5
+#set ::env(GLB_RT_MAXLAYER) 5
+set ::env(RT_MAX_LAYER) {met4}
 set ::env(GLB_RT_MAX_DIODE_INS_ITERS) 20
 set ::env(DIODE_INSERTION_STRATEGY) 3
 

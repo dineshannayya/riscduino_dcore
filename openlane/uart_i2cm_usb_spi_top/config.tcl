@@ -102,7 +102,7 @@ set ::env(RUN_CVC) 0
 
 
 set ::env(PL_TIME_DRIVEN) 1
-set ::env(PL_TARGET_DENSITY) "0.45"
+set ::env(PL_TARGET_DENSITY) "0.46"
 
 # helps in anteena fix
 set ::env(USE_ARC_ANTENNA_CHECK) "0"
@@ -115,13 +115,15 @@ set ::env(FP_PDN_HPITCH) 100
 set ::env(FP_PDN_VWIDTH) 5
 set ::env(FP_PDN_HWIDTH) 5
 
-set ::env(GLB_RT_MAXLAYER) 5
+#set ::env(GLB_RT_MAXLAYER) 5
 set ::env(RT_MAX_LAYER) {met4}
 set ::env(GLB_RT_MAX_DIODE_INS_ITERS) 10
 set ::env(DIODE_INSERTION_STRATEGY) 4
 
 set ::env(GLB_RESIZER_TIMING_OPTIMIZATIONS) {1}
 set ::env(PL_RESIZER_TIMING_OPTIMIZATIONS) {1}
+
+set ::env(GLB_RT_ADJUSTMENT) {0.25}
 
 set ::env(QUIT_ON_TIMING_VIOLATIONS) "0"
 set ::env(QUIT_ON_MAGIC_DRC) "1"
