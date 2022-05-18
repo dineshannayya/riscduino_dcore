@@ -1,7 +1,7 @@
 
         set ::env(USER_ROOT)    ".."
-        set ::env(CARAVEL_ROOT) "/home/dinesha/workarea/efabless/MPW-5/caravel"
-        set ::env(CARAVEL_PDK_ROOT)     "/opt/pdk_mpw5"
+        set ::env(CARAVEL_ROOT) "/home/dinesha/workarea/efabless/MPW-6/caravel"
+        set ::env(CARAVEL_PDK_ROOT)     "/opt/pdk_mpw6"
 
         read_liberty $::env(CARAVEL_PDK_ROOT)/sky130A/libs.ref/sky130_fd_sc_hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib	
 	read_liberty $::env(CARAVEL_PDK_ROOT)/sky130A/libs.ref/sky130_sram_macros/lib/sky130_sram_2kbyte_1rw1r_32x512_8_TT_1p8V_25C.lib	
@@ -105,11 +105,8 @@
 	read_spef -path \gpio_control_in_2[7]               $::env(CARAVEL_ROOT)/spef/gpio_control_block.spef	
 	read_spef -path \gpio_control_in_2[8]               $::env(CARAVEL_ROOT)/spef/gpio_control_block.spef	
 	read_spef -path \gpio_control_in_2[9]               $::env(CARAVEL_ROOT)/spef/gpio_control_block.spef	
-	read_spef -path gpio_defaults_block_0               $::env(CARAVEL_ROOT)/spef/gpio_defaults_block_1803.spef	
-	read_spef -path gpio_defaults_block_1               $::env(CARAVEL_ROOT)/spef/gpio_defaults_block_1803.spef	
-	read_spef -path gpio_defaults_block_2               $::env(CARAVEL_ROOT)/spef/gpio_defaults_block_0403.spef	
-	read_spef -path gpio_defaults_block_3               $::env(CARAVEL_ROOT)/spef/gpio_defaults_block_0403.spef	
-	read_spef -path gpio_defaults_block_4               $::env(CARAVEL_ROOT)/spef/gpio_defaults_block_0403.spef	
+	read_spef -path gpio_defaults_block_0[0]            $::env(CARAVEL_ROOT)/spef/gpio_defaults_block.spef	
+	read_spef -path gpio_defaults_block_0[1]            $::env(CARAVEL_ROOT)/spef/gpio_defaults_block.spef	
 	read_spef -path gpio_defaults_block_5               $::env(CARAVEL_ROOT)/spef/gpio_defaults_block.spef	
 	read_spef -path gpio_defaults_block_6               $::env(CARAVEL_ROOT)/spef/gpio_defaults_block.spef	
 	read_spef -path gpio_defaults_block_7               $::env(CARAVEL_ROOT)/spef/gpio_defaults_block.spef	
@@ -135,6 +132,9 @@
 	read_spef -path gpio_defaults_block_27              $::env(CARAVEL_ROOT)/spef/gpio_defaults_block.spef	
 	read_spef -path gpio_defaults_block_28              $::env(CARAVEL_ROOT)/spef/gpio_defaults_block.spef	
 	read_spef -path gpio_defaults_block_29              $::env(CARAVEL_ROOT)/spef/gpio_defaults_block.spef	
+	read_spef -path gpio_defaults_block_2[0]            $::env(CARAVEL_ROOT)/spef/gpio_defaults_block.spef	
+	read_spef -path gpio_defaults_block_2[1]            $::env(CARAVEL_ROOT)/spef/gpio_defaults_block.spef	
+	read_spef -path gpio_defaults_block_2[2]            $::env(CARAVEL_ROOT)/spef/gpio_defaults_block.spef	
 	read_spef -path gpio_defaults_block_30              $::env(CARAVEL_ROOT)/spef/gpio_defaults_block.spef	
 	read_spef -path gpio_defaults_block_31              $::env(CARAVEL_ROOT)/spef/gpio_defaults_block.spef	
 	read_spef -path gpio_defaults_block_32              $::env(CARAVEL_ROOT)/spef/gpio_defaults_block.spef	

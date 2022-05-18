@@ -628,7 +628,7 @@ Examples:
     make verify-user_basic
     make verify-user_uart
     make verify-user_uart1
-    make verify-user_spi
+    make verify-user_sspi
     make verify-user_i2cm
     make verify-user_risc_boot
     make verify-user_pwm
@@ -640,6 +640,21 @@ Examples:
     make verify-wb_port SIM=RTL DUMP=OFF
     make verify-wb_port SIM=RTL DUMP=ON
     make verify-riscv_regress
+    make verify-wb_port  SIM=GL
+    make verify-risc_boot SIM=GL
+    make verify-uart_master SIM=GL
+    make verify-user_basic SIM=GL
+    make verify-user_uart SIM=GL
+    make verify-user_uart1 SIM=GL
+    make verify-user_sspi SIM=GL
+    make verify-user_i2cm SIM=GL
+    make verify-user_risc_boot SIM=GL
+    make verify-user_pwm SIM=GL
+    make verify-user_timer SIM=GL
+    make verify-user_sspi SIM=GL
+    make verify-user_qspi SIM=GL
+    make verify-user_usb SIM=GL
+    make verify-user_uart_master
 ```
 
 # Tool Sets
