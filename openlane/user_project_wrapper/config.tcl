@@ -189,6 +189,17 @@ set ::env(FP_PDN_IRDROP) "0"
 set ::env(FP_PDN_HORIZONTAL_HALO) "10"
 set ::env(FP_PDN_VERTICAL_HALO) "10"
 
+#
+
+set ::env(FP_PDN_CORE_RING_HOFFSET) {12.45}
+set ::env(FP_PDN_CORE_RING_HSPACING) {1.7}
+set ::env(FP_PDN_CORE_RING_HWIDTH) {3.1}
+
+set ::env(FP_PDN_CORE_RING_VOFFSET) {12.45}
+set ::env(FP_PDN_CORE_RING_VSPACING) {1.7}
+set ::env(FP_PDN_CORE_RING_VWIDTH) {3.1}
+
+
 set ::env(FP_PDN_VOFFSET) "5"
 set ::env(FP_PDN_VPITCH) "80"
 set ::env(FP_PDN_VSPACING) "15.5"
