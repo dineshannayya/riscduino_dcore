@@ -34,7 +34,6 @@ if { $::env(FP_PDN_ENABLE_MACROS_GRID) == 1 &&
         set instance_name [lindex $pdn_hook 0]
         set power_net [lindex $pdn_hook 1]
         set ground_net [lindex $pdn_hook 2]
-	puts "connecting:- $instance_name => $power_net :: $ground_net"
         # This assumes the power pin and the power net have the same name.
         # The macro hooks only give an instance name and not power pin names.
 
@@ -54,35 +53,29 @@ if { $::env(FP_PDN_ENABLE_MACROS_GRID) == 1 &&
 
 set secondary []
 
-foreach net $::env(VDD_NETS) {
-    if { $net != $::env(VDD_NET)} {
-        lappend secondary $net
+foreach vdd $::env(VDD_NETS) gnd $::env(GND_NETS) {
+    if { $vdd != $::env(VDD_NET)} {
+        lappend secondary $vdd
 
-        set db_net [[ord::get_db_block] findNet $net]
+        set db_net [[ord::get_db_block] findNet $vdd]
         if {$db_net == "NULL"} {
-            set net [odb::dbNet_create [ord::get_db_block] $net]
+            set net [odb::dbNet_create [ord::get_db_block] $vdd]
             $net setSpecial
             $net setSigType "POWER"
         }
     }
-}
 
-foreach net $::env(GND_NETS) {
-    if { $net != $::env(GND_NET)} {
-        lappend secondary $net
+    if { $gnd != $::env(GND_NET)} {
+        lappend secondary $gnd
 
-        set db_net [[ord::get_db_block] findNet $net]
+        set db_net [[ord::get_db_block] findNet $gnd]
         if {$db_net == "NULL"} {
-            set net [odb::dbNet_create [ord::get_db_block] $net]
+            set net [odb::dbNet_create [ord::get_db_block] $gnd]
             $net setSpecial
             $net setSigType "GROUND"
         }
     }
 }
-
-puts "VDD_NET   : $::env(VDD_NET)"
-puts "GND_NET   : $::env(GND_NET)"
-puts "secondary : $secondary"
 
 set_voltage_domain -name CORE -power $::env(VDD_NET) -ground $::env(GND_NET) \
     -secondary_power $secondary
@@ -149,19 +142,6 @@ if { $::env(FP_PDN_ENABLE_RAILS) == 1 } {
         -layers "$::env(FP_PDN_RAILS_LAYER) $::env(FP_PDN_LOWER_LAYER)"
 } 
 
-define_pdn_grid \
-    -macro \
-    -default \
-    -name macro \
-    -starts_with POWER \
-    -halo "$::env(FP_PDN_HORIZONTAL_HALO) $::env(FP_PDN_VERTICAL_HALO)"
-
-add_pdn_connect \
-    -grid macro \
-    -layers "$::env(FP_PDN_LOWER_LAYER) $::env(FP_PDN_UPPER_LAYER)"
-
-#set_voltage_domain -name CORE -power $::env(VDD_NET) -ground $::env(GND_NET) \
-#    -secondary_power $secondary
 
 # Adds the core ring if enabled.
 if { $::env(FP_PDN_CORE_RING) == 1 } {
@@ -173,3 +153,13 @@ if { $::env(FP_PDN_CORE_RING) == 1 } {
         -core_offset "$::env(FP_PDN_CORE_RING_VOFFSET) $::env(FP_PDN_CORE_RING_HOFFSET)"
 }
 
+define_pdn_grid \
+    -macro \
+    -default \
+    -name macro \
+    -starts_with POWER \
+    -halo "$::env(FP_PDN_HORIZONTAL_HALO) $::env(FP_PDN_VERTICAL_HALO)"
+
+add_pdn_connect \
+    -grid macro \
+    -layers "$::env(FP_PDN_LOWER_LAYER) $::env(FP_PDN_UPPER_LAYER)"
