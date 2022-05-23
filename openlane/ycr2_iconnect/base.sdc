@@ -1,7 +1,7 @@
 ###############################################################################
 # Timing Constraints
 ###############################################################################
-create_clock -name core_clk -period 20.0000 [get_ports {core_clk}]
+create_clock -name core_clk -period 8.0000 [get_ports {core_clk}]
 
 set_clock_transition 0.1500 [all_clocks]
 set_clock_uncertainty -setup 0.2500 [all_clocks]

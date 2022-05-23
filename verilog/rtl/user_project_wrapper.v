@@ -201,6 +201,9 @@
 ////    4.2  April 6 2022, Dinesh A                               ////
 ////         1. SSPI CS# increased from 1 to 4                    ////
 ////         2. uart port increase to two                         ////
+////    4.3  May 23 2022, Dinesh A                                ////
+////         Re targetted the design to mpw-6 tools set and risc  ////
+////         core logic are timing optimized to 100mhz            ////
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
 //// Copyright (C) 2000 Authors and OPENCORES.ORG                 ////

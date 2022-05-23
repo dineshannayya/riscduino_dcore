@@ -1,9 +1,9 @@
 
-module ctech_mux2x1 (
-	input  logic A0,
-	input  logic A1,
+module ctech_mux2x1 #(parameter WB = 1) (
+	input  logic [WB-1:0] A0,
+	input  logic [WB-1:0] A1,
 	input  logic S ,
-	output logic X);
+	output logic [WB-1:0] X);
 
 `ifndef SYNTHESIS
 assign X = (S) ? A1 : A0;
@@ -13,11 +13,11 @@ sky130_fd_sc_hd__mux2_8 u_mux (.A0 (A0), .A1 (A1), .S  (S), .X (X));
 
 endmodule
 
-module ctech_mux2x1_2 (
-	input  logic A0,
-	input  logic A1,
+module ctech_mux2x1_2 #(parameter WB = 1) (
+	input  logic [WB-1:0] A0,
+	input  logic [WB-1:0] A1,
 	input  logic S ,
-	output logic X);
+	output logic [WB-1:0] X);
 
 `ifndef SYNTHESIS
 assign X = (S) ? A1 : A0;
@@ -27,11 +27,11 @@ sky130_fd_sc_hd__mux2_2 u_mux (.A0 (A0), .A1 (A1), .S  (S), .X (X));
 
 endmodule
 
-module ctech_mux2x1_4 (
-	input  logic A0,
-	input  logic A1,
+module ctech_mux2x1_4 #(parameter WB = 1) (
+	input  logic [WB-1:0] A0,
+	input  logic [WB-1:0] A1,
 	input  logic S ,
-	output logic X);
+	output logic [WB-1:0] X);
 
 `ifndef SYNTHESIS
 assign X = (S) ? A1 : A0;

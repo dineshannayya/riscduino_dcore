@@ -90,5 +90,5 @@ set ::env(QUIT_ON_LVS_ERROR) "0"
 set ::env(QUIT_ON_SLEW_VIOLATIONS) "0"
 
 #Need to cross-check why global timing opimization creating setup vio with hugh hold fix
-set ::env(GLB_RESIZER_TIMING_OPTIMIZATIONS) "0"
+set ::env(GLB_RESIZER_TIMING_OPTIMIZATIONS) "1"
 

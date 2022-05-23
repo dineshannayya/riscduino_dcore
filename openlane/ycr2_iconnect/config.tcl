@@ -41,7 +41,10 @@ set ::env(VERILOG_FILES) "\
 	$script_dir/../../verilog/rtl/yifive/ycr2c/src/top/ycr_sram_mux.sv                   \
 	$script_dir/../../verilog/rtl/yifive/ycr2c/src/top/ycr_tcm.sv                        \
 	$script_dir/../../verilog/rtl/yifive/ycr2c/src/top/ycr_timer.sv                      \
+        $script_dir/../../verilog/rtl/yifive/ycr2c/src/top/ycr_req_retiming.sv               \
         $script_dir/../../verilog/rtl/yifive/ycr2c/src/lib/ycr_arb.sv                        \
+        $script_dir/../../verilog/rtl/yifive/ycr2c/src/lib/ctech_cells.sv                    \
+        $script_dir/../../verilog/rtl/yifive/ycr2c/src/lib/sync_fifo2.sv                     \
 	$script_dir/../../verilog/rtl/yifive/ycr2c/src/core/primitives/ycr_reset_cells.sv    \
 	"
 set ::env(VERILOG_INCLUDE_DIRS) [glob $script_dir/../../verilog/rtl/yifive/ycr2c/src/includes ]
@@ -57,7 +60,7 @@ set ::env(LEC_ENABLE) 0
 ## Floorplan
 set ::env(FP_PIN_ORDER_CFG) $script_dir/pin_order.cfg
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 380 1000"
+set ::env(DIE_AREA) "0 0 380 1100"
 
 #set ::env(PDN_CFG) $script_dir/pdn_cfg.tcl
 #set ::env(MACRO_PLACEMENT_CFG) $script_dir/macro_placement.cfg

@@ -98,6 +98,7 @@ $(USER_PROJECT_VERILOG)/rtl/user_reg_map.v
 -v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/top/ycr2_top_wb.sv
 -v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/top/ycr_icache_router.sv
 -v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/top/ycr_dcache_router.sv
+-v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/top/ycr_req_retiming.sv
 -v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/cache/src/core/icache_top.sv
 -v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/cache/src/core/icache_app_fsm.sv
 -v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/cache/src/core/icache_tag_fifo.sv
