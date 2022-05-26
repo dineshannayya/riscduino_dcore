@@ -55,6 +55,8 @@ set ::env(VERILOG_FILES) "\
 	$script_dir/../../verilog/rtl/yifive/ycr2c/src/core/pipeline/ycr_pipe_hdu.sv           \
 	$script_dir/../../verilog/rtl/yifive/ycr2c/src/core/pipeline/ycr_pipe_tdu.sv           \
 	$script_dir/../../verilog/rtl/yifive/ycr2c/src/core/pipeline/ycr_ipic.sv               \
+        $script_dir/../../verilog/rtl/yifive/ycr2c/src/top/ycr_req_retiming.sv               \
+        $script_dir/../../verilog/rtl/yifive/ycr2c/src/lib/sync_fifo2.sv                     \
 	"
 set ::env(VERILOG_INCLUDE_DIRS) [glob $script_dir/../../verilog/rtl/yifive/ycr2c/src/includes ]
 set ::env(SYNTH_READ_BLACKBOX_LIB) 1
@@ -72,10 +74,10 @@ set ::env(GND_PIN) [list {vssd1}]
 ## Floorplan
 set ::env(FP_PIN_ORDER_CFG) $script_dir/pin_order.cfg
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 560 950 "
+set ::env(DIE_AREA) "0 0 540 950 "
 
 set ::env(MACRO_PLACEMENT_CFG) $script_dir/macro_placement.cfg
-set ::env(PL_TARGET_DENSITY) 0.40
+set ::env(PL_TARGET_DENSITY) 0.43
 set ::env(CELL_PAD) "4"
 
 #set ::env(GLB_RT_MAXLAYER) 5
