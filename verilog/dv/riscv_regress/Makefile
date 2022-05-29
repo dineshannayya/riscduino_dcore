@@ -278,6 +278,7 @@ ifeq ($(SIM),RTL)
 	iverilog -g2005-sv -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
 	-I $(UPRJ_TESTS_PATH) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.$(CONFIG) \
+       -f$(USER_PROJECT_VERILOG)/includes/includes.rtl.lib  \
 	$(sv_list) \
 	-o $(top_module).vvp; \
 	printf "" > $(test_results); \
@@ -295,6 +296,7 @@ ifeq ($(SIM),RTL)
 	iverilog -g2005-sv -DWFDUMP -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
 	-I $(UPRJ_TESTS_PATH) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.$(CONFIG) \
+        -f$(USER_PROJECT_VERILOG)/includes/includes.rtl.lib  \
 	$(sv_list) \
 	-o $(top_module).vvp; \
 	printf "" > $(test_results); \

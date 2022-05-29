@@ -53,7 +53,7 @@
 module user_usb_tb;
 
 parameter  USB_HPER   = 10.4167; // 48Mhz Half cycle
-parameter  USER2_HPER = 2.6042; // 192Mhz Half cycle
+parameter  USER2_HPER = 2.7777; // 180Mhz Half cycle
 
 	reg clock;
 	reg user_clock2;
@@ -135,10 +135,10 @@ parameter  USER2_HPER = 2.6042; // 192Mhz Half cycle
 	`ifdef WFDUMP
 	   initial begin
 	   	$dumpfile("simx.vcd");
-	   	$dumpvars(1, user_usb_tb);
-	   	$dumpvars(1, user_usb_tb.u_top);
-	   	$dumpvars(1, user_usb_tb.u_top.u_uart_i2c_usb_spi);
-	   	$dumpvars(0, user_usb_tb.u_top.u_uart_i2c_usb_spi.u_usb_host);
+	   	$dumpvars(0, user_usb_tb);
+	   	//$dumpvars(1, user_usb_tb.u_top);
+	   	//$dumpvars(1, user_usb_tb.u_top.u_uart_i2c_usb_spi);
+	   	//$dumpvars(0, user_usb_tb.u_top.u_uart_i2c_usb_spi.u_usb_host);
 	   	//$dumpvars(0, user_usb_tb.u_top.u_intercon);
 	   	//$dumpvars(0, user_usb_tb.u_top.u_wb_host);
 	   end
@@ -171,8 +171,9 @@ parameter  USER2_HPER = 2.6042; // 192Mhz Half cycle
 	        repeat (10) @(posedge clock);
 		$display("Monitor: Standalone User Risc Boot Test Started");
 
-		// Remove Wb Reset
-		wb_user_core_write('h3080_0000,'h1);
+         
+		// Remove Wb/PinMux Reset
+                wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h1);
 
                 // Enable SPI Multi Functional Ports
                 wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GPIO_MULTI_FUNC,'h400);
@@ -180,8 +181,10 @@ parameter  USER2_HPER = 2.6042; // 192Mhz Half cycle
 	        repeat (2) @(posedge clock);
 		#1;
          
-	        // Set USB clock : 192/4 = 48Mhz	
-                wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,{8'h82,4'h0,8'h0,4'h0,8'h01});
+                // Remove Wb/PinMux Reset
+                wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h1);
+	        // Set USB clock : 180/3 = 60Mhz	
+                wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_CLK_CTRL2,{8'h0,8'h61,8'h0,8'h0});
 
                 // Remove the reset
 		// Remove WB and SPI/UART Reset, Keep CORE under Reset

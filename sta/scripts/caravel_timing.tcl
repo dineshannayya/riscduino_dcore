@@ -155,6 +155,7 @@
         read_spef -path mprj/u_uart_i2c_usb_spi               $::env(USER_ROOT)/spef/uart_i2c_usb_spi_top.spef
         read_spef -path mprj/u_wb_host                        $::env(USER_ROOT)/spef/wb_host.spef
         read_spef -path mprj/u_intercon                       $::env(USER_ROOT)/spef/wb_interconnect.spef
+	read_spef -path mprj/u_pll                            $::env(USER_ROOT)/spef/digital_pll.spef	
         read_spef -path mprj                                  $::env(USER_ROOT)/spef/user_project_wrapper.spef  
 
 

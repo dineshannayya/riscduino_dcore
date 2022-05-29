@@ -53,10 +53,12 @@ ifeq ($(SIM),RTL)
    ifeq ($(DUMP),OFF)
 	iverilog -g2012 -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.$(CONFIG) \
+	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.lib  \
 	$< -o $@ 
     else  
 	iverilog -g2012 -DWFDUMP -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
 	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.$(CONFIG) \
+	-f$(USER_PROJECT_VERILOG)/includes/includes.rtl.lib  \
 	$< -o $@ 
    endif
 else  

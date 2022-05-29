@@ -37,7 +37,7 @@
 ////   2. usb1_core:  usb1 core                                   ////
 ////   3. usb1_host : usb phy                                     ////
 ////                                                              ////
-////   Assumptiom: usb_clk is 48Mhz                               ////
+////   Assumptiom: usb_clk is 60Mhz                               ////
 ////                                                              ////
 ////  To Do:                                                      ////
 ////    nothing                                                   ////
@@ -49,7 +49,15 @@
 ////                                                              ////
 //////////////////////////////////////////////////////////////////////
 
-module usb1_host (
+module usb1_host 
+//-----------------------------------------------------------------
+// Params
+//-----------------------------------------------------------------
+#(
+     parameter USB_CLK_FREQ     = 60000000
+)
+
+(
     input  logic           usb_clk_i   ,
     input  logic           usb_rstn_i  ,
 
@@ -167,7 +175,7 @@ async_wb  #(.AW (6))
 
     );
 
-usbh_core  u_core (
+usbh_core  #(.USB_CLK_FREQ(USB_CLK_FREQ)) u_core (
     // Inputs
     .clk_i               (usb_clk_i           ),
     .rstn_i              (usb_rst_ssn         ),
@@ -204,7 +212,7 @@ usbh_core  u_core (
 
 
 
-usb_fs_phy  u_phy(
+usb_fs_phy  #(.USB_CLK_FREQ(USB_CLK_FREQ)) u_phy(
     // Inputs
          .clk_i               (usb_clk_i           ),
          .rstn_i              (usb_rst_ssn         ),

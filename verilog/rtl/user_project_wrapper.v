@@ -204,6 +204,9 @@
 ////    4.3  May 23 2022, Dinesh A                                ////
 ////         Re targetted the design to mpw-6 tools set and risc  ////
 ////         core logic are timing optimized to 100mhz            ////
+////    4.4  May 29 2022, Dinesh A                                ////
+////         1. Digital PLL integrated and clock debug signal add ////
+////           @digitial io [33] port
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
 //// Copyright (C) 2000 Authors and OPENCORES.ORG                 ////
@@ -446,6 +449,7 @@ wire                           wbd_clk_wh                             ;
 wire                           wbd_clk_spi                            ;
 wire                           wbd_clk_pinmux                         ;
 wire                           wbd_int_rst_n                          ;
+wire                           wbd_pll_rst_n                          ;
 
 wire [15:0]                    irq_lines                              ;
 wire                           soft_irq                               ;
@@ -453,7 +457,6 @@ wire                           soft_irq                               ;
 
 wire [7:0]                     cfg_glb_ctrl                           ;
 wire [31:0]                    cfg_clk_ctrl1                          ;
-wire [31:0]                    cfg_clk_ctrl2                          ;
 wire [3:0]                     cfg_cska_wi                            ; // clock skew adjust for wishbone interconnect
 wire [3:0]                     cfg_cska_wh                            ; // clock skew adjust for web host
 
@@ -491,6 +494,7 @@ wire                           wbd_clk_wh_skew                        ; // clock
 
 wire [31:0]                    spi_debug                              ;
 wire [31:0]                    pinmux_debug                           ;
+wire                           dbg_clk_mon                            ; // clock monitoring port
 wire [63:0]                    riscv_debug                            ;
 
 // SFLASH I/F
@@ -586,7 +590,15 @@ wire                           i2cm_intr_o                            ;
 wire                           uartm_rxd                              ;
 wire                           uartm_txd                              ;
 
-
+//----------------------------------------------------------------
+//  Digital PLL I/F
+//  -------------------------------------------------------------
+wire                           cfg_pll_enb                            ; // Enable PLL
+wire [4:0]                     cfg_pll_fed_div                        ; // PLL feedback division ratio
+wire                           cfg_dco_mode                           ; // Run PLL in DCO mode
+wire [25:0]                    cfg_dc_trim                            ; // External trim for DCO mode
+wire                           pll_ref_clk                            ; // Input oscillator to match
+wire [1:0]                     pll_clk_out                            ; // Two 90 degree clock phases
 
 wire [3:0]                     spi_csn                                ;
 
@@ -627,6 +639,7 @@ wb_host u_wb_host(
           .usb_clk                 (usb_clk                 ),
 
           .wbd_int_rst_n           (wbd_int_rst_n           ),
+          .wbd_pll_rst_n           (wbd_pll_rst_n           ),
 
     // Master Port
           .wbm_rst_i               (wb_rst_i                ),  
@@ -660,16 +673,39 @@ wb_host u_wb_host(
           .wbs_err_i               (wbd_int_err_o           ),  
 
           .cfg_clk_ctrl1           (cfg_clk_ctrl1           ),
-          .cfg_clk_ctrl2           (cfg_clk_ctrl2           ),
+
+          .cfg_pll_enb             (cfg_pll_enb             ), 
+          .cfg_pll_fed_div         (cfg_pll_fed_div         ), 
+          .cfg_dco_mode            (cfg_dco_mode            ), 
+          .cfg_dc_trim             (cfg_dc_trim             ),
+          .pll_ref_clk             (pll_ref_clk             ), 
+          .pll_clk_out             (pll_clk_out             ), 
 
           .la_data_in              (la_data_in[17:0]        ),
 
           .uartm_rxd               (uartm_rxd               ),
-          .uartm_txd               (uartm_txd               )
+          .uartm_txd               (uartm_txd               ),
+
+	  .dbg_clk_mon             (dbg_clk_mon             )
 
 
     );
 
+
+// This rtl/gds picked from efabless caravel project 
+digital_pll   u_pll(
+`ifdef USE_POWER_PINS
+    .VPWR                           (vccd1                  ),
+    .VGND                           (vssd1                  ),
+`endif
+    .resetb                         (wbd_pll_rst_n          ), 
+    .enable                         (cfg_pll_enb            ), 
+    .div                            (cfg_pll_fed_div        ), 
+    .dco                            (cfg_dco_mode           ), 
+    .ext_trim                       (cfg_dc_trim            ),
+    .osc                            (pll_ref_clk            ), 
+    .clockp                         (pll_clk_out            ) 
+    );
 
 
 
@@ -1234,7 +1270,9 @@ pinmux u_pinmux(
 
 	  .pulse1m_mclk            (pulse1m_mclk            ),
 
-	  .pinmux_debug            (pinmux_debug            )
+	  .pinmux_debug            (pinmux_debug            ),
+
+	  .dbg_clk_mon             (dbg_clk_mon             )
 
 
 

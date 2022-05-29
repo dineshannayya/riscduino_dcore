@@ -76,6 +76,7 @@ set ::env(VERILOG_FILES_BLACKBOX) "\
 	$proj_dir/../../verilog/gl/ycr_intf.v \
 	$proj_dir/../../verilog/gl/ycr_core_top.v \
 	$proj_dir/../../verilog/gl/ycr2_iconnect.v \
+	$proj_dir/../../verilog/gl/digital_pll.v \
 	$::env(PDK_ROOT)/sky130A/libs.ref/sky130_sram_macros/verilog/sky130_sram_2kbyte_1rw1r_32x512_8.v \
 	"
 
@@ -88,6 +89,7 @@ set ::env(EXTRA_LEFS) "\
 	$lef_root/ycr_intf.lef \
 	$lef_root/ycr_core_top.lef \
 	$lef_root/ycr2_iconnect.lef \
+	$lef_root/digital_pll.lef \
 	$::env(PDK_ROOT)/sky130A/libs.ref/sky130_sram_macros/lef/sky130_sram_2kbyte_1rw1r_32x512_8.lef \
 	"
 
@@ -100,6 +102,7 @@ set ::env(EXTRA_GDS_FILES) "\
 	$gds_root/ycr_intf.gds \
 	$gds_root/ycr_core_top.gds \
 	$gds_root/ycr2_iconnect.gds \
+	$gds_root/digital_pll.gds \
 	$::env(PDK_ROOT)/sky130A/libs.ref/sky130_sram_macros/gds/sky130_sram_2kbyte_1rw1r_32x512_8.gds \
 	"
 

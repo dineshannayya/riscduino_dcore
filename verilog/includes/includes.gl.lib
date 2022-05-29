@@ -8,3 +8,4 @@
 -v $(PDK_ROOT)/sky130A/libs.ref/sky130_fd_sc_hvl/verilog/primitives.v
 -v $(PDK_ROOT)/sky130A/libs.ref/sky130_fd_sc_hvl/verilog/sky130_fd_sc_hvl.v
 
+$(USER_PROJECT_VERILOG)/gl/digital_pll.v
