@@ -15,7 +15,7 @@ assign X = (S) ? A1 : A0;
          for (tcnt = 0; $unsigned(tcnt) < WB; tcnt=tcnt+1) begin : bit_
              sky130_fd_sc_hd__mux2_8 u_mux (.A0 (A0[tcnt]), .A1 (A1[tcnt]), .S  (S), .X (X[tcnt]));
          end
-       end else begin : bit_
+       end else begin
           sky130_fd_sc_hd__mux2_8 u_mux (.A0 (A0), .A1 (A1), .S  (S), .X (X));
        end
     endgenerate
@@ -39,7 +39,7 @@ assign X = (S) ? A1 : A0;
          for (tcnt = 0; $unsigned(tcnt) < WB; tcnt=tcnt+1) begin : bit_
              sky130_fd_sc_hd__mux2_2 u_mux (.A0 (A0[tcnt]), .A1 (A1[tcnt]), .S  (S), .X (X[tcnt]));
          end
-       end else begin : bit_
+       end else begin 
           sky130_fd_sc_hd__mux2_2 u_mux (.A0 (A0), .A1 (A1), .S  (S), .X (X));
        end
     endgenerate
@@ -63,7 +63,7 @@ assign X = (S) ? A1 : A0;
          for (tcnt = 0; $unsigned(tcnt) < WB; tcnt=tcnt+1) begin : bit_
              sky130_fd_sc_hd__mux2_4 u_mux (.A0 (A0[tcnt]), .A1 (A1[tcnt]), .S  (S), .X (X[tcnt]));
          end
-       end else begin : bit_
+       end else begin
           sky130_fd_sc_hd__mux2_4 u_mux (.A0 (A0), .A1 (A1), .S  (S), .X (X));
        end
     endgenerate

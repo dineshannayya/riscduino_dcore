@@ -27,7 +27,7 @@ set ::env(FP_PDN_CORE_RING) "0"
 
 # Timing configuration
 set ::env(CLOCK_PERIOD) "10"
-set ::env(CLOCK_PORT) "app_clk usb_clk u_uart_core.u_lineclk_buf.u_mux/X"
+set ::env(CLOCK_PORT) "app_clk usb_clk u_uart0_core.u_lineclk_buf.genblk1.u_mux/X u_uart1_core.u_lineclk_buf.genblk1.u_mux/X"
 
 set ::env(SYNTH_MAX_FANOUT) 4
 

@@ -186,13 +186,13 @@ begin
 	wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h11F);
    end else if(d_risc_id == 1) begin
 	$display("STATUS: Working with Risc core 1");
-	wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h243);
+	wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h21F);
    end else if(d_risc_id == 2) begin
 	$display("STATUS: Working with Risc core 2");
-	wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h443);
+	wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h41F);
    end else if(d_risc_id == 3) begin
-	$display("STATUS: Working with Risc core 2");
-	wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h84F);
+	$display("STATUS: Working with Risc core 3");
+	wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h81F);
    end
 
    repeat (100) @(posedge clock);  // wait for Processor Get Ready

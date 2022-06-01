@@ -110,7 +110,7 @@ set ::env(SYNTH_DEFINES) [list SYNTHESIS ]
 
 set ::env(VERILOG_INCLUDE_DIRS) [glob $script_dir/../../verilog/rtl/yifive/ycr2c/src/includes ]
 
-set ::env(GLB_RT_MAXLAYER) 6
+#set ::env(GLB_RT_MAXLAYER) 6
 set ::env(RT_MAX_LAYER) {met5}
 
 set ::env(FP_PDN_CHECK_NODES) 0
