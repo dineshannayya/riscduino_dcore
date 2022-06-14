@@ -207,6 +207,8 @@
 ////    4.4  May 29 2022, Dinesh A                                ////
 ////         1. Digital PLL integrated and clock debug signal add ////
 ////           @digitial io [33] port
+////    4.6  June 13 2022, Dinesh A                               ////
+////         1. icache and dcache bypass config addded            ////
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
 //// Copyright (C) 2000 Authors and OPENCORES.ORG                 ////
@@ -357,8 +359,11 @@ wire   [WB_WIDTH-1:0]          wbd_riscv_dmem_adr_i                   ; // addre
 wire                           wbd_riscv_dmem_we_i                    ; // write
 wire   [WB_WIDTH-1:0]          wbd_riscv_dmem_dat_i                   ; // data output
 wire   [3:0]                   wbd_riscv_dmem_sel_i                   ; // byte enable
+wire   [2:0]                   wbd_riscv_dmem_bl_i                    ; // byte enable
+wire                           wbd_riscv_dmem_bry_i                   ; // burst access ready
 wire   [WB_WIDTH-1:0]          wbd_riscv_dmem_dat_o                   ; // data input
 wire                           wbd_riscv_dmem_ack_o                   ; // acknowlegement
+wire                           wbd_riscv_dmem_lack_o                  ; // acknowlegement
 wire                           wbd_riscv_dmem_err_o                   ; // error
 
 //---------------------------------------------------------------------
@@ -609,6 +614,8 @@ wire [15:0]                    cfg_riscv_ctrl;
 wire [3:0]                     cfg_riscv_sram_lphase   = cfg_riscv_ctrl[3:0];
 wire [2:0]                     cfg_riscv_cache_ctrl    = cfg_riscv_ctrl[6:4];
 wire [1:0]                     cfg_riscv_debug_sel     = cfg_riscv_ctrl[9:8];
+wire                           cfg_bypass_icache       = cfg_riscv_ctrl[10];
+wire                           cfg_bypass_dcache       = cfg_riscv_ctrl[11];
 
 /////////////////////////////////////////////////////////
 // Clock Skew Ctrl
@@ -730,6 +737,8 @@ ycr2_top_wb u_riscv_top (
 	  .core_debug_sel          (cfg_riscv_debug_sel     ),
 	  .cfg_sram_lphase         (cfg_riscv_sram_lphase   ),
 	  .cfg_cache_ctrl          (cfg_riscv_cache_ctrl    ),
+	  .cfg_bypass_icache       (cfg_bypass_icache       ),
+	  .cfg_bypass_dcache       (cfg_bypass_dcache       ),
 
     // Clock
           .core_clk                (cpu_clk                 ),
@@ -839,8 +848,11 @@ ycr2_top_wb u_riscv_top (
           .wbd_dmem_we_o           (wbd_riscv_dmem_we_i     ), 
           .wbd_dmem_dat_o          (wbd_riscv_dmem_dat_i    ),
           .wbd_dmem_sel_o          (wbd_riscv_dmem_sel_i    ),
+          .wbd_dmem_bl_o           (wbd_riscv_dmem_bl_i     ),
+          .wbd_dmem_bry_o          (wbd_riscv_dmem_bry_i    ),
           .wbd_dmem_dat_i          (wbd_riscv_dmem_dat_o    ),
           .wbd_dmem_ack_i          (wbd_riscv_dmem_ack_o    ),
+          .wbd_dmem_lack_i         (wbd_riscv_dmem_lack_o   ),
           .wbd_dmem_err_i          (wbd_riscv_dmem_err_o    ) 
 );
 
@@ -1047,11 +1059,14 @@ wb_interconnect  #(
           .m1_wbd_dat_i            (wbd_riscv_dmem_dat_i    ),
           .m1_wbd_adr_i            (wbd_riscv_dmem_adr_i    ),
           .m1_wbd_sel_i            (wbd_riscv_dmem_sel_i    ),
+          .m1_wbd_bl_i             (wbd_riscv_dmem_bl_i    ),
+          .m1_wbd_bry_i            (wbd_riscv_dmem_bry_i    ),
           .m1_wbd_we_i             (wbd_riscv_dmem_we_i     ),
           .m1_wbd_cyc_i            (wbd_riscv_dmem_stb_i    ),
           .m1_wbd_stb_i            (wbd_riscv_dmem_stb_i    ),
           .m1_wbd_dat_o            (wbd_riscv_dmem_dat_o    ),
           .m1_wbd_ack_o            (wbd_riscv_dmem_ack_o    ),
+          .m1_wbd_lack_o           (wbd_riscv_dmem_lack_o   ),
           .m1_wbd_err_o            (wbd_riscv_dmem_err_o    ),
          
          // Master 2 Interface

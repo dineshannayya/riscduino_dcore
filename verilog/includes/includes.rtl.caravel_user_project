@@ -59,7 +59,6 @@ $(USER_PROJECT_VERILOG)/rtl/user_reg_map.v
 -v $(USER_PROJECT_VERILOG)/rtl/wb_interconnect/src/wb_arb.sv
 -v $(USER_PROJECT_VERILOG)/rtl/wb_interconnect/src/wb_slave_port.sv
 -v $(USER_PROJECT_VERILOG)/rtl/wb_interconnect/src/wb_interconnect.sv
-
 -v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/core/pipeline/ycr_pipe_hdu.sv
 -v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/core/pipeline/ycr_pipe_tdu.sv
 -v $(USER_PROJECT_VERILOG)/rtl/yifive/ycr2c/src/core/pipeline/ycr_ipic.sv

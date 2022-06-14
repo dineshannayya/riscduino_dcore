@@ -138,12 +138,13 @@
      `include "yifive/ycr2c/src/top/ycr_timer.sv"
      `include "yifive/ycr2c/src/top/ycr_dmem_wb.sv"
      `include "yifive/ycr2c/src/top/ycr_imem_wb.sv"
-     `include "yifive/ycr2c/src/top/ycr2_mcore_router.sv"
      `include "yifive/ycr2c/src/top/ycr2_intf.sv"
-     `include "yifive/ycr2c/src/top/ycr2_mintf.sv"
+     `include "yifive/ycr2c/src/top/ycr_sram_mux.sv"
+     `include "yifive/ycr2c/src/top/ycr_router.sv"
+     `include "yifive/ycr2c/src/top/ycr2_iconnect.sv"
+     `include "yifive/ycr2c/src/top/ycr2_cross_bar.sv"
      `include "yifive/ycr2c/src/top/ycr2_top_wb.sv"
-     `include "yifive/ycr2c/src/top/ycr_icache_router.sv"
-     `include "yifive/ycr2c/src/top/ycr_dcache_router.sv"
+     `include "yifive/ycr2c/src/top/ycr_req_retiming.sv"
      `include "yifive/ycr2c/src/cache/src/core/icache_top.sv"
      `include "yifive/ycr2c/src/cache/src/core/icache_app_fsm.sv"
      `include "yifive/ycr2c/src/cache/src/core/icache_tag_fifo.sv"
@@ -165,4 +166,8 @@
      // standard cell + power pin
      `include "lib/clk_skew_adjust.gv"
      `include "lib/ctech_cells.sv"
+
+     `include "digital_pll/src/digital_pll_controller.v"
+     `include "digital_pll/src/digital_pll.v"
+     `include "digital_pll/src/ring_osc2x13.v"
 `endif

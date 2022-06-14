@@ -18,20 +18,12 @@
 ////                                                              ////
 ////  Standalone User validation Test bench                       ////
 ////                                                              ////
-////  This file is part of the YIFive cores project               ////
-////  https://github.com/dineshannayya/yifive_r0.git              ////
-////  http://www.opencores.org/cores/yifive/                      ////
+////  This file is part of the Riscduino cores project            ////
 ////                                                              ////
 ////  Description                                                 ////
 ////   This is a standalone test bench to validate the            ////
-////   Digital core.                                              ////
-////   1. User Risc core is booted using  compiled code of        ////
-////      user_risc_boot.c                                        ////
-////   2. User Risc core uses Serial Flash and SDRAM to boot      ////
-////   3. After successful boot, Risc core will  write signature  ////
-////      in to  user register from 0x3000_0018 to 0x3000_002C    ////
-////   4. Through the External Wishbone Interface we read back    ////
-////       and validate the user register to declared pass fail   ////
+////   Digital core with Risc core executing code from TCM/SRAM.  ////
+////   with icache and dcache bypass mode                         ////
 ////                                                              ////
 ////  To Do:                                                      ////
 ////    nothing                                                   ////
@@ -71,35 +63,10 @@
 
 `default_nettype wire
 
-`timescale 1 ns/1 ps
+`timescale 1 ns / 1 ns
 
 `include "sram_macros/sky130_sram_2kbyte_1rw1r_32x512_8.v"
-`include "is62wvs1288.v"
-
-
-
-localparam [31:0]      YCR1_SIM_EXIT_ADDR      = 32'h0000_00F8;
-localparam [31:0]      YCR1_SIM_PRINT_ADDR     = 32'hF000_0000;
-localparam [31:0]      YCR1_SIM_EXT_IRQ_ADDR   = 32'hF000_0100;
-localparam [31:0]      YCR1_SIM_SOFT_IRQ_ADDR  = 32'hF000_0200;
-
- `define QSPIM_GLBL_CTRL          32'h10000000
- `define QSPIM_DMEM_G0_RD_CTRL    32'h10000004
- `define QSPIM_DMEM_G0_WR_CTRL    32'h10000008
- `define QSPIM_DMEM_G1_RD_CTRL    32'h1000000C
- `define QSPIM_DMEM_G1_WR_CTRL    32'h10000010
-
- `define QSPIM_DMEM_CS_AMAP        32'h10000014
- `define QSPIM_DMEM_CA_AMASK       32'h10000018
-
- `define QSPIM_IMEM_CTRL1          32'h1000001C
- `define QSPIM_IMEM_CTRL2          32'h10000020
- `define QSPIM_IMEM_ADDR           32'h10000024
- `define QSPIM_IMEM_WDATA          32'h10000028
- `define QSPIM_IMEM_RDATA          32'h1000002C
- `define QSPIM_SPI_STATUS          32'h10000030
-
-module user_risc_regress_tb;
+module user_cache_bypass_tb;
 	reg clock;
 	reg wb_rst_i;
 	reg power1, power2;
@@ -115,7 +82,6 @@ module user_risc_regress_tb;
         wire [31:0] wbd_ext_dat_o;  // data input
         wire        wbd_ext_ack_o;  // acknowlegement
         wire        wbd_ext_err_o;  // error
-	wire        clk;
 
 	// User I/O
 	wire [37:0] io_oeb;
@@ -127,91 +93,15 @@ module user_risc_regress_tb;
 	wire [7:0] mprj_io_0;
 	reg         test_fail;
 	reg [31:0] read_data;
-
-
-	int unsigned                f_results;
-        int unsigned                f_info;
-        
-        string                      s_results;
-        string                      s_info;
-        `ifdef SIGNATURE_OUT
-        string                      s_testname;
-        bit                         b_single_run_flag;
-        `endif  //  SIGNATURE_OUT
-
-
-	`ifdef VERILATOR
-         logic [255:0]          test_file;
-	 logic [255:0]          test_ram_file;
-         `else // VERILATOR
-         string                 test_file;
-	 string                 test_ram_file;
-
-         `endif // VERILATOR
-
-
-        event	               reinit_event;
-	bit                    test_running;
-        int unsigned           tests_passed;
-        int unsigned           tests_total;
-
-	logic  [7:0]           tem_mem[0:4095];
-	logic  [31:0]          mem_data;
 	integer    d_risc_id;
 
 
-parameter P_FSM_C      = 4'b0000; // Command Phase Only
-parameter P_FSM_CW     = 4'b0001; // Command + Write DATA Phase Only
-parameter P_FSM_CA     = 4'b0010; // Command -> Address Phase Only
-
-parameter P_FSM_CAR    = 4'b0011; // Command -> Address -> Read Data
-parameter P_FSM_CADR   = 4'b0100; // Command -> Address -> Dummy -> Read Data
-parameter P_FSM_CAMR   = 4'b0101; // Command -> Address -> Mode -> Read Data
-parameter P_FSM_CAMDR  = 4'b0110; // Command -> Address -> Mode -> Dummy -> Read Data
-
-parameter P_FSM_CAW    = 4'b0111; // Command -> Address ->Write Data
-parameter P_FSM_CADW   = 4'b1000; // Command -> Address -> DUMMY + Write Data
-parameter P_FSM_CAMW   = 4'b1001; // Command -> Address -> MODE + Write Data
-
-parameter P_FSM_CDR    = 4'b1010; // COMMAND -> DUMMY -> READ
-parameter P_FSM_CDW    = 4'b1011; // COMMAND -> DUMMY -> WRITE
-parameter P_FSM_CR     = 4'b1100;  // COMMAND -> READ
-
-parameter P_MODE_SWITCH_IDLE     = 2'b00;
-parameter P_MODE_SWITCH_AT_ADDR  = 2'b01;
-parameter P_MODE_SWITCH_AT_DATA  = 2'b10;
-
-parameter P_SINGLE = 2'b00;
-parameter P_DOUBLE = 2'b01;
-parameter P_QUAD   = 2'b10;
-parameter P_QDDR   = 2'b11;
-	//-----------------------------------------------------------------
-	// Since this is regression, reset will be applied multiple time
-	// Reset logic
-	// ----------------------------------------------------------------
-	bit [1:0]     rst_cnt;
-        bit           rst_init;
-	wire          rst_n;
-
-
-        assign rst_n = &rst_cnt;
-	assign wb_rst_i    =  !rst_n;
-        
-        always_ff @(posedge clk) begin
-	if (rst_init)   begin
-	     rst_cnt <= '0;
-	     -> reinit_event;
-	end
-            else if (~&rst_cnt) rst_cnt <= rst_cnt + 1'b1;
-        end
 
 	// External clock is used by default.  Make this artificially fast for the
 	// simulation.  Normally this would be a slow clock and the digital PLL
 	// would be the fast clock.
 
 	always #12.5 clock <= (clock === 1'b0);
-
-	assign clk = clock;
 
 	initial begin
 		clock = 0;
@@ -221,111 +111,94 @@ parameter P_QDDR   = 2'b11;
                 wbd_ext_we_i  ='h0;  // write
                 wbd_ext_dat_i ='h0;  // data output
                 wbd_ext_sel_i ='h0;  // byte enable
-   
-		$value$plusargs("risc_core_id=%d", d_risc_id);
 	end
 
 	`ifdef WFDUMP
 	   initial begin
 	   	$dumpfile("simx.vcd");
-	   	$dumpvars(1, user_risc_regress_tb);
-	   	$dumpvars(1, user_risc_regress_tb.u_top);
-	   	$dumpvars(0, user_risc_regress_tb.u_top.u_riscv_top);
-	   	$dumpvars(0, user_risc_regress_tb.u_top.u_qspi_master);
-	   	$dumpvars(0, user_risc_regress_tb.u_top.u_intercon);
+	   	$dumpvars(2, user_cache_bypass_tb);
+	   	$dumpvars(0, user_cache_bypass_tb.u_top.u_riscv_top);
 	   end
        `endif
 
-        integer i;
+	initial begin
 
-        always @reinit_event
-	begin
-		// Initialize the SPI memory with hex content
-		// Wait for reset removal
-		wait (rst_n == 1);
+		$value$plusargs("risc_core_id=%d", d_risc_id);
 
-
-		// Initialize the SPI memory with hex content
-                $write("\033[0;34m---Initializing the SPI Memory with Hexfile: %s\033[0m\n", test_file);
-                $readmemh(test_file,u_spi_flash_256mb.Mem);
-
-		// some of the RISCV test need SRAM area for specific
-		// instruction execution like fence
-		$sformat(test_ram_file, "%s.ram",test_file);
-                $readmemh(test_ram_file,u_sram.memory);
-
-		/***
-		// Split the Temp memory content to two sram file
-                $readmemh(test_ram_file,tem_mem);
-		// Load the SRAM0/SRAM1 with 2KB data
-                $write("\033[0;34m---Initializing the u_sram0_2kb Memory with Hexfile: %s\033[0m\n",test_ram_file);
-		// Initializing the SRAM
-		for(i = 0 ; i < 2048; i = i +4) begin
-		    mem_data = {tem_mem[i+3],tem_mem[i+2],tem_mem[i+1],tem_mem[i+0]};
-		    //$display("Filling Mem Location : %x with data : %x",i, mem_data);
-		    u_top.u_sram0_2kb.mem[i/4] = mem_data;
-		end
-		for(i = 2048 ; i < 4096; i = i +4) begin
-		  mem_data = {tem_mem[i+3],tem_mem[i+2],tem_mem[i+1],tem_mem[i+0]};
-		  //$display("Filling Mem Location : %x with data : %x",i, mem_data);
-		  u_top.u_sram1_2kb.mem[(2048-i)/4] = mem_data;
-		end
-		***/
-
-		//for(i =32'h00; i < 32'h100; i = i+1)
-                //    $display("Location: %x, Data: %x", i, u_top.u_tsram0_2kb.mem[i]);
-
-
-		#200; 
+		#200; // Wait for reset removal
 	        repeat (10) @(posedge clock);
-		$display("Monitor: Core reset removal");
+		$display("Monitor: Standalone User Risc Boot Test Started");
 
 		// Remove Wb Reset
 		wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h1);
-	        repeat (2) @(posedge clock);
-		#1;
-		//------------ fuse_mhartid= 0x00
-                //wb_user_core_write('h3002_0004,'h0);
-
 
 	        repeat (2) @(posedge clock);
 		#1;
-		// Remove WB and SPI Reset, Keep SDARM and CORE under Reset
-                wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h01F);
+		// Set the icahce and dcache bypass
+                wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG1,{4'b0,2'b11,2'b00,8'b0,16'b0});
 
-		// CS#2 Switch to QSPI Mode
-                wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_BANK_SEL,'h1000); // Change the Bank Sel 1000
-		wb_user_core_write(`ADDR_SPACE_QSPI+`QSPIM_IMEM_CTRL1,{16'h0,1'b0,1'b0,4'b0000,P_MODE_SWITCH_IDLE,P_SINGLE,P_SINGLE,4'b0100});
-		wb_user_core_write(`ADDR_SPACE_QSPI+`QSPIM_IMEM_CTRL2,{8'h0,2'b00,2'b00,P_FSM_C,8'h00,8'h38});
-		wb_user_core_write(`ADDR_SPACE_QSPI+`QSPIM_IMEM_WDATA,32'h0);
-
-		// Enable the DCACHE Remap to SRAM region
-		//wb_user_core_write('h3080_000C,{4'b0000,4'b1111, 24'h0});
-		//
 		// Remove all the reset
-               if(d_risc_id == 0) begin
-                    $display("STATUS: Working with Risc core 0");
-                    wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h11F);
-               end else begin
-                    $display("STATUS: Working with Risc core 1");
-                    wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h21F);
-               end
+		if(d_risc_id == 0) begin
+		     $display("STATUS: Working with Risc core 0");
+                     wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h11F);
+		end else begin
+		     $display("STATUS: Working with Risc core 1");
+                     wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h21F);
+		end
 
+
+		// Repeat cycles of 1000 clock edges as needed to complete testbench
+		repeat (30) begin
+			repeat (1000) @(posedge clock);
+			// $display("+1000 cycles");
+		end
+
+
+		$display("Monitor: Reading Back the expected value");
+		// User RISC core expect to write these value in global
+		// register, read back and decide on pass fail
+		// 0x30000018  = 0x11223344; 
+                // 0x3000001C  = 0x22334455; 
+                // 0x30000020  = 0x33445566; 
+                // 0x30000024  = 0x44556677; 
+                // 0x30000028 = 0x55667788; 
+                // 0x3000002C = 0x66778899; 
+
+                test_fail = 0;
+		wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_1,read_data,32'h11223344);
+		wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_2,read_data,32'h22334455);
+		wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_3,read_data,32'h33445566);
+		wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_4,read_data,32'h44556677);
+		wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_5,read_data,32'h55667788);
+		wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_6,read_data,32'h66778899);
+
+
+	   
+	    	$display("###################################################");
+          	if(test_fail == 0) begin
+		   `ifdef GL
+	    	       $display("Monitor: Standalone User Risc Boot (GL) Passed");
+		   `else
+		       $display("Monitor: Standalone User Risc Boot (RTL) Passed");
+		   `endif
+	        end else begin
+		    `ifdef GL
+	    	        $display("Monitor: Standalone User Risc Boot (GL) Failed");
+		    `else
+		        $display("Monitor: Standalone User Risc Boot (RTL) Failed");
+		    `endif
+		 end
+	    	$display("###################################################");
+	    $finish;
 	end
 
+	initial begin
+		wb_rst_i <= 1'b1;
+		#100;
+		wb_rst_i <= 1'b0;	    	// Release reset
+	end
 wire USER_VDD1V8 = 1'b1;
 wire VSS = 1'b0;
-
-//-------------------------------------------------------------------------------
-// Run tests
-//-------------------------------------------------------------------------------
-
-`include "riscv_runtests.sv"
-
-
-//-------------------------------------------------------------------------------
-// Core instance
-//-------------------------------------------------------------------------------
 
 user_project_wrapper u_top(
 `ifdef USE_POWER_PINS
@@ -362,24 +235,10 @@ user_project_wrapper u_top(
 
 );
 
-
-logic [31:0] riscv_dmem_req_cnt; // cnt dmem req
-initial 
-begin
-   riscv_dmem_req_cnt = 0;
-end
-
-always @(posedge u_top.wbd_riscv_dmem_stb_i)
-begin
-    riscv_dmem_req_cnt = riscv_dmem_req_cnt+1;
-    if((riscv_dmem_req_cnt %200) == 0)
-	$display("STATUS: Total Dmem Req Cnt: %d ",riscv_dmem_req_cnt);
-end
-
-
 `ifndef GL // Drive Power for Hold Fix Buf
     // All standard cell need power hook-up for functionality work
     initial begin
+
     end
 `endif    
 
@@ -405,9 +264,8 @@ end
    assign io_in[31] = flash_io2;
    assign io_in[32] = flash_io3;
 
-
    // Quard flash
-     s25fl256s #(.mem_file_name("add.hex"),
+     s25fl256s #(.mem_file_name("user_cache_bypass.hex"),
 	         .otp_file_name("none"),
                  .TimingModel("S25FL512SAGMFI010_F_30pF")) 
 		 u_spi_flash_256mb (
@@ -423,20 +281,6 @@ end
 
        );
 
-
-   wire spiram_csb = io_out[27];
-
-   is62wvs1288 #(.mem_file_name("none"))
-	u_sram (
-         // Data Inputs/Outputs
-           .io0     (flash_io0),
-           .io1     (flash_io1),
-           // Controls
-           .clk    (flash_clk),
-           .csb    (spiram_csb),
-           .io2    (flash_io2),
-           .io3    (flash_io3)
-    );
 
 
 
@@ -495,31 +339,58 @@ begin
 end
 endtask
 
+task  wb_user_core_read_check;
+input [31:0] address;
+output [31:0] data;
+input [31:0] cmp_data;
+reg    [31:0] data;
+begin
+  repeat (1) @(posedge clock);
+  #1;
+  wbd_ext_adr_i =address;  // address
+  wbd_ext_we_i  ='h0;  // write
+  wbd_ext_dat_i ='0;  // data output
+  wbd_ext_sel_i ='hF;  // byte enable
+  wbd_ext_cyc_i ='h1;  // strobe/request
+  wbd_ext_stb_i ='h1;  // strobe/request
+  wait(wbd_ext_ack_o == 1);
+  repeat (1) @(negedge clock);
+  data  = wbd_ext_dat_o;  
+  repeat (1) @(posedge clock);
+  #1;
+  wbd_ext_cyc_i ='h0;  // strobe/request
+  wbd_ext_stb_i ='h0;  // strobe/request
+  wbd_ext_adr_i ='h0;  // address
+  wbd_ext_we_i  ='h0;  // write
+  wbd_ext_dat_i ='h0;  // data output
+  wbd_ext_sel_i ='h0;  // byte enable
+  if(data !== cmp_data) begin
+     $display("ERROR : WB USER ACCESS READ  Address : 0x%x, Exd: 0x%x Rxd: 0x%x ",address,cmp_data,data);
+     test_fail = 1;
+  end else begin
+     $display("STATUS: WB USER ACCESS READ  Address : 0x%x, Data : 0x%x",address,data);
+  end
+  repeat (2) @(posedge clock);
+end
+endtask
+
 `ifdef GL
 
-wire        wbd_spi_stb_i   = u_top.u_spi_master.wbd_stb_i;
-wire        wbd_spi_ack_o   = u_top.u_spi_master.wbd_ack_o;
-wire        wbd_spi_we_i    = u_top.u_spi_master.wbd_we_i;
-wire [31:0] wbd_spi_adr_i   = u_top.u_spi_master.wbd_adr_i;
-wire [31:0] wbd_spi_dat_i   = u_top.u_spi_master.wbd_dat_i;
-wire [31:0] wbd_spi_dat_o   = u_top.u_spi_master.wbd_dat_o;
-wire [3:0]  wbd_spi_sel_i   = u_top.u_spi_master.wbd_sel_i;
+wire        wbd_spi_stb_i   = u_top.u_qspi_master.wbd_stb_i;
+wire        wbd_spi_ack_o   = u_top.u_qspi_master.wbd_ack_o;
+wire        wbd_spi_we_i    = u_top.u_qspi_master.wbd_we_i;
+wire [31:0] wbd_spi_adr_i   = u_top.u_qspi_master.wbd_adr_i;
+wire [31:0] wbd_spi_dat_i   = u_top.u_qspi_master.wbd_dat_i;
+wire [31:0] wbd_spi_dat_o   = u_top.u_qspi_master.wbd_dat_o;
+wire [3:0]  wbd_spi_sel_i   = u_top.u_qspi_master.wbd_sel_i;
 
-wire        wbd_sdram_stb_i = u_top.u_sdram_ctrl.wb_stb_i;
-wire        wbd_sdram_ack_o = u_top.u_sdram_ctrl.wb_ack_o;
-wire        wbd_sdram_we_i  = u_top.u_sdram_ctrl.wb_we_i;
-wire [31:0] wbd_sdram_adr_i = u_top.u_sdram_ctrl.wb_addr_i;
-wire [31:0] wbd_sdram_dat_i = u_top.u_sdram_ctrl.wb_dat_i;
-wire [31:0] wbd_sdram_dat_o = u_top.u_sdram_ctrl.wb_dat_o;
-wire [3:0]  wbd_sdram_sel_i = u_top.u_sdram_ctrl.wb_sel_i;
-
-wire        wbd_uart_stb_i  = u_top.u_uart_i2c_usb.reg_cs;
-wire        wbd_uart_ack_o  = u_top.u_uart_i2c_usb.reg_ack;
-wire        wbd_uart_we_i   = u_top.u_uart_i2c_usb.reg_wr;
-wire [7:0]  wbd_uart_adr_i  = u_top.u_uart_i2c_usb.reg_addr;
-wire [7:0]  wbd_uart_dat_i  = u_top.u_uart_i2c_usb.reg_wdata;
-wire [7:0]  wbd_uart_dat_o  = u_top.u_uart_i2c_usb.reg_rdata;
-wire        wbd_uart_sel_i  = u_top.u_uart_i2c_usb.reg_be;
+wire        wbd_uart_stb_i  = u_top.u_uart_i2c_usb_spi.reg_cs;
+wire        wbd_uart_ack_o  = u_top.u_uart_i2c_usb_spi.reg_ack;
+wire        wbd_uart_we_i   = u_top.u_uart_i2c_usb_spi.reg_wr;
+wire [8:0]  wbd_uart_adr_i  = u_top.u_uart_i2c_usb_spi.reg_addr;
+wire [7:0]  wbd_uart_dat_i  = u_top.u_uart_i2c_usb_spi.reg_wdata;
+wire [7:0]  wbd_uart_dat_o  = u_top.u_uart_i2c_usb_spi.reg_rdata;
+wire        wbd_uart_sel_i  = u_top.u_uart_i2c_usb_spi.reg_be;
 
 `endif
 
