@@ -580,81 +580,135 @@ Following Design changes are done on the basic version of syntacore RISC core
    sudo usermod -aG docker <your user name>
    # Reboot the system to enable the docker setup
 ```
-##  Step-2: Update the Submodule, To to project area
+##  Step-2: Clone , update the Submodule, unzip the content
 ```bash
+   git clone https://github.com/dineshannayya/riscduino.git
+   cd riscduino
    git submodule init
    git submodule update
-```
-## Step-3: clone Openlane scripts under workarea
-```bash
-   git clone https://github.com/The-OpenROAD-Project/OpenLane.git
+   make unzip
 ```
 
-## Step-4: add Environment setting
+## Note-1: RTL to GDS Docker
+    - Required openlane and pdk are moved inside the riscduino docker to avoid the external dependency. 
+    - flow automatically pull the required docker based on MPW version.
+    - RTL to gds docker is hardcoded inside File: openlane/Makefile
 ```bash
-    export CARAVEL_ROOT=<Carvel Installed Path>
-    export OPENLANE_ROOT=<OpenLane Installed Path>
-    export OPENLANE_IMAGE_NAME=efabless/openlane:latest
-    export PDK_ROOT=<PDK Installed PATH>
-    export PDK_PATH=<PDK Install Path>/sky130A
+     OPENLANE_TAG = mpw6
+     OPENLANE_IMAGE_NAME = riscduino/openlane:$(OPENLANE_TAG)
 ```
-## Step-5: To install the PDK
+## Note-1.1: View the RTL to GDS Docker content
+    - for MPW-6 caravel pdk and openlane avaible inside riscduino/openlane:mpw6 docker 
+    - caravel, openlane and pdk envionment are automatically pointed to internal docker pointer
+    - To view the docker contents
 ```bash
-   source ~/.bashrc
-   cd OpenLane
-   make pdk
+    docker run -ti --rm riscduino/openlane:mpw6  bash
+    cd /opt/pdk_mpw6     -  pdk folder
+    cd /opt/caravel      -  caravel folder 
+    cd /openlane         -  openlane folder
+    env   - Show the internally defined env's
+        CARAVEL_ROOT=/opt/caravel
+        PDK_ROOT=/opt/pdk_mpw6
+```
+
+## Note-2: RTL Simulation Docker
+    - Required caravel and pdk are moved inside the riscduino docker to avoid the external dependency. 
+    - flow automatically pull the required docker based on MPW version.
+    - To view the docker contents
+    - RTL simulation docker hardcoded inside File: Makefile
+        simenv:
+	    docker pull riscduino/dv_setup:mpw6
+
+## Note-2.1: View the RTL Simulation Docker content
+    - for MPW-6 caravel and pdk avaible inside riscduino/dv_setup:mpw6 docker this is used for RTL to gds flows
+    - caravel and pdk envionment are automatically pointed to internal docker pointer
+    - To view the docker contents
+```bash
+    docker run -ti --rm riscduino/dv_setup:mpw6  bash
+    cd /opt/pdk_mpw6     -  pdk folder
+    cd /opt/caravel      -  caravel folder 
+    env   - Show the internally defined env's
+        CARAVEL_ROOT=/opt/caravel
+        PDK_ROOT=/opt/pdk_mpw6
 ```
 
 # Tests preparation
 
 The simulation package includes the following tests:
 
-* **risc_boot**           - Simple User Risc core boot 
-* **wb_port**             - User Wishbone validation
+* **risc_boot**           - Complete caravel User Risc core boot 
+* **wb_port**             - Complete caravel User Wishbone validation
+* **uart_master**         - complete caravel user uart master test
 * **user_risc_boot**      - Standalone User Risc core boot
-* **user_mbist_test1**    - Standalone MBIST test
+* **user_sspi**           - Standalone SSPI test
+* **user_qspi**           - Standalone Quad SPI test
 * **user_spi**            - Standalone SPI test
 * **user_i2c**            - Standalone I2C test
-* **user_risc_soft_boot** - Standalone Risc with SRAM as Boot
+* **user_usb**            - Standalone USB Host test
+* **user_risc_boot**      - Standalone Risc Boot test
+* **user_uart**           - Standalone Risc with UART-0 Test
+* **user_uart1**          - Standalone Risc with UART-1 Test
+* **user_gpio**           - Standalone GPIO Test
+* **user_pwm**            - Standalone pwm Test
+* **user_timer**          - Standalone timer Test
+* **user_uart_master**    - Standalone uart master test
+* **riscv_regress**       - Standalone riscv compliance and regression test suite
+
 
 
 # Running Simulation
 
 Examples:
 ``` sh
-    make verify-wb_port  
-    make verify-risc_boot
-    make verify-uart_master
-    make verify-user_basic
-    make verify-user_uart
-    make verify-user_uart1
-    make verify-user_sspi
-    make verify-user_i2cm
-    make verify-user_risc_boot
-    make verify-user_pwm
-    make verify-user_timer
-    make verify-user_sspi
-    make verify-user_qspi
-    make verify-user_usb
-    make verify-user_uart_master
-    make verify-wb_port SIM=RTL DUMP=OFF
-    make verify-wb_port SIM=RTL DUMP=ON
-    make verify-riscv_regress
-    make verify-wb_port  SIM=GL
-    make verify-risc_boot SIM=GL
-    make verify-uart_master SIM=GL
-    make verify-user_basic SIM=GL
-    make verify-user_uart SIM=GL
-    make verify-user_uart1 SIM=GL
-    make verify-user_sspi SIM=GL
-    make verify-user_i2cm SIM=GL
-    make verify-user_risc_boot SIM=GL
-    make verify-user_pwm SIM=GL
-    make verify-user_timer SIM=GL
-    make verify-user_sspi SIM=GL
-    make verify-user_qspi SIM=GL
-    make verify-user_usb SIM=GL
-    make verify-user_uart_master
+    make verify-wb_port                        - User Wishbone Test from caravel
+    make verify-risc_boot                      - User Risc core test from caravel
+    make verify-uart_master                    - User uart master test from caravel
+    make verify-user_basic                     - Standalone Basic signal and clock divider test
+    make verify-user_uart                      - Standalone user uart-0 test using user risc core
+    make verify-user_uart1                     - Standalone user uart-0 test using user risc core
+    make verify-user_i2cm                      - Standalone user i2c test
+    make verify-user_risc_boot                 - standalone user risc core-0 boot test
+    make verify-user_pwm                       - standalone user pwm test
+    make verify-user_timer                     - standalone user timer test
+    make verify-user_sspi                      - standalone user spi test
+    make verify-user_qspi                      - standalone user quad spi test
+    make verify-user_usb                       - standalone user usb host test
+    make verify-user_gpio                      - standalone user gpio test
+    make verify-user_aes                       - standalone aes test with risc core-0
+    make verify-user_cache_bypass              - standalone icache and dcache bypass test with risc core-0
+    make verify-user_uart_master               - standalone user uart master test
+    make verify-user_sram_exec                 - standalone riscv core-0 test with executing code from data memory
+    make verify-riscv_regress                  - standalone riscv compliance test suite
+    make verify-arudino_risc_boot              - standalone riscv core-0 boot using arduino tool set
+    make verify-user_mcore                     - standalone riscv multi-core test
+    make verify-user_sram_exec RISC_CORE=1     - standalone riscv core-1 test with executing code from data memory
+    make verify-user_risc_boot RISC_CORE=1     - standalone user risc core-1 boot test
+    make verify-user_uart RISC_CORE=1          - Standalone user uart test using user risc core-1
+    make verify-user_uart1 RISC_CORE=1         - Standalone user uart test using user risc core-1
+    make verify-user_aes  RISC_CORE=1          - standalone aes test with risc core-1
+    make verify-user_cache_bypass RISC_CORE=1  - standalone icache and dcache bypass test with risc core-1
+    make verify-arudino_risc_boot RISC_CORE=1  - standalone riscv core-1 boot using arduino tool set
+    
+    make verify-user_uart SIM=RTL DUMP=OFF     - Standalone user uart-0 test using user risc core with waveform dump off
+    make verify-user_uart SIM=RTL DUMP=ON      - Standalone user uart-0 test using user risc core with waveform dump on
+    make verify-user_uart SIM=GL DUMP=OFF      - Standalone user uart-0 test using user risc core with gatelevel netlist
+    make verify-user_uart SIM=GL DUMP=ON       - Standalone user uart-0 test using user risc core with gatelevel netlist and waveform on
+
+```
+# Running RTL to GDS flows
+   - First run the individual macro file
+   - Last run the user_project_wrapper
+``` sh
+   cd openlane
+   make pinmux
+   make qspim_top
+   make uart_i2cm_usb_spi_top
+   make wb_host
+   make wb_interconnect
+   make ycr_intf
+   make ycr_core_top
+   make ycr_iconnect
+   make user_project_wrapper
 ```
 
 # Tool Sets
@@ -691,6 +745,11 @@ Riscduino Soc flow uses Openlane tool sets.
     3. `Netgen` - Performs LVS Checks
     4. `CVC` - Performs Circuit Validity Checks
 
+# Riscduino documentation
+    Riscduino documentation available at <https://riscduino.readthedocs.io/en/latest/>
+
+# Arduino ide integration
+    We are in initial phase of Riscduino board integration into arduino and integration details are available at <https://github.com/dineshannayya/riscduino_board/>
 
 # News
 * **Riscduino Aim** - https://www.youtube.com/watch?v=lFVnicPhTI0

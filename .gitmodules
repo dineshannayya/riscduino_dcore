@@ -4,3 +4,6 @@
 [submodule "verilog/rtl/qspim"]
 	path = verilog/rtl/qspim
 	url = https://github.com/dineshannayya/qspim.git
+[submodule "verilog/dv/common/riscduino_board"]
+	path = verilog/dv/common/riscduino_board
+	url = https://github.com/dineshannayya/riscduino_board.git
