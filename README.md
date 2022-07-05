@@ -680,6 +680,7 @@ Examples:
     make verify-user_sram_exec                 - standalone riscv core-0 test with executing code from data memory
     make verify-riscv_regress                  - standalone riscv compliance test suite
     make verify-arudino_risc_boot              - standalone riscv core-0 boot using arduino tool set
+    make verify-arudino_hello_world            - standalone riscv core-0 hello world test using arduino tool set
     make verify-user_mcore                     - standalone riscv multi-core test
     make verify-user_sram_exec RISC_CORE=1     - standalone riscv core-1 test with executing code from data memory
     make verify-user_risc_boot RISC_CORE=1     - standalone user risc core-1 boot test
@@ -688,6 +689,7 @@ Examples:
     make verify-user_aes  RISC_CORE=1          - standalone aes test with risc core-1
     make verify-user_cache_bypass RISC_CORE=1  - standalone icache and dcache bypass test with risc core-1
     make verify-arudino_risc_boot RISC_CORE=1  - standalone riscv core-1 boot using arduino tool set
+    make verify-arudino_hello_world RISC_CORE=1 - standalone riscv core-1 hello world test using arduino tool set
     
     make verify-user_uart SIM=RTL DUMP=OFF     - Standalone user uart-0 test using user risc core with waveform dump off
     make verify-user_uart SIM=RTL DUMP=ON      - Standalone user uart-0 test using user risc core with waveform dump on
