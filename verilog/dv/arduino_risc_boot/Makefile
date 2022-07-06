@@ -45,7 +45,7 @@ export IVERILOG_DUMPER = fst
 
 .SUFFIXES:
 
-PATTERN = arudino_risc_boot
+PATTERN = arduino_risc_boot
 
 all:  ${PATTERN:=.vcd}
 
