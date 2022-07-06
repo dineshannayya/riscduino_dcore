@@ -75,7 +75,7 @@
 `timescale 1 ns / 1 ns
 
 `include "sram_macros/sky130_sram_2kbyte_1rw1r_32x512_8.v"
-module arudino_risc_boot_tb;
+module arduino_risc_boot_tb;
 	reg clock;
 	reg wb_rst_i;
 	reg power1, power2;
@@ -125,7 +125,7 @@ module arudino_risc_boot_tb;
 	`ifdef WFDUMP
 	   initial begin
 	   	$dumpfile("simx.vcd");
-	   	$dumpvars(3, arudino_risc_boot_tb);
+	   	$dumpvars(3, arduino_risc_boot_tb);
 	   end
        `endif
 
@@ -270,7 +270,7 @@ user_project_wrapper u_top(
    assign io_in[32] = flash_io3;
 
    // Quard flash
-     s25fl256s #(.mem_file_name("arudino_risc_boot.ino.hex"),
+     s25fl256s #(.mem_file_name("arduino_risc_boot.ino.hex"),
 	         .otp_file_name("none"),
                  .TimingModel("S25FL512SAGMFI010_F_30pF")) 
 		 u_spi_flash_256mb (

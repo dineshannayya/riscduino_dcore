@@ -45,7 +45,7 @@ export IVERILOG_DUMPER = fst
 
 .SUFFIXES:
 
-PATTERN = arudino_ascii_table
+PATTERN = arduino_ascii_table
 
 all:  ${PATTERN:=.vcd}
 

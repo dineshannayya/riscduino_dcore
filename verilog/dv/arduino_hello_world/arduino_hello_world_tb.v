@@ -77,7 +77,7 @@
 `include "sram_macros/sky130_sram_2kbyte_1rw1r_32x512_8.v"
 `include "uart_agent.v"
 
-module arudino_hello_world_tb;
+module arduino_hello_world_tb;
 	reg clock;
 	reg wb_rst_i;
 	reg power1, power2;
@@ -147,11 +147,11 @@ module arudino_hello_world_tb;
 	`ifdef WFDUMP
 	   initial begin
 	   	$dumpfile("simx.vcd");
-	   	$dumpvars(3, arudino_hello_world_tb);
-	   	//$dumpvars(0, arudino_hello_world_tb.u_top.u_riscv_top.i_core_top_0);
-	   	//$dumpvars(0, arudino_hello_world_tb.u_top.u_riscv_top.u_connect);
-	   	//$dumpvars(0, arudino_hello_world_tb.u_top.u_riscv_top.u_intf);
-	   	$dumpvars(0, arudino_hello_world_tb.u_top.u_uart_i2c_usb_spi.u_uart0_core);
+	   	$dumpvars(3, arduino_hello_world_tb);
+	   	//$dumpvars(0, arduino_hello_world_tb.u_top.u_riscv_top.i_core_top_0);
+	   	//$dumpvars(0, arduino_hello_world_tb.u_top.u_riscv_top.u_connect);
+	   	//$dumpvars(0, arduino_hello_world_tb.u_top.u_riscv_top.u_intf);
+	   	$dumpvars(0, arduino_hello_world_tb.u_top.u_uart_i2c_usb_spi.u_uart0_core);
 	   end
        `endif
 
@@ -357,7 +357,7 @@ user_project_wrapper u_top(
    assign io_in[32] = flash_io3;
 
    // Quard flash
-     s25fl256s #(.mem_file_name("arudino_hello_world.ino.hex"),
+     s25fl256s #(.mem_file_name("arduino_hello_world.ino.hex"),
 	         .otp_file_name("none"),
                  .TimingModel("S25FL512SAGMFI010_F_30pF")) 
 		 u_spi_flash_256mb (
