@@ -28,7 +28,7 @@ DESIGNS?=../../..
 export USER_PROJECT_VERILOG ?=  $(DESIGNS)/verilog
 ## YIFIVE FIRMWARE
 YIFIVE_FIRMWARE_PATH = $(USER_PROJECT_VERILOG)/dv/firmware
-GCC64_PREFIX?=riscv64-unknown-elf
+GCC_PREFIX?=riscv32-unknown-elf
 
 
 ## Simulation mode: RTL/GL

@@ -24,12 +24,12 @@ CONFIG = caravel_user_project
 #######################################################################
 
 DESIGNS?=../../..
-TOOLS?=/opt/riscv64i/
+TOOLS?=/opt/riscv32i/
 
 export USER_PROJECT_VERILOG ?=  $(DESIGNS)/verilog
 ## YIFIVE FIRMWARE
 YIFIVE_FIRMWARE_PATH = $(USER_PROJECT_VERILOG)/dv/firmware
-GCC64_PREFIX?=riscv64-unknown-elf
+GCC_PREFIX?=riscv32-unknown-elf
 
 
 ## Simulation mode: RTL/GL
@@ -51,12 +51,12 @@ all:  ${PATTERN:=.vcd}
 vvp:  ${PATTERN:=.vvp}
 
 %.vvp: %_tb.v
-	${GCC64_PREFIX}-gcc -O2 -funroll-loops -fpeel-loops -fgcse-sm -fgcse-las  -D__RVC_EXT -static -std=gnu99 -fno-common -fno-builtin-printf -DTCM=0 -Wa,-march=rv32imc -march=rv32imc -mabi=ilp32 -DFLAGS_STR=\""-O2 -funroll-loops -fpeel-loops -fgcse-sm -fgcse-las "\"  -c -I./ -I$(YIFIVE_FIRMWARE_PATH)  user_mcore.c -o user_mcore.o
-	${GCC64_PREFIX}-gcc -O2 -funroll-loops -fpeel-loops -fgcse-sm -fgcse-las  -D__RVC_EXT -static -std=gnu99 -fno-common -fno-builtin-printf -DTCM=0 -Wa,-march=rv32imc -march=rv32imc -mabi=ilp32 -DFLAGS_STR=\""-O2 -funroll-loops -fpeel-loops -fgcse-sm -fgcse-las "\"  -c -I./ -I$(YIFIVE_FIRMWARE_PATH)  $(YIFIVE_FIRMWARE_PATH)/common_bthread.c -o common_bthread.o
-	${GCC64_PREFIX}-gcc -O2 -funroll-loops -fpeel-loops -fgcse-sm -fgcse-las  -D__RVC_EXT -static -std=gnu99 -fno-common -fno-builtin-printf -DTCM=0 -Wa,-march=rv32imc -march=rv32imc -mabi=ilp32 -DFLAGS_STR=\""-O2 -funroll-loops -fpeel-loops -fgcse-sm -fgcse-las "\"  -D__ASSEMBLY__=1 -c -I./ -I$(YIFIVE_FIRMWARE_PATH)  $(YIFIVE_FIRMWARE_PATH)/crt.S -o crt.o
-	${GCC64_PREFIX}-gcc -o user_mcore.elf -T $(YIFIVE_FIRMWARE_PATH)/link.ld user_mcore.o crt.o common_bthread.o -nostartfiles -nostdlib -lc -lgcc -march=rv32imc -mabi=ilp32 -N
-	${GCC64_PREFIX}-objcopy -O verilog user_mcore.elf user_mcore.hex
-	${GCC64_PREFIX}-objdump -D user_mcore.elf > user_mcore.dump
+	${GCC_PREFIX}-gcc -O2 -funroll-loops -fpeel-loops -fgcse-sm -fgcse-las  -D__RVC_EXT -static -std=gnu99 -fno-common -fno-builtin-printf -DTCM=0 -Wa,-march=rv32imc -march=rv32imc -mabi=ilp32 -DFLAGS_STR=\""-O2 -funroll-loops -fpeel-loops -fgcse-sm -fgcse-las "\"  -c -I./ -I$(YIFIVE_FIRMWARE_PATH)  user_mcore.c -o user_mcore.o
+	${GCC_PREFIX}-gcc -O2 -funroll-loops -fpeel-loops -fgcse-sm -fgcse-las  -D__RVC_EXT -static -std=gnu99 -fno-common -fno-builtin-printf -DTCM=0 -Wa,-march=rv32imc -march=rv32imc -mabi=ilp32 -DFLAGS_STR=\""-O2 -funroll-loops -fpeel-loops -fgcse-sm -fgcse-las "\"  -c -I./ -I$(YIFIVE_FIRMWARE_PATH)  $(YIFIVE_FIRMWARE_PATH)/common_bthread.c -o common_bthread.o
+	${GCC_PREFIX}-gcc -O2 -funroll-loops -fpeel-loops -fgcse-sm -fgcse-las  -D__RVC_EXT -static -std=gnu99 -fno-common -fno-builtin-printf -DTCM=0 -Wa,-march=rv32imc -march=rv32imc -mabi=ilp32 -DFLAGS_STR=\""-O2 -funroll-loops -fpeel-loops -fgcse-sm -fgcse-las "\"  -D__ASSEMBLY__=1 -c -I./ -I$(YIFIVE_FIRMWARE_PATH)  $(YIFIVE_FIRMWARE_PATH)/crt.S -o crt.o
+	${GCC_PREFIX}-gcc -o user_mcore.elf -T $(YIFIVE_FIRMWARE_PATH)/link.ld user_mcore.o crt.o common_bthread.o -nostartfiles -nostdlib -lc -lgcc -march=rv32imc -mabi=ilp32 -N
+	${GCC_PREFIX}-objcopy -O verilog user_mcore.elf user_mcore.hex
+	${GCC_PREFIX}-objdump -D user_mcore.elf > user_mcore.dump
 	rm crt.o user_mcore.o
 ifeq ($(SIM),RTL)
    ifeq ($(DUMP),OFF)
