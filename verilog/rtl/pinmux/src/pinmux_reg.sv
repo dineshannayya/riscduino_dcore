@@ -716,7 +716,7 @@ gen_32b_reg  #(32'h8273_8343) u_reg_22	(
 //-----------------------------------------
 // Software Reg-2, Release date: <DAY><MONTH><YEAR>
 // ----------------------------------------
-gen_32b_reg  #(32'h1306_2022) u_reg_23	(
+gen_32b_reg  #(32'h0807_2022) u_reg_23	(
 	      //List of Inputs
 	      .reset_n    (h_reset_n     ),
 	      .clk        (mclk          ),
@@ -729,9 +729,9 @@ gen_32b_reg  #(32'h1306_2022) u_reg_23	(
 	      );
 
 //-----------------------------------------
-// Software Reg-3: Poject Revison 4.6 = 0004600
+// Software Reg-3: Poject Revison 4.7 = 0004700
 // ----------------------------------------
-gen_32b_reg  #(32'h0004_6000) u_reg_24	(
+gen_32b_reg  #(32'h0004_7000) u_reg_24	(
 	      //List of Inputs
 	      .reset_n    (h_reset_n     ),
 	      .clk        (mclk          ),

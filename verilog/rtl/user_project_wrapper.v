@@ -206,9 +206,12 @@
 ////         core logic are timing optimized to 100mhz            ////
 ////    4.4  May 29 2022, Dinesh A                                ////
 ////         1. Digital PLL integrated and clock debug signal add ////
-////           @digitial io [33] port
+////           @digitial io [33] port                             ////
 ////    4.6  June 13 2022, Dinesh A                               ////
 ////         1. icache and dcache bypass config addded            ////
+////    4.7  July 08 2022, Dinesh A                               ////
+////          Pinmux changes to support SPI CS port matching to   ////
+////          arduino                                             ////
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
 //// Copyright (C) 2000 Authors and OPENCORES.ORG                 ////
