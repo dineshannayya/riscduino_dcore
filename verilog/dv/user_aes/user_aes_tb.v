@@ -163,6 +163,9 @@ reg 	       uart_fifo_enable     ;	// fifo mode disable
        `endif
 
 	initial begin
+
+	       $value$plusargs("risc_core_id=%d", d_risc_id);
+
                uart_data_bit           = 2'b11;
                uart_stop_bits          = 0; // 0: 1 stop bit; 1: 2 stop bit;
                uart_stick_parity       = 0; // 1: force even parity
@@ -184,8 +187,14 @@ reg 	       uart_fifo_enable     ;	// fifo mode disable
                
                repeat (2) @(posedge clock);
                #1;
-               // Remove all the reset
-               wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h11F);
+		// Remove all the reset
+		if(d_risc_id == 0) begin
+		     $display("STATUS: Working with Risc core 0");
+                     wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h11F);
+		end else if(d_risc_id == 1) begin
+		     $display("STATUS: Working with Risc core 1");
+                     wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h21F);
+		end 
 
                repeat (100) @(posedge clock);  // wait for Processor Get Ready
 
