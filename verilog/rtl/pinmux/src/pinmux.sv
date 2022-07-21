@@ -42,6 +42,9 @@
 ////          GPIO, So we have moved the Auto generated SPI CS    ////
 ////          different config bit. I2C config position moved from////
 ////          bit[14] to bit [15]                                 ////
+////    0.4 - 20 July 2022, Dinesh A                              ////
+////         On Power On, If RESET* = 0, then system will enter   ////
+////         in to SPIS slave mode to support boot                ////
 //////////////////////////////////////////////////////////////////////
 
 module pinmux (
@@ -130,6 +133,12 @@ module pinmux (
 		       input   logic [3:0]     spim_ssn,
 		       input   logic           spim_miso,
 		       output  logic           spim_mosi,
+		       
+		       // SPI SLAVE
+		       output   logic           spis_sck,
+		       output   logic           spis_ssn,
+		       input    logic           spis_miso,
+		       output   logic           spis_mosi,
 
                        // UART MASTER I/F
                        output  logic            uartm_rxd ,
@@ -563,6 +572,14 @@ wire [7:0]  cfg_port_c_dir_sel   = cfg_gpio_dir_sel[23:16];
 wire [7:0]  cfg_port_d_dir_sel   = cfg_gpio_dir_sel[31:24];
 
 
+// This logic to create spi slave interface
+logic        pin_resetn,spis_boot;
+
+// On Reset internal SPI Master is disabled, If pin_reset = 0, then we are in
+// SPIS Boot Mode
+assign      spis_boot = (cfg_spim_enb ) ? 1'b0: !pin_resetn; 
+assign      spis_ssn  = (spis_boot    ) ? pin_resetn : 1'b1;
+
 // datain selection
 always_comb begin
      port_a_in = 'h0;
@@ -577,6 +594,7 @@ always_comb begin
 
      //Pin-1        PC6/RESET*          digital_io[0]
      port_c_in[6] = digital_io_in[0];
+     pin_resetn   = digital_io_in[0];
 
      //Pin-2        PD0/RXD[0]             digital_io[1]
      port_d_in[0] = digital_io_in[1];
@@ -624,13 +642,15 @@ always_comb begin
 
      //Pin-17       PB3/MOSI/OC2A(PWM5) digital_io[14]
      port_b_in[3] = digital_io_in[14];
-     if(cfg_spim_enb) spim_mosi = digital_io_in[14];
+     if(cfg_spim_enb) spim_mosi = digital_io_in[14];        // SPIM MOSI (Input) = SPIS MISO (Output)
 
      //Pin-18       PB4/MISO            digital_io[15]
      port_b_in[4] = digital_io_in[15];
+     spis_mosi    = (spis_boot) ? digital_io_in[15] : 1'b0;  // SPIM MISO (Output) = SPIS MOSI (Input)
 
      //Pin-19       PB5/SCK             digital_io[16]
      port_b_in[5]= digital_io_in[16];
+     spis_sck    = (spis_boot) ? digital_io_in[16] : 1'b1;   // SPIM SCK (Output) = SPIS SCK (Input)
      
      //Pin-23       PC0/ADC0            digital_io[18]/analog_io[11]
      port_c_in[0] = digital_io_in[18];
@@ -726,13 +746,14 @@ always_comb begin
      //Pin-17       PB3/MOSI/OC2A(PWM5) digital_io[14]
      if(cfg_pwm_enb[5])              digital_io_out[14]  = pwm_wfm[5];
      else if(cfg_port_b_dir_sel[3])  digital_io_out[14]  = port_b_out[3];
+     else if(spis_boot)              digital_io_out[14]  = spis_miso;   // SPIM MOSI (Input) = SPIS MISO (Output)
 
      //Pin-18       PB4/MISO            digital_io[15]
-     if(cfg_spim_enb)                digital_io_out[15]  = spim_miso;
+     if(cfg_spim_enb)                digital_io_out[15]  = spim_miso;   // SPIM MISO (Output) = SPIS MOSI (Input)
      else if(cfg_port_b_dir_sel[4])  digital_io_out[15]  = port_b_out[4];
 
      //Pin-19       PB5/SCK             digital_io[16]
-     if(cfg_spim_enb)             digital_io_out[16]  = spim_sck;
+     if(cfg_spim_enb)             digital_io_out[16]  = spim_sck;      // SPIM SCK (Output) = SPIS SCK (Input)
      else if(cfg_port_b_dir_sel[5])  digital_io_out[16]  = port_b_out[5];
      
      //Pin-23       PC0/ADC0            digital_io[18]/analog_io[11]
@@ -839,17 +860,20 @@ always_comb begin
      else if(cfg_port_b_dir_sel[2])  digital_io_oen[13]  = 1'b0;
 
      //Pin-17       PB3/MOSI/OC2A(PWM5) digital_io[14]
-     if(cfg_spim_enb)                digital_io_oen[14]  = 1'b1;
+     if(cfg_spim_enb)                digital_io_oen[14]  = 1'b1; // SPIM MOSI (Input)
      else if(cfg_pwm_enb[5])         digital_io_oen[14]  = 1'b0;
      else if(cfg_port_b_dir_sel[3])  digital_io_oen[14]  = 1'b0;
+     else if(spis_boot)              digital_io_oen[14]  = 1'b0; // SPIS MISO (Output)
 
      //Pin-18       PB4/MISO         digital_io[15]
-     if(cfg_spim_enb)             digital_io_oen[15]  = 1'b0;
+     if(cfg_spim_enb)                digital_io_oen[15]  = 1'b0; // SPIM MISO (Output) 
      else if(cfg_port_b_dir_sel[4])  digital_io_oen[15]  = 1'b0;
+     else if(spis_boot)              digital_io_oen[15]  = 1'b1; // SPIS MOSI (Input)
 
      //Pin-19       PB5/SCK             digital_io[16]
-     if(cfg_spim_enb)                digital_io_oen[16]  = 1'b0;
+     if(cfg_spim_enb)                digital_io_oen[16]  = 1'b0; // SPIM SCK (Output)
      else if(cfg_port_b_dir_sel[5])  digital_io_oen[16]  = 1'b0;
+     else if(spis_boot)              digital_io_oen[16]  = 1'b1; // SPIS SCK (Input)
      
      //Pin-23       PC0/ADC0            digital_io[18]/analog_io[11]
      if(cfg_port_c_dir_sel[0])       digital_io_oen[18]  = 1'b0;
