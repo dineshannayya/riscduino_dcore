@@ -37,7 +37,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOC.
 
 # Overview
 
-Riscduino is a Dual 32 bit RISC V based SOC design pin compatible to arduino platform and this soc targetted for efabless Shuttle program.  This project uses only open source tool set for simulation,synthesis and backend tools.  The SOC flow follow the openlane methodology and SOC environment is compatible with efabless/carvel methodology.
+Riscduino is a Dual 32 bit RISC V based SOC design pin compatible to arduino platform and this soc targeted for efabless Shuttle program.  This project uses only open source tool set for simulation,synthesis and backend tools.  The SOC flow follow the openlane methodology and SOC environment is compatible with efabless/carvel methodology.
 <table>
   <tr>
     <td  align="center"><img src="./docs/source/_static/Riscduino_Integration.png" ></td>
