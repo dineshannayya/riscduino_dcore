@@ -206,6 +206,15 @@ Carvel SOC provides 38 GPIO pins for user functionality. Riscduino SOC GPIO Pin 
   <tr align="center"> <td> usb1.1          </td> <td> usb_dp                 </td> <td>                 </td> <td> digital_io[36]                       </td></tr>
   <tr align="center"> <td> usb1.1          </td> <td> usb_dn                 </td> <td>                 </td> <td> digital_io[37]                       </td></tr>
 </table>
+
+
+# Riscduino documentation
+*  Riscduino documentation available at : <https://riscduino.readthedocs.io/en/latest/>
+
+# Arduino ide integration
+*  We are in initial phase of Riscduino board integration into arduino and integration details are available at : <https://github.com/dineshannayya/riscduino_board/>
+
+
 # Sub IP features
 
 ## RISC V Core
@@ -342,18 +351,16 @@ Following Design changes are done on the basic version of syntacore RISC core
 
 # SOC Size
 
-| Block             | Total Cell | Seq      | Combo   |
-| ------            | ---------  | -------- | -----   |
-| RISC              | 20982      | 3164     | 17818   |
-| PINMUX            | 5693       | 1022     |  4671   |
-| SPI               | 7120       | 1281     |  5839   |
-| UART_I2C_USB_SPI  | 11196      | 2448     |  8748   |
-| WB_HOST           | 2796       | 588      |  2208   |
-| WB_INTC           | 1878       | 108      |  1770   |
-| SAR_ADC           | 118        |  18      |   100   |
-| MBIST             | 3125       | 543      |  2582   |
-|                   |            |          |         |
-| TOTAL             | 52908      | 9172     | 43736   |
+| Block             | Total Cell | Combo   | Seq      |
+| ------            | ---------  | -----   | -------- |
+| RISC              | 52527      | 46858   | 5669     |
+| QSPI              | 8654       |  7149   | 1505     |
+| UART_I2C_USB_SPI  | 15926      | 13061   | 2865     |
+| WB_HOST           | 5800       |  4701   | 1099     |
+| WB_INTC           | 11477      | 10081   | 1396     |
+| PINMUX            | 6746       |  5574   | 1172     |
+|                   |            |         |          |
+| TOTAL             | 120381     | 103826  | 16555    |
 
 
 
@@ -753,14 +760,9 @@ Riscduino Soc flow uses Openlane tool sets.
     3. `Netgen` - Performs LVS Checks
     4. `CVC` - Performs Circuit Validity Checks
 
-# Riscduino documentation
-    Riscduino documentation available at <https://riscduino.readthedocs.io/en/latest/>
-
-# Arduino ide integration
-    We are in initial phase of Riscduino board integration into arduino and integration details are available at <https://github.com/dineshannayya/riscduino_board/>
 
 # News
-* **Riscduino Aim** - https://www.youtube.com/watch?v=lFVnicPhTI0
+* **Riscduino Aim** - <https://www.youtube.com/watch?v=lFVnicPhTI0>
 
 # How To Contribute
 
