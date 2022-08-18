@@ -50,7 +50,7 @@
         read_verilog $::env(USER_ROOT)/verilog/gl/uart_i2c_usb_spi_top.v
         read_verilog $::env(USER_ROOT)/verilog/gl/wb_host.v  
         read_verilog $::env(USER_ROOT)/verilog/gl/wb_interconnect.v
-        read_verilog $::env(USER_ROOT)/verilog/gl/pinmux.v
+        read_verilog $::env(USER_ROOT)/verilog/gl/pinmux_top.v
         read_verilog $::env(USER_ROOT)/verilog/gl/user_project_wrapper.v  
 
 
@@ -150,7 +150,7 @@
         read_spef -path mprj/u_riscv_top.u_intf               $::env(USER_ROOT)/spef/ycr_intf.spef
         read_spef -path mprj/u_riscv_top.i_core_top_0         $::env(USER_ROOT)/spef/ycr_core_top.spef
         read_spef -path mprj/u_riscv_top.i_core_top_1         $::env(USER_ROOT)/spef/ycr_core_top.spef
-        read_spef -path mprj/u_pinmux                         $::env(USER_ROOT)/spef/pinmux.spef
+        read_spef -path mprj/u_pinmux                         $::env(USER_ROOT)/spef/pinmux_top.spef
         read_spef -path mprj/u_qspi_master                    $::env(USER_ROOT)/spef/qspim_top.spef
         read_spef -path mprj/u_uart_i2c_usb_spi               $::env(USER_ROOT)/spef/uart_i2c_usb_spi_top.spef
         read_spef -path mprj/u_wb_host                        $::env(USER_ROOT)/spef/wb_host.spef

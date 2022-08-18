@@ -291,7 +291,7 @@ parameter P_QDDR   = 2'b11;
 	        repeat (2) @(posedge clock);
 		#1;
 		// Remove WB and SPI Reset, Keep SDARM and CORE under Reset
-                wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h01F);
+                wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h01F);
 
 		// CS#2 Switch to QSPI Mode
                 wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_BANK_SEL,'h1000); // Change the Bank Sel 1000
@@ -305,10 +305,10 @@ parameter P_QDDR   = 2'b11;
 		// Remove all the reset
                if(d_risc_id == 0) begin
                     $display("STATUS: Working with Risc core 0");
-                    wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h11F);
+                    wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h11F);
                end else begin
                     $display("STATUS: Working with Risc core 1");
-                    wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h21F);
+                    wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h21F);
                end
 
 	end

@@ -18,30 +18,22 @@
 ////                                                              ////
 ////  Standalone User validation Test bench                       ////
 ////                                                              ////
-////  This file is part of the YIFive cores project               ////
-////  https://github.com/dineshannayya/yifive_r0.git              ////
-////  http://www.opencores.org/cores/yifive/                      ////
+////  This file is part of the riscdunio cores project            ////
+////  https://github.com/dineshannayya/riscdunio.git              ////
 ////                                                              ////
 ////  Description                                                 ////
 ////   This is a standalone test bench to validate the            ////
 ////   Digital core.                                              ////
-////   1. User Risc core is booted using  compiled code of        ////
-////      user_risc_boot.c                                        ////
-////   2. User Risc core uses Serial Flash and SDRAM to boot      ////
-////   3. After successful boot, Risc core will  write signature  ////
-////      in to  user register from 0x1003_0058 to 0x1003_006C    ////
-////   4. Through the External Wishbone Interface we read back    ////
-////       from 0x3003_0058 to 0x3003_006C                        ////
-////       and validate the user register to declared pass fail   ////
+////   This test bench to valid Arduino example:                  ////
 ////                                                              ////
 ////  To Do:                                                      ////
 ////    nothing                                                   ////
 ////                                                              ////
 ////  Author(s):                                                  ////
-////      - Dinesh Annayya, dinesha@opencores.org                 ////
+////      - Dinesh Annayya, dinesh.annayya@gmail.com              ////
 ////                                                              ////
 ////  Revision :                                                  ////
-////    0.1 - 16th Feb 2021, Dinesh A                             ////
+////    0.1 - 29th July 2022, Dinesh A                            ////
 ////                                                              ////
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
@@ -145,10 +137,10 @@ module arduino_risc_boot_tb;
 		// Remove all the reset
 		if(d_risc_id == 0) begin
 		     $display("STATUS: Working with Risc core 0");
-                     wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h11F);
+                     wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h11F);
 		end else if(d_risc_id == 1) begin
 		     $display("STATUS: Working with Risc core 1");
-                     wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h21F);
+                     wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h21F);
 		end
 
 
@@ -170,12 +162,12 @@ module arduino_risc_boot_tb;
                 // 0x3000002C = 0x66778899; 
 
                 test_fail = 0;
-		wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_1,read_data,32'h11223344);
-		wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_2,read_data,32'h22334455);
-		wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_3,read_data,32'h33445566);
-		wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_4,read_data,32'h44556677);
-		wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_5,read_data,32'h55667788);
-		wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_6,read_data,32'h66778899);
+		wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_0,read_data,32'h11223344);
+		wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_1,read_data,32'h22334455);
+		wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_2,read_data,32'h33445566);
+		wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_3,read_data,32'h44556677);
+		wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_4,read_data,32'h55667788);
+		wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_5,read_data,32'h66778899);
 
 
 	   

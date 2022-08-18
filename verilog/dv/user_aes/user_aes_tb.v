@@ -183,17 +183,17 @@ reg 	       uart_fifo_enable     ;	// fifo mode disable
                wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h1);
 
                // Enable UART Multi Functional Ports
-               wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GPIO_MULTI_FUNC,'h100);
+               wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_MUTI_FUNC,'h100);
                
                repeat (2) @(posedge clock);
                #1;
 		// Remove all the reset
 		if(d_risc_id == 0) begin
 		     $display("STATUS: Working with Risc core 0");
-                     wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h11F);
+                     wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h11F);
 		end else if(d_risc_id == 1) begin
 		     $display("STATUS: Working with Risc core 1");
-                     wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h21F);
+                     wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h21F);
 		end 
 
                repeat (100) @(posedge clock);  // wait for Processor Get Ready
@@ -204,9 +204,9 @@ reg 	       uart_fifo_enable     ;	// fifo mode disable
                                               uart_stick_parity, uart_timeout, uart_divisor);
 
 		// Set the PORT-B Direction as Output
-                wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GPIO_DSEL,'h0000FF00);
+                wb_user_core_write(`ADDR_SPACE_GPIO+`GPIO_CFG_DSEL,'h0000FF00);
 		// Set the GPIO Output data: 0x00000000
-                wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GPIO_ODATA,'h0000000);
+                wb_user_core_write(`ADDR_SPACE_GPIO+`GPIO_CFG_ODATA,'h0000000);
    
                fork
 	          begin
@@ -217,7 +217,7 @@ reg 	       uart_fifo_enable     ;	// fifo mode disable
 	          end
                join_any
 	
-	       wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_2,read_data,32'h00000000);
+	       wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_0,read_data,32'h00000000);
 
                $display("###################################################");
                if(test_fail == 0) begin

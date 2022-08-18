@@ -150,10 +150,10 @@ integer i,j;
 	`ifdef WFDUMP
 	   initial begin
 	   	$dumpfile("simx.vcd");
-	   	$dumpvars(0, user_basic_tb);
+	   	$dumpvars(1, user_basic_tb);
 	   	//$dumpvars(1, user_basic_tb.u_top);
 	   	//$dumpvars(0, user_basic_tb.u_top.u_pll);
-	   	//$dumpvars(1, user_basic_tb.u_top.u_wb_host);
+	   	$dumpvars(0, user_basic_tb.u_top.u_wb_host);
 	   	//$dumpvars(1, user_basic_tb.u_top.u_intercon);
 	   	//$dumpvars(1, user_basic_tb.u_top.u_intercon);
 	   	//$dumpvars(1, user_basic_tb.u_top.u_pinmux);
@@ -165,10 +165,6 @@ integer i,j;
 		#100;
 		wb_rst_i <= 1'b0;	    	// Release reset
 	end
-
-
-// Hook to pll clock
-wire pll_clock = u_top.u_wb_host.u_clkbuf_pll.X;
 
 
 initial
@@ -244,35 +240,37 @@ begin
 	  test_step = 10;
           wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_CLK_CTRL2,{8'h63,8'h69,8'hFF,8'h64});
 	  clock_monitor(5*CLK2_PERIOD,11*CLK2_PERIOD,257*CLK2_PERIOD,6*CLK2_PERIOD);
-  
-         $display("###################################################");
-         $display("Monitor: Checking the PLL:");
-         $display("###################################################");
+ 
+     `ifndef GL  
+     $display("###################################################");
+     $display("Monitor: Checking the PLL:");
+     $display("###################################################");
 	 test_step = 11;
 	 // Set PLL enable, no DCO mode ; Set PLL output divider to 0x03
-         wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,{16'h0,1'b1,3'b100,4'b0000,8'h2});
-         wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_PLL_CTRL,{1'b0,5'h3,26'h00000});
-         repeat (100) @(posedge clock);
+     wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,{16'h0,1'b1,3'b100,4'b0000,8'h2});
+     wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_PLL_CTRL,{1'b0,5'h3,26'h00000});
+     repeat (100) @(posedge clock);
 	 pll_clock_monitor(5);
 
 	 test_step = 12;
 	 // Set PLL enable, DCO mode ; Set PLL output divider to 0x01
-         wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,{16'h0,1'b1,3'b000,4'b0000,8'h2});
-         wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_PLL_CTRL,{1'b1,5'h0,26'h0000});
-         repeat (100) @(posedge clock);
+     wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,{16'h0,1'b1,3'b000,4'b0000,8'h2});
+     wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_PLL_CTRL,{1'b1,5'h0,26'h0000});
+     repeat (100) @(posedge clock);
 	 pll_clock_monitor(4);
 
-         $display("###################################################");
-         $display("Monitor: Monitor Clock output:");
-         $display("###################################################");
+     $display("###################################################");
+     $display("Monitor: Monitor Clock output:");
+     $display("###################################################");
 	 $display("Monitor: CPU: CLOCK2/(2+3), USB: CLOCK2/(2+9), RTC: CLOCK2/(2+255), WBS:CLOCK2/(2+4)");
 	 test_step = 13;
-         wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_CLK_CTRL2,{8'h63,8'h69,8'hFF,8'h64});
+     wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_CLK_CTRL2,{8'h63,8'h69,8'hFF,8'h64});
 
 	 // Set PLL enable, DCO mode ; Set PLL output divider to 0x01
-         wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,{16'h0,1'b1,3'b000,4'b0000,8'h2});
-         wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_PLL_CTRL,{1'b1,5'h0,26'h0000});
+     wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,{16'h0,1'b1,3'b000,4'b0000,8'h2});
+     wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_PLL_CTRL,{1'b1,5'h0,26'h0000});
 	 dbg_clk_monitor(79,60,5*CLK2_PERIOD,11*CLK2_PERIOD,257*CLK2_PERIOD,6*CLK2_PERIOD);
+     `endif
          
 	 $display("###################################################");
          $display("Monitor: Checking the chip signature :");
@@ -281,9 +279,9 @@ begin
          // Remove Wb/PinMux Reset
          wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h1);
 
-	 wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_1,read_data,32'h8273_8343);
-	 wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_2,read_data,32'h2007_2022);
-	 wb_user_core_read_check(`ADDR_SPACE_PINMUX+`PINMUX_SOFT_REG_3,read_data,32'h0004_8000);
+	 wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_0,read_data,32'h8273_8343);
+	 wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_1,read_data,32'h1508_2022);
+	 wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_2,read_data,32'h0005_0000);
 
       end
    
@@ -347,7 +345,7 @@ user_project_wrapper u_top(
  
 
     // IOs
-    .io_in          (io_in)  ,
+    .io_in          ('h0)  ,
     .io_out         (io_out) ,
     .io_oeb         (io_oeb) ,
 
@@ -391,7 +389,12 @@ endtask
 task pll_clock_monitor;
 input [15:0] exp_period;
 begin
-   force clock_mon = u_top.u_wb_host.u_clkbuf_pll.X;
+   //force clock_mon = u_top.u_wb_host.pll_clk_out[0];
+   `ifdef GL
+      force clock_mon = u_top.u_wb_host.pll_clk_out[0];
+    `else
+      force clock_mon = u_top.u_wb_host.u_clkbuf_pll.X;
+    `endif
    check_clock_period("PLL CLock",exp_period);
    release clock_mon;
 end

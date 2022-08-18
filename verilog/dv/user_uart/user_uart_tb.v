@@ -146,7 +146,8 @@ integer i,j;
 	`ifdef WFDUMP
 	   initial begin
 	   	$dumpfile("simx.vcd");
-	   	$dumpvars(0, user_uart_tb);
+	   	$dumpvars(1, user_uart_tb);
+	   	$dumpvars(1, user_uart_tb.u_top);
 	   end
        `endif
 
@@ -176,23 +177,23 @@ begin
    wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h1);
 
    // Enable UART Multi Functional Ports
-   wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GPIO_MULTI_FUNC,'h100);
+   wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_MUTI_FUNC,'h100);
    
    repeat (2) @(posedge clock);
    #1;
    // Remove all the reset
    if(d_risc_id == 0) begin
 	$display("STATUS: Working with Risc core 0");
-	wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h11F);
+	wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h11F);
    end else if(d_risc_id == 1) begin
 	$display("STATUS: Working with Risc core 1");
-	wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h21F);
+	wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h21F);
    end else if(d_risc_id == 2) begin
 	$display("STATUS: Working with Risc core 2");
-	wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h41F);
+	wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h41F);
    end else if(d_risc_id == 3) begin
 	$display("STATUS: Working with Risc core 3");
-	wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h81F);
+	wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h81F);
    end
 
    repeat (100) @(posedge clock);  // wait for Processor Get Ready
@@ -298,6 +299,11 @@ user_project_wrapper u_top(
     .user_irq       () 
 
 );
+
+// SSPI Slave I/F
+assign io_in[0]  = 1'b1; // RESET
+assign io_in[16] = 1'b0 ; // SPIS SCK 
+
 
 `ifndef GL // Drive Power for Hold Fix Buf
     // All standard cell need power hook-up for functionality work

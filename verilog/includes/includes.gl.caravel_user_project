@@ -117,7 +117,7 @@ $(USER_PROJECT_VERILOG)/gl/wb_host.v
 #-v $(USER_PROJECT_VERILOG)/rtl/pinmux/src/pwm.sv
 #-v $(USER_PROJECT_VERILOG)/rtl/pinmux/src/timer.sv
 #else
-$(USER_PROJECT_VERILOG)/gl/pinmux.v
+$(USER_PROJECT_VERILOG)/gl/pinmux_top.v
 #endif
 
 ##################################################

@@ -24,34 +24,18 @@
 #define uint16_t  int
 #define size      10
 
-#define reg_mprj_globl_reg0  (*(volatile uint32_t*)0x10020000)
-#define reg_mprj_globl_reg1  (*(volatile uint32_t*)0x10020004)
-#define reg_mprj_globl_reg2  (*(volatile uint32_t*)0x10020008)
-#define reg_mprj_globl_reg3  (*(volatile uint32_t*)0x1002000C)
-#define reg_mprj_globl_reg4  (*(volatile uint32_t*)0x10020010)
-#define reg_mprj_globl_reg5  (*(volatile uint32_t*)0x10020014)
-#define reg_mprj_globl_reg6  (*(volatile uint32_t*)0x10020018)
-#define reg_mprj_globl_reg7  (*(volatile uint32_t*)0x1002001C)
-#define reg_mprj_globl_reg8  (*(volatile uint32_t*)0x10020020)
-#define reg_mprj_globl_reg9  (*(volatile uint32_t*)0x10020024)
-#define reg_mprj_globl_reg10 (*(volatile uint32_t*)0x10020028)
-#define reg_mprj_globl_reg11 (*(volatile uint32_t*)0x1002002C)
-#define reg_mprj_globl_reg12 (*(volatile uint32_t*)0x10020030)
-#define reg_mprj_globl_reg13 (*(volatile uint32_t*)0x10020034)
-#define reg_mprj_globl_reg14 (*(volatile uint32_t*)0x10020038)
-#define reg_mprj_globl_reg15 (*(volatile uint32_t*)0x1002003C)
-#define reg_mprj_globl_reg16 (*(volatile uint32_t*)0x10020040)
-#define reg_mprj_globl_reg17 (*(volatile uint32_t*)0x10020044)
-#define reg_mprj_globl_reg18 (*(volatile uint32_t*)0x10020048)
-#define reg_mprj_globl_reg19 (*(volatile uint32_t*)0x1002004C)
-#define reg_mprj_globl_reg20 (*(volatile uint32_t*)0x10020050)
-#define reg_mprj_globl_reg21 (*(volatile uint32_t*)0x10020054)
-#define reg_mprj_globl_reg22 (*(volatile uint32_t*)0x10020058)
-#define reg_mprj_globl_reg23 (*(volatile uint32_t*)0x1002005C)
-#define reg_mprj_globl_reg24 (*(volatile uint32_t*)0x10020060)
-#define reg_mprj_globl_reg25 (*(volatile uint32_t*)0x10020064)
-#define reg_mprj_globl_reg26 (*(volatile uint32_t*)0x10020068)
-#define reg_mprj_globl_reg27 (*(volatile uint32_t*)0x1002006C)
+#define reg_mprj_globl_reg0  (*(volatile uint32_t*)0x10020000) // Chip ID
+#define reg_mprj_globl_reg1  (*(volatile uint32_t*)0x10020004) // Global Config-0
+#define reg_mprj_globl_reg2  (*(volatile uint32_t*)0x10020008) // Global Config-1
+#define reg_mprj_globl_reg3  (*(volatile uint32_t*)0x1002000C) // Global Interrupt Mask
+#define reg_mprj_globl_reg4  (*(volatile uint32_t*)0x10020010) // Global Interrupt
+#define reg_mprj_globl_reg5  (*(volatile uint32_t*)0x10020014) // Multi functional sel
+#define reg_mprj_globl_soft0  (*(volatile uint32_t*)0x10020018) // Sof Register-0
+#define reg_mprj_globl_soft1  (*(volatile uint32_t*)0x1002001C) // Sof Register-1
+#define reg_mprj_globl_soft2  (*(volatile uint32_t*)0x10020020) // Sof Register-2
+#define reg_mprj_globl_soft3  (*(volatile uint32_t*)0x10020024) // Sof Register-3
+#define reg_mprj_globl_soft4 (*(volatile uint32_t*)0x10020028) // Sof Register-4
+#define reg_mprj_globl_soft5 (*(volatile uint32_t*)0x1002002C) // Sof Register-5
 // -------------------------------------------------------------------------
 // Multi-core test, Two Array is filled with below data, destination hold sum
 //      source           result            remark
@@ -124,12 +108,12 @@ void vvadd_mt(void* arg_vptr )
        arg_t arg0 = { dest, src0, src1, 0, buf_size/2 };
        arg_t arg1 = { dest, src0, src1, buf_size/2, buf_size };
 
-       reg_mprj_globl_reg22  = 0x11223344;  // Sig-1
+       reg_mprj_globl_soft0  = 0x11223344;  // Sig-0
        // Initialize bare threads (bthread).
        bthread_init();
       
       
-       reg_mprj_globl_reg23  = 0x22334455;  // Sig-2
+       reg_mprj_globl_soft1  = 0x22334455;  // Sig-1
        // Start counting stats.
        //test_stats_on();
       
@@ -137,18 +121,18 @@ void vvadd_mt(void* arg_vptr )
        // Spawn work onto core 1
        bthread_spawn( 1, &vvadd_mt, &arg1 );
       
-       reg_mprj_globl_reg24  = 0x33445566;  // Sig-3
+       reg_mprj_globl_soft2  = 0x33445566;  // Sig-2
        // Have core 0 also do some work.
        vvadd_mt(&arg0);
       
-       reg_mprj_globl_reg25  = 0x44556677;  // Sig-4
+       reg_mprj_globl_soft3  = 0x44556677;  // Sig-3
        // Wait for core 1 to finish.
        bthread_join(1);
 
 
        // Stop counting stats
        //test_stats_off();
-       reg_mprj_globl_reg26 = 0x55667788;  // sig-5
+       reg_mprj_globl_soft4 = 0x55667788;  // sig-4
       
        // Core 0 will verify the results.
        if ( bthread_get_core_id() == 0 ) {
@@ -159,7 +143,7 @@ void vvadd_mt(void* arg_vptr )
             	test_pass &= 0;
            }
 	   if(test_pass == 0x1) {
-               reg_mprj_globl_reg27 = 0x66778899;  // sig-6
+               reg_mprj_globl_soft5 = 0x66778899;  // sig-5
 	   }
 
        }
