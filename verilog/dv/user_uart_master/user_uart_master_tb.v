@@ -149,7 +149,7 @@ integer i,j;
 	end
 initial
 begin
-   wb_rst_i <= 1'b1;
+   init();
    uart_data_bit           = 2'b11;
    uart_stop_bits          = 1; // 0: 1 stop bit; 1: 2 stop bit;
    uart_stick_parity       = 0; // 1: force even parity
@@ -167,7 +167,6 @@ begin
    la_data_in[17:16] = 2'b00; //  priority mode, 0 -> nop, 1 -> Even, 2 -> Odd
 
    #100;
-   wb_rst_i <= 1'b0;	    	// Release reset
 
    $display("Monitor: Standalone User Uart master Test Started");
 
@@ -269,6 +268,8 @@ user_project_wrapper u_top(
     .user_irq       () 
 
 );
+// SSPI Slave I/F
+assign io_in[0]  = 1'b1; // RESET
 
 `ifndef GL // Drive Power for Hold Fix Buf
     // All standard cell need power hook-up for functionality work
@@ -282,8 +283,8 @@ user_project_wrapper u_top(
 // --------------------------
 wire uart_txd,uart_rxd;
 
-assign uart_txd   = io_out[35];
-assign io_in[34]  = uart_rxd ;
+assign uart_txd   = io_out[23];
+assign io_in[22]  = uart_rxd ;
  
 uart_agent tb_master_uart(
 	.mclk                (clock              ),
@@ -294,5 +295,6 @@ uart_agent tb_master_uart(
 
 
 `include "uart_master_tasks.sv"
+`include "user_tasks.sv"
 endmodule
 `default_nettype wire

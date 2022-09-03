@@ -87,6 +87,9 @@ Riscduino is a Dual 32 bit RISC V based SOC design pin compatible to arduino pla
   <tr>
     <td  align="center"><img src="./docs/source/_static/Riscduino-derivatives.png" ></td>
   </tr>
+  <tr>
+    <td  align="center"><img src="./docs/source/_static/Riscduino_Series_placement.png" ></td>
+  </tr>
 
 </table>
 
@@ -128,7 +131,7 @@ Riscduino is a Dual 32 bit RISC V based SOC design pin compatible to arduino pla
   <tr>
     <td  align="center"> MPW-5 </td> 
     <td  align="center"> 21-Mar-2022  </td>
-    <td  align="center"> Riscduino-SCORE</td>
+    <td  align="center"> Riscduino-SCORE (S0)</td>
     <td  align="center"> Single 32bit RISCV core with cache + Onchip SRAM+ WB Cross Bar</td>
     <td  align="center"> <a href="https://github.com/dineshannayya/riscduino">Link</a></td>
     <td  align="center"> <a href="https://platform.efabless.com/projects/670">Link</a></td>
@@ -136,7 +139,7 @@ Riscduino is a Dual 32 bit RISC V based SOC design pin compatible to arduino pla
   <tr>
     <td  align="center"> MPW-5 </td> 
     <td  align="center"> 21-Mar-2022  </td>
-    <td  align="center"> Riscduino-DCORE</td>
+    <td  align="center"> Riscduino-DCORE (D0)</td>
     <td  align="center"> Dual 32bit RISCV core with cache + Onchip SRAM+ WB Cross Bar</td>
     <td  align="center"> <a href="https://github.com/dineshannayya/riscduino_dcore">Link</a></td>
     <td  align="center"> <a href="https://platform.efabless.com/projects/718">Link</a></td>
@@ -144,10 +147,34 @@ Riscduino is a Dual 32 bit RISC V based SOC design pin compatible to arduino pla
   <tr>
     <td  align="center"> MPW-5 </td> 
     <td  align="center"> 21-Mar-2022  </td>
-    <td  align="center"> Riscduino-QCORE</td>
+    <td  align="center"> Riscduino-QCORE (Q0)</td>
     <td  align="center"> Quad 32bit RISCV core with cache + Onchip SRAM+ WB Cross Bar</td>
     <td  align="center"> <a href="https://github.com/dineshannayya/riscduino_qcore">Link</a></td>
     <td  align="center"> <a href="https://platform.efabless.com/projects/782">Link</a></td>
+  </tr>
+  <tr>
+    <td  align="center"> MPW-6 </td> 
+    <td  align="center"> 07-June-2022  </td>
+    <td  align="center"> Riscduino-SCORE (S3)</td>
+    <td  align="center"> Single 32bit RISCV core with cache + Onchip SRAM+ WB Cross Bar</td>
+    <td  align="center"> <a href="https://github.com/dineshannayya/riscduino">Link</a></td>
+    <td  align="center"> <a href="https://platform.efabless.com/projects/1047">Link</a></td>
+  </tr>
+  <tr>
+    <td  align="center"> MPW-6 </td> 
+    <td  align="center"> 07-June-2022  </td>
+    <td  align="center"> Riscduino-DCORE (D1)</td>
+    <td  align="center"> Dual 32bit RISCV core with cache + Onchip SRAM+ WB Cross Bar</td>
+    <td  align="center"> <a href="https://github.com/dineshannayya/riscduino_dcore">Link</a></td>
+    <td  align="center"> <a href="https://platform.efabless.com/projects/838">Link</a></td>
+  </tr>
+  <tr>
+    <td  align="center"> MPW-6 </td> 
+    <td  align="center"> 07-June-2022 </td>
+    <td  align="center"> Riscduino-QCORE (Q1)</td>
+    <td  align="center"> Quad 32bit RISCV core with cache + Onchip SRAM+ WB Cross Bar</td>
+    <td  align="center"> <a href="https://github.com/dineshannayya/riscduino_qcore">Link</a></td>
+    <td  align="center"> <a href="https://platform.efabless.com/projects/839">Link</a></td>
   </tr>
 </table>
 
@@ -162,49 +189,50 @@ Carvel SOC provides 38 GPIO pins for user functionality. Riscduino SOC GPIO Pin 
 
 <table>
   <tr align="center"> <td> ATMGA328 Pin No</td> <td> Functionality           </td> <td> Arudino Pin Name</td> <td> Carvel Pin Mapping                   </td></tr>
-  <tr align="center"> <td> Pin-1           </td> <td> PC6/RESET              </td> <td>                 </td> <td> digital_io[0]                        </td></tr>
-  <tr align="center"> <td> Pin-2           </td> <td> PD0/RXD[0]             </td> <td>  D0             </td> <td> digital_io[1]                        </td></tr>
-  <tr align="center"> <td> Pin-3           </td> <td> PD1/TXD[0]             </td> <td>  D1             </td> <td> digital_io[2]                        </td></tr>
-  <tr align="center"> <td> Pin-4           </td> <td> PD2/RXD[1]/INT0        </td> <td>  D2             </td> <td> digital_io[3]                        </td></tr>
-  <tr align="center"> <td> Pin-5           </td> <td> PD3/INT1/OC2B(PWM0)    </td> <td>  D3             </td> <td> digital_io[4]                        </td></tr>
-  <tr align="center"> <td> Pin-6           </td> <td> PD4/TXD[1]             </td> <td>  D4             </td> <td> digital_io[5]                        </td></tr>
+  <tr align="center"> <td> Pin-1           </td> <td> PC6/RESET              </td> <td>                 </td> <td> digital_io[5]                        </td></tr>
+  <tr align="center"> <td> Pin-2           </td> <td> PD0/RXD[0]             </td> <td>  D0             </td> <td> digital_io[6]                        </td></tr>
+  <tr align="center"> <td> Pin-3           </td> <td> PD1/TXD[0]             </td> <td>  D1             </td> <td> digital_io[7]                        </td></tr>
+  <tr align="center"> <td> Pin-4           </td> <td> PD2/RXD[1]/INT0        </td> <td>  D2             </td> <td> digital_io[8]                        </td></tr>
+  <tr align="center"> <td> Pin-5           </td> <td> PD3/INT1/OC2B(PWM0)    </td> <td>  D3             </td> <td> digital_io[9]                        </td></tr>
+  <tr align="center"> <td> Pin-6           </td> <td> PD4/TXD[1]             </td> <td>  D4             </td> <td> digital_io[10]                        </td></tr>
   <tr align="center"> <td> Pin-7           </td> <td> VCC                    </td> <td>                 </td> <td>  -                                   </td></tr>
   <tr align="center"> <td> Pin-8           </td> <td> GND                    </td> <td>                 </td> <td>  -                                   </td></tr>
-  <tr align="center"> <td> Pin-9           </td> <td> PB6/XTAL1/TOSC1        </td> <td>                 </td> <td> digital_io[6]                        </td></tr>
-  <tr align="center"> <td> Pin-10          </td> <td> PB7/XTAL2/TOSC2        </td> <td>                 </td> <td> digital_io[7]                        </td></tr>
-  <tr align="center"> <td> Pin-11          </td> <td> PD5/SS[3]/OC0B(PWM1)/T1      </td> <td> D5              </td> <td> digital_io[8]                        </td></tr>
-  <tr align="center"> <td> Pin-12          </td> <td> PD6/SS[2]/OC0A(PWM2)/AIN0    </td> <td> D6              </td> <td> digital_io[9] /analog_io[2]          </td></tr>
-  <tr align="center"> <td> Pin-13          </td> <td> PD7/A1N1               </td> <td> D7              </td> <td> digital_io[10]/analog_io[3]          </td></tr>
-  <tr align="center"> <td> Pin-14          </td> <td> PB0/CLKO/ICP1          </td> <td> D8              </td> <td> digital_io[11]                       </td></tr>
-  <tr align="center"> <td> Pin-15          </td> <td> PB1/SS[1]OC1A(PWM3)         </td> <td> D9              </td> <td> digital_io[12]                       </td></tr>
-  <tr align="center"> <td> Pin-16          </td> <td> PB2/SS[0]/OC1B(PWM4)      </td> <td> D10             </td> <td> digital_io[13]                       </td></tr>
-  <tr align="center"> <td> Pin-17          </td> <td> PB3/MOSI/OC2A(PWM5)    </td> <td> D11             </td> <td> digital_io[14]                       </td></tr>
-  <tr align="center"> <td> Pin-18          </td> <td> PB4/MISO               </td> <td> D12             </td> <td> digital_io[15]                       </td></tr>
-  <tr align="center"> <td> Pin-19          </td> <td> PB5/SCK                </td> <td> D13             </td> <td> digital_io[16]                       </td></tr>
+  <tr align="center"> <td> Pin-9           </td> <td> PB6/XTAL1/TOSC1        </td> <td>                 </td> <td> digital_io[11]                        </td></tr>
+  <tr align="center"> <td> Pin-10          </td> <td> PB7/XTAL2/TOSC2        </td> <td>                 </td> <td> digital_io[12]                        </td></tr>
+  <tr align="center"> <td> Pin-11          </td> <td> PD5/SS[3]/OC0B(PWM1)/T1      </td> <td> D5        </td> <td> digital_io[13]                        </td></tr>
+  <tr align="center"> <td> Pin-12          </td> <td> PD6/SS[2]/OC0A(PWM2)/AIN0    </td> <td> D6        </td> <td> digital_io[14] /analog_io[2]          </td></tr>
+  <tr align="center"> <td> Pin-13          </td> <td> PD7/A1N1               </td> <td> D7              </td> <td> digital_io[15]/analog_io[3]          </td></tr>
+  <tr align="center"> <td> Pin-14          </td> <td> PB0/CLKO/ICP1          </td> <td> D8              </td> <td> digital_io[16]                       </td></tr>
+  <tr align="center"> <td> Pin-15          </td> <td> PB1/SS[1]OC1A(PWM3)         </td> <td> D9         </td> <td> digital_io[17]                       </td></tr>
+  <tr align="center"> <td> Pin-16          </td> <td> PB2/SS[0]/OC1B(PWM4)      </td> <td> D10          </td> <td> digital_io[18]                       </td></tr>
+  <tr align="center"> <td> Pin-17          </td> <td> PB3/MOSI/OC2A(PWM5)    </td> <td> D11             </td> <td> digital_io[19]                       </td></tr>
+  <tr align="center"> <td> Pin-18          </td> <td> PB4/MISO               </td> <td> D12             </td> <td> digital_io[20]                       </td></tr>
+  <tr align="center"> <td> Pin-19          </td> <td> PB5/SCK                </td> <td> D13             </td> <td> digital_io[21]                       </td></tr>
   <tr align="center"> <td> Pin-20          </td> <td> AVCC                   </td> <td>                 </td> <td> -                                    </td></tr>
   <tr align="center"> <td> Pin-21          </td> <td> AREF                   </td> <td>                 </td> <td> analog_io[10]                        </td></tr>
   <tr align="center"> <td> Pin-22          </td> <td> GND                    </td> <td>                 </td> <td> -                                    </td></tr>
-  <tr align="center"> <td> Pin-23          </td> <td> PC0/ADC0               </td> <td>  A0             </td> <td> digital_io[18]/analog_io[11]         </td></tr>
-  <tr align="center"> <td> Pin-24          </td> <td> PC1/ADC1               </td> <td>  A1             </td> <td> digital_io[19]/analog_io[12]         </td></tr>
-  <tr align="center"> <td> Pin-25          </td> <td> PC2/ADC2               </td> <td>  A2             </td> <td> digital_io[20]/analog_io[13]         </td></tr>
-  <tr align="center"> <td> Pin-26          </td> <td> PC3/ADC3               </td> <td>  A3             </td> <td> digital_io[21]/analog_io[14]         </td></tr>
-  <tr align="center"> <td> Pin-27          </td> <td> PC4/ADC4/SDA           </td> <td>  A4             </td> <td> digital_io[22]/analog_io[15]         </td></tr>
-  <tr align="center"> <td> Pin-28          </td> <td> PC5/ADC5/SCL           </td> <td>  A5             </td> <td> digital_io[23]/analog_io[16]         </td></tr>
+  <tr align="center"> <td> Pin-23          </td> <td> PC0/uartm_rxd/ADC0     </td> <td>  A0             </td> <td> digital_io[22]/analog_io[11]         </td></tr>
+  <tr align="center"> <td> Pin-24          </td> <td> PC1/uartm/ADC1         </td> <td>  A1             </td> <td> digital_io[23]/analog_io[12]         </td></tr>
+  <tr align="center"> <td> Pin-25          </td> <td> PC2/usb_dp/ADC2        </td> <td>  A2             </td> <td> digital_io[24]/analog_io[13]         </td></tr>
+  <tr align="center"> <td> Pin-26          </td> <td> PC3/usb_dn/ADC3        </td> <td>  A3             </td> <td> digital_io[25]/analog_io[14]         </td></tr>
+  <tr align="center"> <td> Pin-27          </td> <td> PC4/ADC4/SDA           </td> <td>  A4             </td> <td> digital_io[26]/analog_io[15]         </td></tr>
+  <tr align="center"> <td> Pin-28          </td> <td> PC5/ADC5/SCL           </td> <td>  A5             </td> <td> digital_io[27]/analog_io[16]         </td></tr>
   <tr align="center"> <td colspan="4">   Additional Pad used for Externam ROM/RAM/USB </td></tr>
-  <tr align="center"> <td> Sflash          </td> <td> sflash_sck             </td> <td>                 </td> <td> digital_io[24]                       </td></tr>
-  <tr align="center"> <td> SFlash          </td> <td> sflash_ss0             </td> <td>                 </td> <td> digital_io[25]                       </td></tr>
-  <tr align="center"> <td> SFlash          </td> <td> sflash_ss1             </td> <td>                 </td> <td> digital_io[26]                       </td></tr>
-  <tr align="center"> <td> SFlash          </td> <td> sflash_ss2             </td> <td>                 </td> <td> digital_io[27]                       </td></tr>
-  <tr align="center"> <td> SFlash          </td> <td> sflash_ss3             </td> <td>                 </td> <td> digital_io[28]                       </td></tr>
-  <tr align="center"> <td> SFlash          </td> <td> sflash_io0             </td> <td>                 </td> <td> digital_io[29]                       </td></tr>
-  <tr align="center"> <td> SFlash          </td> <td> sflash_io1             </td> <td>                 </td> <td> digital_io[30]                       </td></tr>
-  <tr align="center"> <td> SFlash          </td> <td> sflash_io2             </td> <td>                 </td> <td> digital_io[31]                       </td></tr>
-  <tr align="center"> <td> SFlash          </td> <td> sflash_io3             </td> <td>                 </td> <td> digital_io[32]                       </td></tr>
-  <tr align="center"> <td> SSRAM           </td> <td> dbg_clk_mon            </td> <td>                 </td> <td> digital_io[33]                       </td></tr>
-  <tr align="center"> <td> SSRAM           </td> <td> uartm rxd              </td> <td>                 </td> <td> digital_io[34]                       </td></tr>
-  <tr align="center"> <td> SSRAM           </td> <td> uartm txd              </td> <td>                 </td> <td> digital_io[35]                       </td></tr>
-  <tr align="center"> <td> usb1.1          </td> <td> usb_dp                 </td> <td>                 </td> <td> digital_io[36]                       </td></tr>
-  <tr align="center"> <td> usb1.1          </td> <td> usb_dn                 </td> <td>                 </td> <td> digital_io[37]                       </td></tr>
+  <tr align="center"> <td> Sflash          </td> <td> sflash_sck             </td> <td>                 </td> <td> digital_io[28]                       </td></tr>
+  <tr align="center"> <td> SFlash          </td> <td> sflash_ss0             </td> <td>                 </td> <td> digital_io[29]                       </td></tr>
+  <tr align="center"> <td> SFlash          </td> <td> sflash_ss1             </td> <td>                 </td> <td> digital_io[30]                       </td></tr>
+  <tr align="center"> <td> SFlash          </td> <td> sflash_ss2             </td> <td>                 </td> <td> digital_io[31]                       </td></tr>
+  <tr align="center"> <td> SFlash          </td> <td> sflash_ss3             </td> <td>                 </td> <td> digital_io[32]                       </td></tr>
+  <tr align="center"> <td> SFlash          </td> <td> sflash_io0             </td> <td>                 </td> <td> digital_io[33]                       </td></tr>
+  <tr align="center"> <td> SFlash          </td> <td> sflash_io1             </td> <td>                 </td> <td> digital_io[34]                       </td></tr>
+  <tr align="center"> <td> SFlash          </td> <td> sflash_io2             </td> <td>                 </td> <td> digital_io[35]                       </td></tr>
+  <tr align="center"> <td> SFlash          </td> <td> sflash_io3             </td> <td>                 </td> <td> digital_io[36]                       </td></tr>
+  <tr align="center"> <td> DEBUG           </td> <td> dbg_clk_mon            </td> <td>                 </td> <td> digital_io[37]                       </td></tr>
+  <tr align="center"> <td> SPARE           </td> <td> PA0                    </td> <td>                 </td> <td> digital_io[0]                       </td></tr>
+  <tr align="center"> <td> SPARE           </td> <td> PA1                    </td> <td>                 </td> <td> digital_io[1]                       </td></tr>
+  <tr align="center"> <td> SPARE           </td> <td> PA2                    </td> <td>                 </td> <td> digital_io[2]                       </td></tr>
+  <tr align="center"> <td> SPARE           </td> <td> PA3                    </td> <td>                 </td> <td> digital_io[3]                       </td></tr>
+  <tr align="center"> <td> SPARE           </td> <td> PA4                     </td> <td>                </td> <td> digital_io[4]                       </td></tr>
 </table>
 
 
@@ -312,34 +340,16 @@ Following Design changes are done on the basic version of syntacore RISC core
     <td  align="center"> SSPI</td>
   </tr>
   <tr>
+    <td  align="center"> 0x1001_01C0 to 0x1001_013F</td> 
+    <td  align="center"> 0x1001_01C0 to 0x1001_013F</td>
+    <td  align="center"> 0x1001_01C0 to 0x1001_013F</td>
+    <td  align="center"> SSPI</td>
+  </tr>
+  <tr>
     <td  align="center"> 0x1002_0080 to 0x1002_00FF</td> 
     <td  align="center"> 0x1002_0080 to 0x1002_00FF</td>
     <td  align="center"> 0x1002_0080 to 0x1002_00FF</td>
     <td  align="center"> PINMUX</td>
-  </tr>
-  <tr>
-    <td  align="center"> 0x1003_0080 to 0x1003_07FF</td> 
-    <td  align="center"> 0x1003_0080 to 0x1003_07FF</td>
-    <td  align="center"> 0x1003_0080 to 0x1003_07FF</td>
-    <td  align="center"> SRAM-0 (2KB)</td>
-  </tr>
-  <tr>
-    <td  align="center"> 0x1003_0800 to 0x1003_0FFF</td> 
-    <td  align="center"> 0x1003_0800 to 0x1003_0FFF</td>
-    <td  align="center"> 0x1003_0800 to 0x1003_0FFF</td>
-    <td  align="center"> SRAM-1 (2KB)</td>
-  </tr>
-  <tr>
-    <td  align="center"> 0x1003_1000 to 0x1003_17FF</td> 
-    <td  align="center"> 0x1003_1000 to 0x1003_17FF</td>
-    <td  align="center"> 0x1003_1000 to 0x1003_17FF</td>
-    <td  align="center"> SRAM-2 (2KB)</td>
-  </tr>
-  <tr>
-    <td  align="center"> 0x1003_1800 to 0x1003_1FFF</td> 
-    <td  align="center"> 0x1003_1800 to 0x1003_1FFF</td>
-    <td  align="center"> 0x1003_1800 to 0x1003_1FFF</td>
-    <td  align="center"> SRAM-3 (2KB)</td>
   </tr>
   <tr>
     <td  align="center"> -</td> 
@@ -540,42 +550,6 @@ Following Design changes are done on the basic version of syntacore RISC core
 
 
 
-# Repository contents
-
-```
-|verilog
-|   ├─  rtl
-|   |     |-  syntacore
-|   |     |     |─  scr1
-|   |     |     |    ├─ **docs**                           | **SCR1 documentation**
-|   |     |     |    |      ├─ scr1_eas.pdf                | SCR1 External Architecture Specification
-|   |     |     |    |      └─ scr1_um.pdf                 | SCR1 User Manual
-|   |     |     |    |─  **src**                           | **SCR1 RTL source and testbench files**
-|   |     |     |    |   ├─ includes                       | Header files
-|   |     |     |    |   ├─ core                           | Core top source files
-|   |     |     |    |   ├─ top                            | Cluster source files
-|   |     |     |    |─  **synth**                         | **SCR1 RTL Synthesis files **
-|   |     |- Qspi_master
-|   |     |     |- src                                     | Qard SPI Master Source files
-|   |     |-wb_interconnect
-|   |     |     |- src                                     | 3x4 Wishbone Interconnect
-|   |     |- digital_core
-|   |     |     |- src                                     | Digital core Source files
-|   |     |- lib                                           | common library source files
-|   |- dv
-|   |   |- la_test1                                        | carevel LA test
-|   |   |- risc_boot                                       | user core risc boot test
-|   |   |- wb_port                                         | user wishbone test
-|   |   |- user_risc_boot                                  | user standalone test without carevel soc
-|   |- gl                                                  | ** GLS Source files **
-|
-|- openlane
-    |- spi_master                                          | spi_master openlane scripts   
-    |- syntacore                                           | Risc Core openlane scripts   
-    |- user_project_wrapper                                | carvel user project wrapper 
-
-```
-
 
 # Prerequisites
    - Docker (ensure docker daemon is running) -- tested with version 19.03.12, but any recent version should suffice.
@@ -694,6 +668,14 @@ Examples:
     make verify-riscv_regress                  - standalone riscv compliance test suite
     make verify-arduino_risc_boot              - standalone riscv core-0 boot using arduino tool set
     make verify-arduino_hello_world            - standalone riscv core-0 hello world test using arduino tool set
+    make verify-arduino_digital_port_control   - standalone riscv core-0 digital port control using arduino tool set
+    make verify-arduino_ascii_table            - standalone riscv core-0 ascii table using arduino tool set
+    make verify-arduino_character_analysis     - standalone riscv core-0 character analysis using arduino tool set
+    make verify-arduino_multi_serial           - standalone riscv core-0 multi uart test using arduino tool set
+    make verify-arduino_switchCase2            - standalone riscv core-0 switch case using arduino tool set
+    make verify-arduino_risc_boot              - standalone riscv core-0 boot test using arduino tool set
+    make verify-arduino_string                 - standalone riscv core-0 string usage test using arduino tool set
+    
     make verify-user_mcore                     - standalone riscv multi-core test
     make verify-user_sram_exec RISC_CORE=1     - standalone riscv core-1 test with executing code from data memory
     make verify-user_risc_boot RISC_CORE=1     - standalone user risc core-1 boot test
@@ -702,7 +684,6 @@ Examples:
     make verify-user_aes  RISC_CORE=1          - standalone aes test with risc core-1
     make verify-user_cache_bypass RISC_CORE=1  - standalone icache and dcache bypass test with risc core-1
     make verify-arduino_risc_boot RISC_CORE=1  - standalone riscv core-1 boot using arduino tool set
-    make verify-arduino_hello_world RISC_CORE=1 - standalone riscv core-1 hello world test using arduino tool set
     
     make verify-user_uart SIM=RTL DUMP=OFF     - Standalone user uart-0 test using user risc core with waveform dump off
     make verify-user_uart SIM=RTL DUMP=ON      - Standalone user uart-0 test using user risc core with waveform dump on

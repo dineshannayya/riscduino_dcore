@@ -233,6 +233,7 @@ parameter P_QDDR   = 2'b11;
 	   	$dumpvars(0, user_risc_regress_tb.u_top.u_riscv_top);
 	   	$dumpvars(0, user_risc_regress_tb.u_top.u_qspi_master);
 	   	$dumpvars(0, user_risc_regress_tb.u_top.u_intercon);
+	   	$dumpvars(0, user_risc_regress_tb.u_top.u_pinmux);
 	   end
        `endif
 
@@ -361,6 +362,9 @@ user_project_wrapper u_top(
     .user_irq       () 
 
 );
+// SSPI Slave I/F
+assign io_in[0]  = 1'b1; // RESET
+assign io_in[16] = 1'b0 ; // SPIS SCK 
 
 
 logic [31:0] riscv_dmem_req_cnt; // cnt dmem req

@@ -55,13 +55,21 @@ set ::env(VERILOG_FILES) "\
      $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/timer_reg.sv \
      $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/timer.sv     \
      $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/semaphore_reg.sv  \
+     $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/ws281x_top.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/ws281x_driver.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/ws281x_reg.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/strap_ctrl.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/glbl_rst_reg.sv \
      $::env(DESIGN_DIR)/../../verilog/rtl/lib/pulse_gen_type1.sv   \
      $::env(DESIGN_DIR)/../../verilog/rtl/lib/pulse_gen_type2.sv   \
      $::env(DESIGN_DIR)/../../verilog/rtl/lib/registers.v          \
      $::env(DESIGN_DIR)/../../verilog/rtl/lib/ctech_cells.sv     \
      $::env(DESIGN_DIR)/../../verilog/rtl/lib/reset_sync.sv     \
+     $::env(DESIGN_DIR)/../../verilog/rtl/lib/sync_fifo.sv     \
+     $::env(DESIGN_DIR)/../../verilog/rtl/lib/clk_ctl.v     \
      "
 
+set ::env(VERILOG_INCLUDE_DIRS) [glob $::env(DESIGN_DIR)/../../verilog/rtl/ ]
 
 set ::env(SYNTH_DEFINES) [list SYNTHESIS ]
 set ::env(SYNTH_READ_BLACKBOX_LIB) 1
@@ -80,7 +88,7 @@ set ::env(GND_PIN) [list {vssd1}]
 set ::env(FP_PIN_ORDER_CFG) $::env(DESIGN_DIR)/pin_order.cfg
 
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 500 400"
+set ::env(DIE_AREA) "0 0 500 750"
 
 
 # If you're going to use multiple power domains, then keep this disabled.
@@ -90,29 +98,44 @@ set ::env(RUN_CVC) 0
 
 
 set ::env(PL_TIME_DRIVEN) 1
-set ::env(PL_TARGET_DENSITY) "0.40"
+set ::env(PL_TARGET_DENSITY) "0.38"
 set ::env(CELL_PAD) "4"
+#set ::env(GRT_ADJUSTMENT) {0.2}
 
-set ::env(FP_IO_VEXTEND) {6}
-set ::env(FP_IO_HEXTEND) {6}
+
+######################################################################################
+# Metal-2/3 Signal are Routed near to block boundary is creating DRC violation at Top-level 
+# during pad connectivity
+#set ::env(FP_IO_HEXTEND) {1}
+#set ::env(FP_IO_VEXTEND) {1}
+
+#set ::env(GRT_OBS) "                        \
+#                    met2  0    2   500  3,  \
+#                    met2  0    747 500  748, \
+#                    met3  2    0   3    750, \
+#                    met3  497  0 498    750"
 
 
 # helps in anteena fix
-set ::env(USE_ARC_ANTENNA_CHECK) "0"
+set ::env(USE_ARC_ANTENNA_CHECK) "1"
 
 set ::env(FP_IO_VEXTEND) 4
 set ::env(FP_IO_HEXTEND) 4
 
 set ::env(FP_PDN_VPITCH) 100
 set ::env(FP_PDN_HPITCH) 100
-set ::env(FP_PDN_VWIDTH) 5
-set ::env(FP_PDN_HWIDTH) 5
+set ::env(FP_PDN_VWIDTH) 6.2
+set ::env(FP_PDN_HWIDTH) 6.2
 
 #set ::env(GLB_RT_MAXLAYER) 5
 set ::env(RT_MAX_LAYER) {met4}
 #set ::env(GLB_RT_MAX_DIODE_INS_ITERS) 10
 
 set ::env(DIODE_INSERTION_STRATEGY) 4
+
+
+#LVS Issue - DEF Base looks to having issue
+set ::env(MAGIC_EXT_USE_GDS) {1}
 
 
 set ::env(QUIT_ON_TIMING_VIOLATIONS) "0"

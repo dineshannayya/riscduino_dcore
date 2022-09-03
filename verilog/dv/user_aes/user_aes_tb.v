@@ -194,7 +194,13 @@ reg 	       uart_fifo_enable     ;	// fifo mode disable
 		end else if(d_risc_id == 1) begin
 		     $display("STATUS: Working with Risc core 1");
                      wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h21F);
-		end 
+		end else if(d_risc_id == 2) begin
+		     $display("STATUS: Working with Risc core 2");
+                     wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h41F);
+		end else if(d_risc_id == 3) begin
+		     $display("STATUS: Working with Risc core 3");
+                     wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h81F);
+		end
 
                repeat (100) @(posedge clock);  // wait for Processor Get Ready
 
@@ -281,6 +287,9 @@ user_project_wrapper u_top(
     .user_irq       () 
 
 );
+// SSPI Slave I/F
+assign io_in[0]  = 1'b1; // RESET
+assign io_in[16] = 1'b0 ; // SPIS SCK 
 
 `ifndef GL // Drive Power for Hold Fix Buf
     // All standard cell need power hook-up for functionality work

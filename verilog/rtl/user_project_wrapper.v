@@ -25,17 +25,21 @@
 ////  Description                                                 ////
 ////      This is digital core and integrate all the main block   ////
 ////      here.  Following block are integrated here              ////
-////      1. Risc V Core                                          ////
-////      2. Quad SPI Master                                      ////
-////      3. Wishbone Cross Bar                                   ////
-////      4. UART                                                 ////
-////      5, USB 1.1                                              ////
-////      6. SPI Master (Single)                                  ////
-////      7. TCM SRAM 2KB                                         ////
-////      8. 2KB icache and 2KB dcache                            ////
-////      8. 6 Channel ADC                                        ////
-////      9. Pinmux with GPIO and 6 PWM                           ////
-////
+////      1.  2x 32 bit Risc V Core                               ////
+////      2.  Quad SPI Master(SPI Flash/SRAM)                     ////
+////      3.  Wishbone Cross Bar                                  ////
+////      4.  2 x UART                                            ////
+////      5,  USB 1.1 Host                                        ////
+////      6.  SPI Master (Single)                                 ////
+////      7.  TCM SRAM 2KB                                        ////
+////      8.  2KB icache and 2KB dcache                           ////
+////      9.  6 Channel ADC (Pending)                             ////
+////      10. Pinmux with GPIO and 6 PWM                          ////
+////      11. 15 x hardware Semaphore                             ////
+////      12. 4 x ws281x driver                                   //// 
+////      13. 3 x Hardware Timer                                  ////
+////      14. UART Master                                         ////
+////      15. SPI Slave (As Arduino ISP)                          ////
 ////                                                              ////
 ////  To Do:                                                      ////
 ////    nothing                                                   ////
@@ -178,7 +182,7 @@
 ////       wishbone slave clock generation config increase from   ////
 ////       3 to 4 bit support clock source selection              ////
 ////       B.  Changed Module: qspim                              ////
-//////      1. Bug fix in spi rise and fall pulse relation w.r.t  ////
+////        1. Bug fix in spi rise and fall pulse relation w.r.t  ////
 ////           spi_clk. Note: Previous version work only with     ////
 ////           spi clock config = 0x2                             ////
 ////        2. spi_oen generation fix for different spi mode      ////
@@ -202,7 +206,7 @@
 ////    4.2  April 6 2022, Dinesh A                               ////
 ////         1. SSPI CS# increased from 1 to 4                    ////
 ////         2. uart port increase to two                         ////
-////    4.3  May 23 2022, Dinesh A                                ////
+////    4.3  May 24 2022, Dinesh A                                ////
 ////         Re targetted the design to mpw-6 tools set and risc  ////
 ////         core logic are timing optimized to 100mhz            ////
 ////    4.4  May 29 2022, Dinesh A                                ////
@@ -230,6 +234,31 @@
 ////             `define ADDR_SPACE_PWM     32'h1002_0080         ////
 ////             `define ADDR_SPACE_TIMER   32'h1002_00C0         ////
 ////             `define ADDR_SPACE_SEMA    32'h1002_0100         ////
+////    5.1  Aug 24 2022, Dinesh A                                ////
+////          A. GPIO interrupt generation changed from 1 to 32   ////
+////          B. Total interrupt to Riscv changed from 16 to 32   ////
+////          C. uart_master disable option added at pinmux       ////
+////          D. Timer interrupt related clean-up                 ////
+////          E. 4x ws281x driver logic added                     ////
+////          F. 4x ws281x driver are mux with 16x gpio           ////
+////          G. gpio type select the normal gpio vs ws281x       ////
+////    5.2  Aug 26 2022, Dinesh A                                ////
+////          A. We have copied the user_defines.h from caravel   ////
+////          and configured all the GPIO from 5 onwards as       ////
+////          GPIO_MODE_USER_STD_BIDIRECTIONAL                    ////
+////                                                              ////
+////          As digitial-io[0-5] reserved at power up.           ////
+////          B. to keep at least one uart access,                ////
+////              we have moved UART_RXD[1] from io[3] to io[6]   ////
+////          C. SPI Slave SSN move from io[0] to [7]             ////
+////    5.3  Sept 2 2022, Dinesh A                                ////
+////          A. System Strap implementation                      ////
+////          B. Arduino pins are moved to take care of caravel   ////
+////            digital-io[0-4] resevred                          ////
+////          C. global register space increased from 16 to 32    ////
+////          D. reset fsm is implementation with soft reboot     ////
+////             option                                           ////
+////          E. strap based booting option added for qspi        ////
 ////                                                              ////
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
@@ -284,6 +313,52 @@
        0x3000_0000 to 0x307F_FFFF  - Indirect Address
                                      {Bank_Sel[15:3],WB ADDR[18:0]}
 ***********************************************************************/
+/***********************************************************************
+ * Caravel I/O mapping 
+ *
+ * mprj_io[37]  io_in/out/oeb/in_3v3[26]  ---                    ---
+ * mprj_io[36]  io_in/out/oeb/in_3v3[25]  ---                    ---
+ * mprj_io[35]  io_in/out/oeb/in_3v3[24]  gpio_analog/noesd[17]  ---
+ * mprj_io[34]  io_in/out/oeb/in_3v3[23]  gpio_analog/noesd[16]  ---
+ * mprj_io[33]  io_in/out/oeb/in_3v3[22]  gpio_analog/noesd[15]  ---
+ * mprj_io[32]  io_in/out/oeb/in_3v3[21]  gpio_analog/noesd[14]  ---
+ * mprj_io[31]  io_in/out/oeb/in_3v3[20]  gpio_analog/noesd[13]  ---
+ * mprj_io[30]  io_in/out/oeb/in_3v3[19]  gpio_analog/noesd[12]  ---
+ * mprj_io[29]  io_in/out/oeb/in_3v3[18]  gpio_analog/noesd[11]  ---
+ * mprj_io[28]  io_in/out/oeb/in_3v3[17]  gpio_analog/noesd[10]  ---
+ * mprj_io[27]  io_in/out/oeb/in_3v3[16]  gpio_analog/noesd[9]   ---
+ * mprj_io[26]  io_in/out/oeb/in_3v3[15]  gpio_analog/noesd[8]   ---
+ * mprj_io[25]  io_in/out/oeb/in_3v3[14]  gpio_analog/noesd[7]   ---
+ * mprj_io[24]  ---                       ---                    user_analog[10]
+ * mprj_io[23]  ---                       ---                    user_analog[9]
+ * mprj_io[22]  ---                       ---                    user_analog[8]
+ * mprj_io[21]  ---                       ---                    user_analog[7]
+ * mprj_io[20]  ---                       ---                    user_analog[6]  clamp[2]
+ * mprj_io[19]  ---                       ---                    user_analog[5]  clamp[1]
+ * mprj_io[18]  ---                       ---                    user_analog[4]  clamp[0]
+ * mprj_io[17]  ---                       ---                    user_analog[3]
+ * mprj_io[16]  ---                       ---                    user_analog[2]
+ * mprj_io[15]  ---                       ---                    user_analog[1]
+ * mprj_io[14]  ---                       ---                    user_analog[0]
+ * mprj_io[13]  io_in/out/oeb/in_3v3[13]  gpio_analog/noesd[6]   ---
+ * mprj_io[12]  io_in/out/oeb/in_3v3[12]  gpio_analog/noesd[5]   ---
+ * mprj_io[11]  io_in/out/oeb/in_3v3[11]  gpio_analog/noesd[4]   ---
+ * mprj_io[10]  io_in/out/oeb/in_3v3[10]  gpio_analog/noesd[3]   ---
+ * mprj_io[9]   io_in/out/oeb/in_3v3[9]   gpio_analog/noesd[2]   ---
+ * mprj_io[8]   io_in/out/oeb/in_3v3[8]   gpio_analog/noesd[1]   ---
+ * mprj_io[7]   io_in/out/oeb/in_3v3[7]   gpio_analog/noesd[0]   ---
+ * mprj_io[6]   io_in/out/oeb/in_3v3[6]   ---                    ---
+ * mprj_io[5]   io_in/out/oeb/in_3v3[5]   ---                    ---
+ * mprj_io[4]   io_in/out/oeb/in_3v3[4]   ---                    ---
+ * mprj_io[3]   io_in/out/oeb/in_3v3[3]   ---                    ---
+ * mprj_io[2]   io_in/out/oeb/in_3v3[2]   ---                    ---
+ * mprj_io[1]   io_in/out/oeb/in_3v3[1]   ---                    ---
+ * mprj_io[0]   io_in/out/oeb/in_3v3[0]   ---                    ---
+
+
+************************************************************************/
+
+`include "user_params.svh"
 
 module user_project_wrapper (
 `ifdef USE_POWER_PINS
@@ -459,7 +534,7 @@ wire                           wbd_adc_ack_i                          ;
 //    Global Register Wishbone Interface
 //---------------------------------------------------------------------
 wire                           wbd_glbl_stb_o                         ; // strobe/request
-wire   [8:0]                   wbd_glbl_adr_o                         ; // address
+wire   [9:0]                   wbd_glbl_adr_o                         ; // address
 wire                           wbd_glbl_we_o                          ; // write
 wire   [WB_WIDTH-1:0]          wbd_glbl_dat_o                         ; // data output
 wire   [3:0]                   wbd_glbl_sel_o                         ; // byte enable
@@ -504,7 +579,7 @@ wire                           wbd_clk_pinmux                         ;
 wire                           wbd_int_rst_n                          ;
 wire                           wbd_pll_rst_n                          ;
 
-wire [15:0]                    irq_lines                              ;
+wire [31:0]                    irq_lines                              ;
 wire                           soft_irq                               ;
 
 
@@ -526,7 +601,7 @@ wire [3:0]                     cfg_cska_qspi_rp                       ; // clock
 wire [3:0]                     cfg_cska_pinmux_rp                     ; // clock skew adjust for pinmux
 wire [3:0]                     cfg_cska_qspi_co_rp                    ; // clock skew adjust for global reg
 
-wire [15:0]                    irq_lines_rp                           ; // Repeater
+wire [31:0]                    irq_lines_rp                           ; // Repeater
 wire                           soft_irq_rp                            ; // Repeater
 
 wire                           wbd_clk_risc_rp                        ;
@@ -661,6 +736,17 @@ wire [1:0]                     pll_clk_out                            ; // Two 9
 
 wire [3:0]                     spi_csn                                ;
 
+//---------------------------------------------------------------------
+// Strap
+//---------------------------------------------------------------------
+wire [31:0]                    system_strap                           ;
+wire [31:0]                    strap_sticky                           ;
+wire [1:0]  strap_qspi_flash       = system_strap[`STRAP_QSPI_FLASH];
+wire        strap_qspi_sram        = system_strap[`STRAP_QSPI_SRAM];
+wire        strap_qspi_pre_sram    = system_strap[`STRAP_QSPI_PRE_SRAM];
+wire        strap_qspi_init_bypass = system_strap[`STRAP_QSPI_INIT_BYPASS];
+
+
 //--------------------------------------------------------------------------
 // Pinmux Risc core config
 // -------------------------------------------------------------------------
@@ -694,10 +780,18 @@ wb_host u_wb_host(
 `endif
           .user_clock1             (wb_clk_i                ),
           .user_clock2             (user_clock2             ),
+          .int_pll_clock           (int_pll_clock             ),
 
           .cpu_clk                 (cpu_clk                 ),
-          .rtc_clk                 (rtc_clk                 ),
-          .usb_clk                 (usb_clk                 ),
+
+       // to/from Pinmux
+          .xtal_clk                (xtal_clk                ),
+	      .e_reset_n               (e_reset_n               ),  // external reset
+	      .p_reset_n               (p_reset_n               ),  // power-on reset
+          .s_reset_n               (s_reset_n               ),  // soft reset
+          .cfg_strap_pad_ctrl      (cfg_strap_pad_ctrl      ),
+	      .system_strap            (system_strap            ),
+	      .strap_sticky            (strap_sticky            ),
 
           .wbd_int_rst_n           (wbd_int_rst_n           ),
           .wbd_pll_rst_n           (wbd_pll_rst_n           ),
@@ -1023,6 +1117,11 @@ qspim_top
           .mclk                    (wbd_clk_spi             ),
           .rst_n                   (qspim_rst_n             ),
 
+          .strap_flash             (strap_qspi_flash        ),
+          .strap_pre_sram          (strap_qspi_pre_sram     ),
+          .strap_sram              (strap_qspi_sram         ),
+          .cfg_init_bypass         (strap_qspi_init_bypass  ),
+
     // Clock Skew Adjust
           .cfg_cska_sp_co          (cfg_cska_qspi_co_rp     ),
           .cfg_cska_spi            (cfg_cska_qspi_rp        ),
@@ -1056,8 +1155,8 @@ qspim_top
 
 wb_interconnect  #(
 	`ifndef SYNTHESIS
-          .CH_CLK_WD               (4                       ),
-	  .CH_DATA_WD              (37                      )
+          .CH_CLK_WD           (4                       ),
+	      .CH_DATA_WD          (53                      )
         `endif
 	) u_intercon (
 `ifdef USE_POWER_PINS
@@ -1077,24 +1176,24 @@ wb_interconnect  #(
 	  .ch_data_in              ({
 			 
 	                              soft_irq,
-			              irq_lines[15:0],
+			                      irq_lines[31:0],
 
-			              cfg_cska_qspi_co[3:0],
-		                      cfg_cska_pinmux[3:0],
-			              cfg_cska_uart[3:0],
-		                      cfg_cska_qspi[3:0],
-                                      cfg_cska_riscv[3:0]
+			                      cfg_cska_qspi_co[3:0],
+		                          cfg_cska_pinmux[3:0],
+			                      cfg_cska_uart[3:0],
+		                          cfg_cska_qspi[3:0],
+                                  cfg_cska_riscv[3:0]
 			             }                             ),
 	  .ch_data_out             ({
 
 	                              soft_irq_rp,
-			              irq_lines_rp[15:0],
+			                      irq_lines_rp[31:0],
 
-			              cfg_cska_qspi_co_rp[3:0],
-		                      cfg_cska_pinmux_rp[3:0],
-			              cfg_cska_uart_rp[3:0],
-		                      cfg_cska_qspi_rp[3:0],
-                                      cfg_cska_riscv_rp[3:0]
+			                      cfg_cska_qspi_co_rp[3:0],
+		                          cfg_cska_pinmux_rp[3:0],
+			                      cfg_cska_uart_rp[3:0],
+		                          cfg_cska_qspi_rp[3:0],
+                                  cfg_cska_riscv_rp[3:0]
                                     }                              ),
      // Clock Skew adjust
 	  .wbd_clk_int             (wbd_clk_int             ), 
@@ -1211,7 +1310,7 @@ uart_i2c_usb_spi_top   u_uart_i2c_usb_spi (
           .usb_rstn                (usb_rst_n               ), // USB reset
           .spi_rstn                (sspim_rst_n             ), // SPI reset
           .app_clk                 (wbd_clk_uart_skew       ),
-	  .usb_clk                 (usb_clk                 ),
+	      .usb_clk                 (usb_clk                 ),
 
         // Reg Bus Interface Signal
           .reg_cs                  (wbd_uart_stb_o          ),
@@ -1268,8 +1367,22 @@ pinmux_top u_pinmux(
         // System Signals
         // Inputs
           .mclk                    (wbd_clk_pinmux_skew     ),
-          .h_reset_n               (wbd_int_rst_n           ),
+          .e_reset_n               (e_reset_n               ),
+          .p_reset_n               (p_reset_n               ),
+          .s_reset_n               (wbd_int_rst_n           ),
 
+          .cfg_strap_pad_ctrl      (cfg_strap_pad_ctrl      ),
+          .system_strap            (system_strap            ),
+          .strap_sticky            (strap_sticky            ),
+
+          .user_clock1             (wb_clk_i                ),
+          .user_clock2             (user_clock2             ),
+          .int_pll_clock           (int_pll_clock           ),
+          .xtal_clk                (xtal_clk                ),
+
+
+          .rtc_clk                 (rtc_clk                 ),
+          .usb_clk                 (usb_clk                 ),
 	// Reset Control
           .cpu_core_rst_n          (cpu_core_rst_n          ),
           .cpu_intf_rst_n          (cpu_intf_rst_n          ),
@@ -1279,7 +1392,7 @@ pinmux_top u_pinmux(
           .i2cm_rst_n              (i2c_rst_n               ),
           .usb_rst_n               (usb_rst_n               ),
 
-	  .cfg_riscv_ctrl          (cfg_riscv_ctrl          ),
+	      .cfg_riscv_ctrl          (cfg_riscv_ctrl          ),
 
         // Reg Bus Interface Signal
           .reg_cs                  (wbd_glbl_stb_o          ),

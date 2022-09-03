@@ -70,8 +70,11 @@
 `include "sram_macros/sky130_sram_2kbyte_1rw1r_32x512_8.v"
 `include "uart_agent.v"
 `include "i2c_slave_model.v"
+`include "is62wvs1288.v"
 
-module arduino_i2c_scaner_tb;
+`define TB_HEX "arduino_i2c_scaner.hex"
+`define TB_TOP  arduino_i2c_scaner_tb
+module `TB_TOP;
 	reg clock;
 	reg wb_rst_i;
 	reg power1, power2;
@@ -145,12 +148,13 @@ module arduino_i2c_scaner_tb;
 	`ifdef WFDUMP
 	   initial begin
 	   	$dumpfile("simx.vcd");
-	   	$dumpvars(3, arduino_i2c_scaner_tb);
-	   	$dumpvars(0, arduino_i2c_scaner_tb.u_top.u_riscv_top.i_core_top_0);
-	   	$dumpvars(0, arduino_i2c_scaner_tb.u_top.u_riscv_top.u_connect);
-	   	$dumpvars(0, arduino_i2c_scaner_tb.u_top.u_riscv_top.u_intf);
-	   	$dumpvars(0, arduino_i2c_scaner_tb.u_top.u_uart_i2c_usb_spi.u_uart0_core);
-	   	$dumpvars(0, arduino_i2c_scaner_tb.u_top.u_uart_i2c_usb_spi.u_i2cm);
+	   	$dumpvars(3, `TB_TOP);
+	   	$dumpvars(0, `TB_TOP.u_top.u_riscv_top.i_core_top_0);
+	   	$dumpvars(0, `TB_TOP.u_top.u_riscv_top.u_connect);
+	   	$dumpvars(0, `TB_TOP.u_top.u_riscv_top.u_intf);
+	   	$dumpvars(0, `TB_TOP.u_top.u_uart_i2c_usb_spi.u_uart0_core);
+	   	$dumpvars(0, `TB_TOP.u_top.u_uart_i2c_usb_spi.u_i2cm);
+	   	$dumpvars(0, `TB_TOP.u_top.u_pinmux);
 	   end
        `endif
 
@@ -208,16 +212,16 @@ module arduino_i2c_scaner_tb;
         // Remove all the reset
         if(d_risc_id == 0) begin
              $display("STATUS: Working with Risc core 0");
-             wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h11F);
+             wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h11F);
         end else if(d_risc_id == 1) begin
              $display("STATUS: Working with Risc core 1");
-             wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h21F);
+             wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h21F);
         end else if(d_risc_id == 2) begin
              $display("STATUS: Working with Risc core 2");
-             wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h41F);
+             wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h41F);
         end else if(d_risc_id == 3) begin
              $display("STATUS: Working with Risc core 3");
-             wb_user_core_write(`ADDR_SPACE_PINMUX+`PINMUX_GBL_CFG0,'h81F);
+             wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h81F);
         end
 
         repeat (100) @(posedge clock);  // wait for Processor Get Ready
@@ -226,6 +230,12 @@ module arduino_i2c_scaner_tb;
         tb_uart.uart_init;
         tb_uart.control_setup (uart_data_bit, uart_stop_bits, uart_parity_en, uart_even_odd_parity, 
                                        uart_stick_parity, uart_timeout, uart_divisor);
+
+         u_i2c_slave_0.debug = 0; // disable i2c bfm debug message
+         u_i2c_slave_1.debug = 0; // disable i2c bfm debug message
+         u_i2c_slave_2.debug = 0; // disable i2c bfm debug message
+         u_i2c_slave_3.debug = 0; // disable i2c bfm debug message
+         u_i2c_slave_4.debug = 0; // disable i2c bfm debug message
 
         repeat (45000) @(posedge clock);  // wait for Processor Get Ready
 	    flag  = 0;
@@ -244,7 +254,7 @@ module arduino_i2c_scaner_tb;
               end
            end
            begin
-              repeat (200000) @(posedge clock);  // wait for Processor Get Ready
+              repeat (800000) @(posedge clock);  // wait for Processor Get Ready
            end
            join_any
         
@@ -255,25 +265,24 @@ module arduino_i2c_scaner_tb;
 
 		   $display("Total Rx Char: %d Check Sum : %x ",uart_rx_nu, check_sum);
            // Check 
-           // if all the 102 byte received
+           // if all the byte received
            // if no error 
-           if(uart_rx_nu != 102) test_fail = 1;
-           if(check_sum != 32'h1fab) test_fail = 1;
-           if(tb_uart.err_cnt != 0) test_fail = 1;
+           if(uart_rx_nu != 1181) test_fail = 1;
+           if(check_sum != 32'h000170c9) test_fail = 1;
 
 	   
 	    	$display("###################################################");
           	if(test_fail == 0) begin
 		   `ifdef GL
-	    	       $display("Monitor: Standalone String (GL) Passed");
+	    	       $display("Monitor: Standalone i2c scanner (GL) Passed");
 		   `else
-		       $display("Monitor: Standalone String (RTL) Passed");
+		       $display("Monitor: Standalone i2c scanner (RTL) Passed");
 		   `endif
 	        end else begin
 		    `ifdef GL
-	    	        $display("Monitor: Standalone String (GL) Failed");
+	    	        $display("Monitor: Standalone i2c scanner (GL) Failed");
 		    `else
-		        $display("Monitor: Standalone String (RTL) Failed");
+		        $display("Monitor: Standalone i2c scanner (RTL) Failed");
 		    `endif
 		 end
 	    	$display("###################################################");
@@ -322,22 +331,45 @@ user_project_wrapper u_top(
     .user_irq       () 
 
 );
+// SSPI Slave I/F
+assign io_in[0]  = 1'b1; // RESET
+assign io_in[16] = 1'b0 ; // SPIS SCK 
 
 //---------------------------
 // I2C
 // --------------------------
 tri scl,sda;
 
-assign sda  =  (io_oeb[22] == 1'b0) ? io_out[22] : 1'bz;
-assign scl   = (io_oeb[23] == 1'b0) ? io_out[23]: 1'bz;
-assign io_in[22]  =  sda;
-assign io_in[23]  =  scl;
+assign sda  =  (io_oeb[26] == 1'b0) ? io_out[26] : 1'bz;
+assign scl   = (io_oeb[27] == 1'b0) ? io_out[27]: 1'bz;
+assign io_in[26]  =  sda;
+assign io_in[27]  =  scl;
 
 pullup p1(scl); // pullup scl line
 pullup p2(sda); // pullup sda line
 
  
-i2c_slave_model  #(.I2C_ADR(7'h4)) u_i2c_slave (
+i2c_slave_model  #(.I2C_ADR(7'h4)) u_i2c_slave_0 (
+	.scl   (scl), 
+	.sda   (sda)
+       );
+
+i2c_slave_model  #(.I2C_ADR(7'h8)) u_i2c_slave_1 (
+	.scl   (scl), 
+	.sda   (sda)
+       );
+
+i2c_slave_model  #(.I2C_ADR(7'h10)) u_i2c_slave_2 (
+	.scl   (scl), 
+	.sda   (sda)
+       );
+
+i2c_slave_model  #(.I2C_ADR(7'h11)) u_i2c_slave_3 (
+	.scl   (scl), 
+	.sda   (sda)
+       );
+
+i2c_slave_model  #(.I2C_ADR(7'h13)) u_i2c_slave_4 (
 	.scl   (scl), 
 	.sda   (sda)
        );
@@ -354,26 +386,26 @@ i2c_slave_model  #(.I2C_ADR(7'h4)) u_i2c_slave (
 //  user core using the gpio pads
 //  ----------------------------------------------------
 
-   wire flash_clk = io_out[24];
-   wire flash_csb = io_out[25];
+   wire flash_clk = io_out[28];
+   wire flash_csb = io_out[29];
    // Creating Pad Delay
-   wire #1 io_oeb_29 = io_oeb[29];
-   wire #1 io_oeb_30 = io_oeb[30];
-   wire #1 io_oeb_31 = io_oeb[31];
-   wire #1 io_oeb_32 = io_oeb[32];
-   tri  #1 flash_io0 = (io_oeb_29== 1'b0) ? io_out[29] : 1'bz;
-   tri  #1 flash_io1 = (io_oeb_30== 1'b0) ? io_out[30] : 1'bz;
-   tri  #1 flash_io2 = (io_oeb_31== 1'b0) ? io_out[31] : 1'bz;
-   tri  #1 flash_io3 = (io_oeb_32== 1'b0) ? io_out[32] : 1'bz;
+   wire #1 io_oeb_29 = io_oeb[33];
+   wire #1 io_oeb_30 = io_oeb[34];
+   wire #1 io_oeb_31 = io_oeb[35];
+   wire #1 io_oeb_32 = io_oeb[36];
+   tri  #1 flash_io0 = (io_oeb_29== 1'b0) ? io_out[33] : 1'bz;
+   tri  #1 flash_io1 = (io_oeb_30== 1'b0) ? io_out[34] : 1'bz;
+   tri  #1 flash_io2 = (io_oeb_31== 1'b0) ? io_out[35] : 1'bz;
+   tri  #1 flash_io3 = (io_oeb_32== 1'b0) ? io_out[36] : 1'bz;
 
-   assign io_in[29] = flash_io0;
-   assign io_in[30] = flash_io1;
-   assign io_in[31] = flash_io2;
-   assign io_in[32] = flash_io3;
+   assign io_in[33] = flash_io0;
+   assign io_in[34] = flash_io1;
+   assign io_in[35] = flash_io2;
+   assign io_in[36] = flash_io3;
 
    // Quard flash
-     s25fl256s #(.mem_file_name("arduino_i2c_scaner.ino.hex"),
-	             .otp_file_name("none"),
+     s25fl256s #(.mem_file_name(`TB_HEX),
+	         .otp_file_name("none"),
                  .TimingModel("S25FL512SAGMFI010_F_30pF")) 
 		 u_spi_flash_256mb (
            // Data Inputs/Outputs
@@ -388,14 +420,27 @@ i2c_slave_model  #(.I2C_ADR(7'h4)) u_i2c_slave (
 
        );
 
+   wire spiram_csb = io_out[31];
+
+   is62wvs1288 #(.mem_file_name("none"))
+	u_sram (
+         // Data Inputs/Outputs
+           .io0     (flash_io0),
+           .io1     (flash_io1),
+           // Controls
+           .clk    (flash_clk),
+           .csb    (spiram_csb),
+           .io2    (flash_io2),
+           .io3    (flash_io3)
+    );
 
 //---------------------------
 //  UART Agent integration
 // --------------------------
 wire uart_txd,uart_rxd;
 
-assign uart_txd   = io_out[2];
-assign io_in[1]  = uart_rxd ;
+assign uart_txd   = io_out[7];
+assign io_in[6]  = uart_rxd ;
  
 uart_agent tb_uart(
 	.mclk                (clock              ),

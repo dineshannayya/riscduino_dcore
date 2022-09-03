@@ -71,6 +71,8 @@
 `include "is62wvs1288.v"
 `include "bfm_ad5205.sv"
 
+`define TB_HEX "arduino_digital_port_control.hex"
+`define TB_TOP  arduino_digital_port_control_tb
 module arduino_digital_port_control_tb;
 	reg clock;
 	reg wb_rst_i;
@@ -152,12 +154,12 @@ parameter P_QDDR   = 2'b11;
 	`ifdef WFDUMP
 	   initial begin
 	   	$dumpfile("simx.vcd");
-	   	$dumpvars(3, arduino_digital_port_control_tb);
-	   	//$dumpvars(0, arduino_digital_port_control_tb.u_top.u_riscv_top.i_core_top_0);
-	   	//$dumpvars(0, arduino_digital_port_control_tb.u_top.u_riscv_top.u_connect);
-	   	//$dumpvars(0, arduino_digital_port_control_tb.u_top.u_riscv_top.u_intf);
-	   	$dumpvars(0, arduino_digital_port_control_tb.u_top.u_pinmux);
-	   	$dumpvars(0, arduino_digital_port_control_tb.u_top.u_uart_i2c_usb_spi);
+	   	$dumpvars(3, `TB_TOP);
+	   	//$dumpvars(0, `TB_TOP.u_top.u_riscv_top.i_core_top_0);
+	   	//$dumpvars(0, `TB_TOP.u_top.u_riscv_top.u_connect);
+	   	//$dumpvars(0, `TB_TOP.u_top.u_riscv_top.u_intf);
+	   	$dumpvars(0, `TB_TOP.u_top.u_pinmux);
+	   	$dumpvars(0, `TB_TOP.u_top.u_uart_i2c_usb_spi);
 	   end
        `endif
 
@@ -291,14 +293,16 @@ user_project_wrapper u_top(
     .user_irq       () 
 
 );
+// SSPI Slave I/F
+assign io_in[5]  = 1'b1; // RESET
 
 //-------------------------------------------------------------------------------------
 //  Integrate the Serial SPI to ad5204/5206 (4-/6-Channel Digital Potentiometers)
 //  https://www.analog.com/media/en/technical-documentation/data-sheets/ad5204_5206.pdf
 //  -----------------------------------------------------------------------------------
-   wire sspi_sck = io_out[16];
-   wire sspi_sdi = io_out[15];
-   wire sspi_ssn = io_out[13];
+   wire sspi_sck = io_out[21];
+   wire sspi_sdi = io_out[20];
+   wire sspi_ssn = io_out[18];
 
    wire [2:0]      p_channel; // potentiometer channel
    wire [7:0]      p_position; // potentiometer position
@@ -324,25 +328,25 @@ user_project_wrapper u_top(
 //  user core using the gpio pads
 //  ----------------------------------------------------
 
-   wire flash_clk = io_out[24];
-   wire flash_csb = io_out[25];
+   wire flash_clk = io_out[28];
+   wire flash_csb = io_out[29];
    // Creating Pad Delay
-   wire #1 io_oeb_29 = io_oeb[29];
-   wire #1 io_oeb_30 = io_oeb[30];
-   wire #1 io_oeb_31 = io_oeb[31];
-   wire #1 io_oeb_32 = io_oeb[32];
-   tri  #1 flash_io0 = (io_oeb_29== 1'b0) ? io_out[29] : 1'bz;
-   tri  #1 flash_io1 = (io_oeb_30== 1'b0) ? io_out[30] : 1'bz;
-   tri  #1 flash_io2 = (io_oeb_31== 1'b0) ? io_out[31] : 1'bz;
-   tri  #1 flash_io3 = (io_oeb_32== 1'b0) ? io_out[32] : 1'bz;
+   wire #1 io_oeb_29 = io_oeb[33];
+   wire #1 io_oeb_30 = io_oeb[34];
+   wire #1 io_oeb_31 = io_oeb[35];
+   wire #1 io_oeb_32 = io_oeb[36];
+   tri  #1 flash_io0 = (io_oeb_29== 1'b0) ? io_out[33] : 1'bz;
+   tri  #1 flash_io1 = (io_oeb_30== 1'b0) ? io_out[34] : 1'bz;
+   tri  #1 flash_io2 = (io_oeb_31== 1'b0) ? io_out[35] : 1'bz;
+   tri  #1 flash_io3 = (io_oeb_32== 1'b0) ? io_out[36] : 1'bz;
 
-   assign io_in[29] = flash_io0;
-   assign io_in[30] = flash_io1;
-   assign io_in[31] = flash_io2;
-   assign io_in[32] = flash_io3;
+   assign io_in[33] = flash_io0;
+   assign io_in[34] = flash_io1;
+   assign io_in[35] = flash_io2;
+   assign io_in[36] = flash_io3;
 
    // Quard flash
-     s25fl256s #(.mem_file_name("arduino_digital_port_control.ino.hex"),
+     s25fl256s #(.mem_file_name(`TB_HEX),
 	         .otp_file_name("none"),
                  .TimingModel("S25FL512SAGMFI010_F_30pF")) 
 		 u_spi_flash_256mb (
@@ -358,7 +362,7 @@ user_project_wrapper u_top(
 
        );
 
-   wire spiram_csb = io_out[27];
+   wire spiram_csb = io_out[31];
 
    is62wvs1288 #(.mem_file_name("none"))
 	u_sram (

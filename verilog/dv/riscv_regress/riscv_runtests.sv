@@ -71,9 +71,9 @@ end
  end
 ***/
 
-wire [31:0] pc_curr_ff         = (d_risc_id == 0) ? u_top.u_riscv_top.i_core_top_0.i_pipe_top.i_pipe_exu.pc_curr_ff         : u_top.u_riscv_top.i_core_top_1.i_pipe_top.i_pipe_exu.pc_curr_ff;
-wire [31:0] exu2pipe_pc_curr_o = (d_risc_id == 0) ? u_top.u_riscv_top.i_core_top_0.i_pipe_top.i_pipe_exu.exu2pipe_pc_curr_o : u_top.u_riscv_top.i_core_top_1.i_pipe_top.i_pipe_exu.exu2pipe_pc_curr_o;
-wire [31:0] mprf_int_10        = (d_risc_id == 0) ? u_top.u_riscv_top.i_core_top_0.i_pipe_top.i_pipe_mprf.mprf_int[10]      : u_top.u_riscv_top.i_core_top_1.i_pipe_top.i_pipe_mprf.mprf_int[10];
+wire [31:0] pc_curr_ff         = u_top.u_riscv_top.i_core_top_0.i_pipe_top.i_pipe_exu.pc_curr_ff         ;
+wire [31:0] exu2pipe_pc_curr_o = u_top.u_riscv_top.i_core_top_0.i_pipe_top.i_pipe_exu.exu2pipe_pc_curr_o ;
+wire [31:0] mprf_int_10        = u_top.u_riscv_top.i_core_top_0.i_pipe_top.i_pipe_mprf.mprf_int[10]      ;
 
 always @(posedge clk) begin
     bit test_pass;
@@ -240,10 +240,7 @@ always @(posedge clk) begin
             if (f_test != 0) begin
             // Launch new test
                 `ifdef YCR1_TRACE_LOG_EN
-		    if(d_risc_id == 0)
-                        u_top.u_riscv_top.i_core_top_0.i_pipe_top.i_tracelog.test_name = test_file;
-		    else
-                        u_top.u_riscv_top.i_core_top_1.i_pipe_top.i_tracelog.test_name = test_file;
+                    u_top.u_riscv_top.i_core_top_0.i_pipe_top.i_tracelog.test_name = test_file;
                 `endif // SCR1_TRACE_LOG_EN
                 //i_memory_tb.test_file = test_file;
                 //i_memory_tb.test_file_init = 1'b1;

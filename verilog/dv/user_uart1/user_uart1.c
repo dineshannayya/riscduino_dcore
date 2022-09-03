@@ -16,26 +16,32 @@
 // SPDX-FileContributor: Dinesh Annayya <dinesha@opencores.org>
 // //////////////////////////////////////////////////////////////////////////
 #define SC_SIM_OUTPORT (0xf0000000)
-#define uint32_t  long
+#include "../c_func/inc/int_reg_map.h"
+#include "common_misc.h"
+#include "common_bthread.h"
 
 
-#define reg_mprj_uart_reg0 (*(volatile uint32_t*)0x10010100)
-#define reg_mprj_uart_reg1 (*(volatile uint32_t*)0x10010104)
-#define reg_mprj_uart_reg2 (*(volatile uint32_t*)0x10010108)
-#define reg_mprj_uart_reg3 (*(volatile uint32_t*)0x1001010C)
-#define reg_mprj_uart_reg4 (*(volatile uint32_t*)0x10010110)
-#define reg_mprj_uart_reg5 (*(volatile uint32_t*)0x10010114)
-#define reg_mprj_uart_reg6 (*(volatile uint32_t*)0x10010118)
-#define reg_mprj_uart_reg7 (*(volatile uint32_t*)0x1001011C)
-#define reg_mprj_uart_reg8 (*(volatile uint32_t*)0x10010120)
 
 int main()
 {
 
+   reg_glbl_cfg0 |= 0x43;       // Remove Reset for UART
+   reg_glbl_multi_func |=0x200; // Enable UART Multi func
+   reg_uart1_ctrl = 0x07;       // Enable Uart Access {3'h0,2'b00,1'b1,1'b1,1'b1}
+
+   // GLBL_CFG_MAIL_BOX used as mail box, each core update boot up handshake at 8 bit
+   // bit[7:0]   - core-0
+   // bit[15:8]  - core-1
+   // bit[23:16] - core-2
+   // bit[31:24] - core-3
+
+   reg_glbl_mail_box = 0x1 << (bthread_get_core_id() * 8); // Start of Main 
+
     while(1) {
        // Check UART RX fifo has data, if available loop back the data
-       if(reg_mprj_uart_reg8 != 0) { 
-	   reg_mprj_uart_reg5 = reg_mprj_uart_reg6;
+       // Also check txfifo is not full
+       if((reg_uart1_rxfifo_stat != 0) && ((reg_uart1_status & 0x1) != 0x1)) { 
+	   reg_uart1_txdata = reg_uart1_rxdata;
        }
     }
 
