@@ -1,5 +1,7 @@
+```
+
 ####################
-# Thsi file document the feature addition and status
+# This file document the feature addition and status
 
 - 28th Aug 2022 - Dinesh A
     A. Create 10 system strap pick following pads and generate pad direction control and master reset
@@ -37,3 +39,4 @@
                 3. If the current=Quad and Previous: Quad, then bypass mode switching
                 4. If the current=Quad and Previous: Single, then switch mode by command 0x38 (ESQI)
                 Note: Power On Always assume previous strap = Single 
+```
