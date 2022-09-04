@@ -26,6 +26,7 @@ int main()
 {
 
    reg_glbl_cfg0 |= 0x1F;       // Remove Reset for UART
+   reg_glbl_multi_func &=0x7FFFFFFF; // Disable UART Master Bit[31] = 0
    reg_glbl_multi_func |=0x100; // Enable UART Multi func
    reg_uart0_ctrl = 0x07;       // Enable Uart Access {3'h0,2'b00,1'b1,1'b1,1'b1}
 

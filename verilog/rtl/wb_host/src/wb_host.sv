@@ -320,11 +320,11 @@ wb_reset_fsm u_reset_fsm (
 
 wire strap_uart_cfg_mode = system_strap[`STRAP_UARTM_CFG];
 
-wire       cfg_uartm_tx_enable   = (strap_uart_cfg_mode) ? la_data_in[1]     : 1'b1;
-wire       cfg_uartm_rx_enable   = (strap_uart_cfg_mode) ? la_data_in[2]     : 1'b1;
-wire       cfg_uartm_stop_bit    = (strap_uart_cfg_mode) ? la_data_in[3]     : 1'b1;
-wire [11:0]cfg_uart_baud_16x     = (strap_uart_cfg_mode) ? la_data_in[15:4]  : 259;
-wire [1:0] cfg_uartm_cfg_pri_mod = (strap_uart_cfg_mode) ? la_data_in[17:16] : 2'b0;
+wire       cfg_uartm_tx_enable   = (strap_uart_cfg_mode==0) ? la_data_in[1]     : 1'b1;
+wire       cfg_uartm_rx_enable   = (strap_uart_cfg_mode==0) ? la_data_in[2]     : 1'b1;
+wire       cfg_uartm_stop_bit    = (strap_uart_cfg_mode==0) ? la_data_in[3]     : 1'b1;
+wire [11:0]cfg_uart_baud_16x     = (strap_uart_cfg_mode==0) ? la_data_in[15:4]  : 258;
+wire [1:0] cfg_uartm_cfg_pri_mod = (strap_uart_cfg_mode==0) ? la_data_in[17:16] : 2'b0;
 
 
 // UART Master

@@ -166,31 +166,34 @@ parameter P_QDDR   = 2'b11;
        
 
 	initial begin
+		$value$plusargs("risc_core_id=%d", d_risc_id);
 
 		#200; // Wait for reset removal
 	        repeat (10) @(posedge clock);
 		$display("Monitor: Standalone User Risc Boot Test Started");
+   
+       init();
+       wait_riscv_boot();
 
-		$value$plusargs("risc_core_id=%d", d_risc_id);
 		// Remove Wb Reset
-		wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h1);
+		//wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h1);
 
 	    repeat (2) @(posedge clock);
 		#1;
 
         // Remove WB and SPI Reset and CORE under Reset
-        wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h01F);
+        //wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h01F);
 
 		// QSPI SRAM:CS#2 Switch to QSPI Mode
-        wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_BANK_SEL,'h1000); // Change the Bank Sel 1000
-		wb_user_core_write(`ADDR_SPACE_QSPI+`QSPIM_IMEM_CTRL1,{16'h0,1'b0,1'b0,4'b0000,P_MODE_SWITCH_IDLE,P_SINGLE,P_SINGLE,4'b0100});
-		wb_user_core_write(`ADDR_SPACE_QSPI+`QSPIM_IMEM_CTRL2,{8'h0,2'b00,2'b00,P_FSM_C,8'h00,8'h38});
-		wb_user_core_write(`ADDR_SPACE_QSPI+`QSPIM_IMEM_WDATA,32'h0);
+        //wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_BANK_SEL,'h1000); // Change the Bank Sel 1000
+		//wb_user_core_write(`ADDR_SPACE_QSPI+`QSPIM_IMEM_CTRL1,{16'h0,1'b0,1'b0,4'b0000,P_MODE_SWITCH_IDLE,P_SINGLE,P_SINGLE,4'b0100});
+		//wb_user_core_write(`ADDR_SPACE_QSPI+`QSPIM_IMEM_CTRL2,{8'h0,2'b00,2'b00,P_FSM_C,8'h00,8'h38});
+		//wb_user_core_write(`ADDR_SPACE_QSPI+`QSPIM_IMEM_WDATA,32'h0);
 
         // Remove all the reset
         if(d_risc_id == 0) begin
              $display("STATUS: Working with Risc core 0");
-             wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h11F);
+             //wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h11F);
         end else if(d_risc_id == 1) begin
              $display("STATUS: Working with Risc core 1");
              wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h21F);
@@ -205,27 +208,27 @@ parameter P_QDDR   = 2'b11;
         repeat (100) @(posedge clock);  // wait for Processor Get Ready
 
 
-        repeat (20000) @(posedge clock);  // wait for Processor Get Ready
+        repeat (1000) @(posedge clock);  // wait for Processor Get Ready
         flag = 1;
 
       fork
       begin
-          for (channel = 0; channel < 1; channel = channel+1) begin
+          for (channel = 0; channel < 6; channel = channel+1) begin
             // change the resistance on this channel from min to max:
-            for (level = 0; level < 255; level = level+1) begin
+            for (level = 0; level < 64; level = level+1) begin
                 wait(u_ad5205.channel == channel && u_ad5205.position ==  level);
                 $display("Channel: %x and Position: %x",u_ad5205.channel,u_ad5205.position);
             end
             // change the resistance on this channel from min to max:
-            for (level = 0; level < 255; level = level+1) begin
-                wait((u_ad5205.channel == channel) && (u_ad5205.position ==  (255 -level)));
+            for (level = 0; level < 64; level = level+1) begin
+                wait((u_ad5205.channel == channel) && (u_ad5205.position ==  (64 -level)));
                 $display("Channel: %x and Position: %x",u_ad5205.channel,u_ad5205.position);
             end
           end
           test_fail = 0;
       end
       begin
-         repeat (6000000) @(posedge clock);  // wait for Processor Get Ready
+         repeat (1000000) @(posedge clock);  // wait for Processor Get Ready
          test_fail = 1;
       end
       join_any
@@ -251,11 +254,6 @@ parameter P_QDDR   = 2'b11;
 	    $finish;
 	end
 
-	initial begin
-		wb_rst_i <= 1'b1;
-		#100;
-		wb_rst_i <= 1'b0;	    	// Release reset
-	end
 wire USER_VDD1V8 = 1'b1;
 wire VSS = 1'b0;
 
@@ -509,6 +507,7 @@ end
 
 `endif
 **/
+`include "user_tasks.sv"
 endmodule
 `include "s25fl256s.sv"
 `default_nettype wire

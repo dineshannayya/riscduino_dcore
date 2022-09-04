@@ -44,8 +44,8 @@
 * Pin Mapping    Arduino              ATMGE CONFIG
 *   ATMEGA328     Port                                                      caravel Pin Mapping
 *   Pin-1         22            PC6/WS[0]/RESET*                            digital_io[5]
-*   Pin-2         0             PD0/WS[0]/RXD[0]                            digital_io[6]
-*   Pin-3         1             PD1/WS[0]/TXD[0]                            digital_io[7]
+*   Pin-2         0             PD0/WS[0]/MRXD/RXD[0]                       digital_io[6]
+*   Pin-3         1             PD1/WS[0]/MRXD/TXD[0]                       digital_io[7]
 *   Pin-4         2             PD2/WS[0]/RXD[1]/INT0                       digital_io[8]
 *   Pin-5         3             PD3/WS[1]INT1/OC2B(PWM0)                    digital_io[9]
 *   Pin-6         4             PD4/WS[1]TXD[1]                             digital_io[10]
@@ -65,8 +65,8 @@
 *   Pin-20                      AVCC                -
 *   Pin-21                      AREF                                        analog_io[10]
 *   Pin-22                      GND                 -
-*   Pin-23        14            PC0/uartm_rxd/ADC0                          digital_io[22]/analog_io[11]
-*   Pin-24        15            PC1/uartm_txd/ADC1                          digital_io[23]/analog_io[12]
+*   Pin-23        14            PC0/ADC0                          digital_io[22]/analog_io[11]
+*   Pin-24        15            PC1/ADC1                          digital_io[23]/analog_io[12]
 *   Pin-25        16            PC2/usb_dp/ADC2                             digital_io[24]/analog_io[13]
 *   Pin-26        17            PC3/usb_dn/ADC3                             digital_io[25]/analog_io[14]
 *   Pin-27        18            PC4/ADC4/SDA                                digital_io[26]/analog_io[15]
@@ -236,21 +236,23 @@ always_comb begin
      port_b_in = 'h0;
      port_c_in = 'h0;
      port_d_in = 'h0;
-     uart_rxd   = 'h0;
+     uart_rxd   = 'b1;
      ext_intr_in= 'h0;
      spim_mosi  = 'h0;
      i2cm_data_i= 'h0;
      i2cm_clk_i = 'h0;
+     uartm_rxd  = 'b1;
 
      //Pin-1        PC6/RESET*          digital_io[5]
      port_c_in[6] = digital_io_in[5];
      pin_resetn   = digital_io_in[5];
 
-     //Pin-2        PD0/RXD[0]             digital_io[6]
+     //Pin-2        PD0/MRXD/RXD[0]             digital_io[6]
      port_d_in[0] = digital_io_in[6];
-     if(cfg_uart_enb[0])  uart_rxd[0]   = digital_io_in[6];
+     if (cfg_muart_enb)        uartm_rxd     = digital_io_in[6];
+     else if(cfg_uart_enb[0])  uart_rxd[0]   = digital_io_in[6];
   
-     //Pin-3        PD1/TXD[0]             digital_io[7]
+     //Pin-3        PD1/MTXD/TXD[0]             digital_io[7]
      port_d_in[1] = digital_io_in[7];
 
 
@@ -302,11 +304,10 @@ always_comb begin
      port_b_in[5]= digital_io_in[21];
      spis_sck    = (spis_boot) ? digital_io_in[21] : 1'b1;   // SPIM SCK (Output) = SPIS SCK (Input)
      
-     //Pin-23       PC0/ADC0            digital_io[22]/uartm_rxd/analog_io[11]
-     uartm_rxd    = (cfg_muart_enb) ?  digital_io_in[22]: 1'b1;
+     //Pin-23       PC0/ADC0            digital_io[22]/analog_io[11]
      port_c_in[0] = digital_io_in[22];
 
-     //Pin-24       PC1/ADC1            digital_io[23]/uartm_txd/analog_io[12]
+     //Pin-24       PC1/ADC1            digital_io[23]/analog_io[12]
      port_c_in[1] = digital_io_in[23];
 
      //Pin-25       PC2/ADC2            digital_io[24]/usb_dp/analog_io[13]
@@ -345,12 +346,13 @@ always_comb begin
      if(cfg_port_c_port_type[6])       digital_io_out[5]   = ws_txd[0];
      else if(cfg_port_c_dir_sel[6])    digital_io_out[5]   = port_c_out[6];
 
-     //Pin-2        PD0/WS[0]/RXD[0]       digital_io[6]
+     //Pin-2        PD0/WS[0]/MRXD/RXD[0]       digital_io[6]
      if(cfg_port_d_port_type[0])       digital_io_out[6]   = ws_txd[0];
      else if(cfg_port_d_dir_sel[0])    digital_io_out[6]   = port_d_out[0];
   
-     //Pin-3        PD1/WS[0]/TXD[0]       digital_io[7]
-     if     (cfg_uart_enb[0])         digital_io_out[7]  = uart_txd[0];
+     //Pin-3        PD1/WS[0]/MTXD/TXD[0]       digital_io[7]
+     if     (cfg_muart_enb)           digital_io_out[7]  = uartm_txd;
+     else if(cfg_uart_enb[0])         digital_io_out[7]  = uart_txd[0];
      else if(cfg_port_d_port_type[1]) digital_io_out[7]  = ws_txd[0];
      else if(cfg_port_d_dir_sel[1])   digital_io_out[7]  = port_d_out[1];
 
@@ -426,13 +428,11 @@ always_comb begin
      if(cfg_spim_enb)             digital_io_out[21]  = spim_sck;      // SPIM SCK (Output) = SPIS SCK (Input)
      else if(cfg_port_b_dir_sel[5])  digital_io_out[21]  = port_b_out[5];
      
-     //Pin-23       PC0/MRXD/ADC0    digital_io[22]/analog_io[11]
-     if(cfg_muart_enb)               digital_io_out[22]  = 1'b1;
-     else if(cfg_port_c_dir_sel[0])  digital_io_out[22]  = port_c_out[0];
+     //Pin-23       PC0/ADC0    digital_io[22]/analog_io[11]
+     if(cfg_port_c_dir_sel[0])  digital_io_out[22]  = port_c_out[0];
 
-     //Pin-24       PC1/MTXD/ADC1    digital_io[23]/analog_io[12]
-     if(cfg_muart_enb)               digital_io_out[23]  = uartm_txd;
-     else if(cfg_port_c_dir_sel[1])  digital_io_out[23]  = port_c_out[1];
+     //Pin-24       PC1/ADC1    digital_io[23]/analog_io[12]
+     if(cfg_port_c_dir_sel[1])  digital_io_out[23]  = port_c_out[1];
 
      //Pin-25       PC2/USB_DP/ADC2  digital_io[24]/analog_io[13]
      if(cfg_usb_enb)                 digital_io_out[24]  = usb_dp_o;
@@ -479,13 +479,15 @@ always_comb begin
      if(cfg_port_c_port_type[6])       digital_io_oen[5]   = 1'b1;
      else if(cfg_port_c_dir_sel[6])    digital_io_oen[5]   = 1'b0;
 
-     //Pin-2        PD0/WS[0]/RXD[0]          digital_io[6]
-     if     (cfg_uart_enb[0])        digital_io_oen[6]   = 1'b1;
+     //Pin-2        PD0/WS[0]/MRXD/RXD[0]          digital_io[6]
+     if     (cfg_muart_enb)          digital_io_oen[6]   = 1'b1;
+     else if(cfg_uart_enb[0])        digital_io_oen[6]   = 1'b1;
      else if(cfg_port_d_port_type[0])digital_io_oen[6]   = 1'b1;
      else if(cfg_port_d_dir_sel[0])  digital_io_oen[6]   = 1'b0;
 
-     //Pin-3        PD1/WS[0]/TXD[0]          digital_io[7]
-     if     (cfg_uart_enb[0])        digital_io_oen[7]   = 1'b0;
+     //Pin-3        PD1/WS[0]/MTXD/TXD[0]          digital_io[7]
+     if     (cfg_muart_enb)          digital_io_oen[7]   = 1'b0;
+     else if(cfg_uart_enb[0])        digital_io_oen[7]   = 1'b0;
      else if(cfg_port_d_port_type[1])digital_io_oen[7]   = 1'b1;
      else if(cfg_port_d_dir_sel[1])  digital_io_oen[7]   = 1'b0;
 
@@ -572,12 +574,10 @@ always_comb begin
      else if(cfg_port_b_dir_sel[5])  digital_io_oen[21]  = 1'b0;
      else if(spis_boot)              digital_io_oen[21]  = 1'b1; // SPIS SCK (Input)
      
-     //Pin-23       PC0/MRXD/ADC0    digital_io[22]/analog_io[11]
-     if(cfg_muart_enb)               digital_io_oen[22]  = 1'b1; 
-     else if(cfg_port_c_dir_sel[0])  digital_io_oen[22]  = 1'b0;
+     //Pin-23       PC0/ADC0    digital_io[22]/analog_io[11]
+     if(cfg_port_c_dir_sel[0])       digital_io_oen[22]  = 1'b0;
 
-     //Pin-24       PC1/MTXD/ADC1    digital_io[23]/analog_io[12]
-     if(cfg_muart_enb)               digital_io_oen[23]  = 1'b0; 
+     //Pin-24       PC1/ADC1    digital_io[23]/analog_io[12]
      if(cfg_port_c_dir_sel[1])       digital_io_oen[23]  = 1'b0;
 
      //Pin-25       PC2/USB_DP/ADC2  digital_io[24]/analog_io[13]

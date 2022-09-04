@@ -260,12 +260,6 @@ begin
    repeat (2) @(posedge clock);
 
    test_fail=0;
-   // Run in Fast Sim Mode
-   `ifdef GL
-       force u_top.u_wb_host._8654_.Q= 1'b1; 
-   `else
-       force u_top.u_wb_host.u_fastsim_buf.X = 1'b1; 
-    `endif
 
    fork
    begin
@@ -273,34 +267,10 @@ begin
        $display("Step-1, Checking the Strap Loading");
        test_id = 1;
        for(i = 0; i < 16; i = i+1) begin
-          //#1 - Apply Reset
-          wb_rst_i = 1; 
-          test_step = 1;
-          //#2 - Apply Strap
-          strap_in = 1 << i; 
-          force u_top.io_in[36:29] = strap_in[15:8];
-          force u_top.io_in[20:13] = strap_in[7:0];
-          repeat (10) @(posedge clock);
-          test_step = 2;
-         
-          //#3 - Remove Reset
-          wb_rst_i = 0; // Remove Reset
-          test_step = 3;
-
-          //#4 - Wait for Power on reset removal
-          wait(u_top.p_reset_n == 1);          
-          test_step = 4;
-
-          // #5 - Release the Strap
-          release u_top.io_in[36:29];
-          release u_top.io_in[20:13];
-          test_step = 5;
-
-          // #6 - Wait for system reset removal
-          wait(u_top.s_reset_n == 1);          // Wait for system reset removal
-          repeat (10) @(posedge clock);
-          test_step = 6;
-
+          strap_in = 0;
+          strap_in = 1 << i;
+          apply_strap(strap_in);
+     
           //#7 - Check the strap reg value
           wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_PAD_STRAP,read_data,strap_in);
           wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_STRAP_STICKY,read_data,strap_sticky);
@@ -318,29 +288,10 @@ begin
        $display("Step-2, Checking the Clock Skew Configuration");
        test_id = 2;
        for(i = 0; i < 4; i = i+1) begin
-          //#1 - Apply Reset
-          wb_rst_i = 1; 
-          //#2 - Apply Strap
           strap_in = 0;
           strap_in[12:11] = i;
           strap_skew = i;
-          force u_top.io_in[36:29] = strap_in[15:8];
-          force u_top.io_in[20:13] = strap_in[7:0];
-          repeat (10) @(posedge clock);
-         
-          //#3 - Remove Reset
-          wb_rst_i = 0; // Remove Reset
-
-          //#4 - Wait for Power on reset removal
-          wait(u_top.p_reset_n == 1);          
-
-          // #5 - Release the Strap
-          release u_top.io_in[36:29];
-          release u_top.io_in[20:13];
-
-          // #6 - Wait for system reset removal
-          wait(u_top.s_reset_n == 1);          // Wait for system reset removal
-          repeat (10) @(posedge clock);
+          apply_strap(strap_in);
 
           //#7 - Check the strap reg value
           wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_PAD_STRAP,read_data,strap_in);
@@ -358,37 +309,16 @@ begin
        test_id = 3;
        for(i = 0; i < 4; i = i+1) begin
           for(j = 0; j < 4; j = j+1) begin
-              //#1 - Apply Reset
-              wb_rst_i = 1; 
-              //#2 - Apply Strap
               strap_in = 0;
-
               strap_in[1:0] = i;
               cpu_clk_cfg[1:0]=i;
               wbs_clk_cfg[1:0]=i;
-
               strap_in[3:2] = j;
               cpu_clk_cfg[3:2]=j;
               wbs_clk_cfg[3:2]=j;
-
               strap_in[3:2] = j;
-              force u_top.io_in[36:29] = strap_in[15:8];
-              force u_top.io_in[20:13] = strap_in[7:0];
-              repeat (10) @(posedge clock);
-         
-              //#3 - Remove Reset
-              wb_rst_i = 0; // Remove Reset
-
-              //#4 - Wait for Power on reset removal
-              wait(u_top.p_reset_n == 1);          
-
-              // #5 - Release the Strap
-              release u_top.io_in[36:29];
-              release u_top.io_in[20:13];
-
-              // #6 - Wait for system reset removal
-              wait(u_top.s_reset_n == 1);          // Wait for system reset removal
-              repeat (10) @(posedge clock);
+ 
+              apply_strap(strap_in);
 
               //#7 - Check the strap reg value
               wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_PAD_STRAP,read_data,strap_in);
@@ -430,7 +360,21 @@ begin
           $display("STATUS: Step-4, Checking the soft reboot sequence - PASSED");
        end
        $display("##########################################################");
+       /****
+       $display("Step-5, Checking the uart Master baud-16x clock is 9600* 16");
+       test_id = 5;
 
+       apply_strap(16'h10); // [4] -  // uart master config control - constant value based on system clock selection
+
+       uartm_clock_monitor(6510); // 1/(9600*16) = 6510 ns
+
+       if(test_fail == 1) begin
+          $display("ERROR: Step-5,  Checking the uart Master baud-16x clock - FAILED");
+       end else begin
+          $display("STATUS: Step-5,  Checking the uart Master baud-16x clock - PASSED");
+       end
+       $display("##########################################################");
+       ***/
        /*** 
        `ifndef GL  
        $display("###################################################");
@@ -486,8 +430,8 @@ begin
         wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h1);
 
          wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_0,read_data,32'h8273_8343);
-         wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_1,read_data,32'h2608_2022);
-         wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_2,read_data,32'h0005_2000);
+         wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_1,read_data,32'h0309_2022);
+         wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_2,read_data,32'h0005_3000);
          if(test_fail == 1) begin
             $display("ERROR: Step-7,Monitor: Checking the chip signature - FAILED");
          end else begin
@@ -660,6 +604,15 @@ begin
       force clock_mon = u_top.u_wb_host.u_clkbuf_pll.X;
     `endif
    check_clock_period("PLL CLock",exp_period);
+   release clock_mon;
+end
+endtask
+
+task uartm_clock_monitor;
+input real exp_period;
+begin
+   force clock_mon = u_top.u_wb_host.u_uart2wb.u_core.line_clk_16x;
+   check_clock_period("UART CLock",exp_period);
    release clock_mon;
 end
 endtask
@@ -867,5 +820,6 @@ end
 
 `endif
 **/
+`include "user_tasks.sv"
 endmodule
 `default_nettype wire

@@ -97,6 +97,35 @@ begin
   end
 endtask
 
+task         apply_strap;
+input [15:0] strap;
+begin
+
+   repeat (10) @(posedge clock);
+   //#1 - Apply Reset
+   wb_rst_i = 1; 
+   //#2 - Apply Strap
+   force u_top.io_in[36:29] = strap[15:8];
+   force u_top.io_in[20:13] = strap[7:0];
+   repeat (10) @(posedge clock);
+    
+   //#3 - Remove Reset
+   wb_rst_i = 0; // Remove Reset
+
+   //#4 - Wait for Power on reset removal
+   wait(u_top.p_reset_n == 1);          
+
+   // #5 - Release the Strap
+   release u_top.io_in[36:29];
+   release u_top.io_in[20:13];
+
+   // #6 - Wait for system reset removal
+   wait(u_top.s_reset_n == 1);          // Wait for system reset removal
+   repeat (10) @(posedge clock);
+
+end
+endtask
+
 genvar gCnt;
 generate
  for(gCnt=0; gCnt<16; gCnt++) begin : g_strap
