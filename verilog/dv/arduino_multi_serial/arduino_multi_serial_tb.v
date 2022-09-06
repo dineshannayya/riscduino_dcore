@@ -71,6 +71,7 @@
 `include "sram_macros/sky130_sram_2kbyte_1rw1r_32x512_8.v"
 `include "is62wvs1288.v"
 `include "uart_agent.v"
+`include "user_params.svh"
 
 `define TB_HEX "arduino_multi_serial.hex"
 `define TB_TOP  arduino_multi_serial_tb
@@ -187,108 +188,111 @@ module `TB_TOP;
        
 
 	initial begin
-               uart_data_bit           = 2'b11;
-               uart_stop_bits          = 0; // 0: 1 stop bit; 1: 2 stop bit;
-               uart_stick_parity       = 0; // 1: force even parity
-               uart_parity_en          = 0; // parity enable
-               uart_even_odd_parity    = 1; // 0: odd parity; 1: even parity
-	       tb_set_uart_baud(50000000,288000,uart_divisor);// 50Mhz Ref clock, Baud Rate: 230400
-               uart_timeout            = 2000;// wait time limit
-               uart_fifo_enable        = 0;	// fifo mode disable
+        uart_data_bit           = 2'b11;
+        uart_stop_bits          = 0; // 0: 1 stop bit; 1: 2 stop bit;
+        uart_stick_parity       = 0; // 1: force even parity
+        uart_parity_en          = 0; // parity enable
+        uart_even_odd_parity    = 1; // 0: odd parity; 1: even parity
+	    tb_set_uart_baud(50000000,288000,uart_divisor);// 50Mhz Ref clock, Baud Rate: 230400
+        uart_timeout            = 2000;// wait time limit
+        uart_fifo_enable        = 0;	// fifo mode disable
 
 		$value$plusargs("risc_core_id=%d", d_risc_id);
+
+	   init();
+	   wait_riscv_boot(d_risc_id);
 
 		#200; // Wait for reset removal
 	        repeat (10) @(posedge clock);
 		$display("Monitor: Standalone User Risc Boot Test Started");
 
 		// Remove Wb Reset
-		wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h1);
+		//wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h1);
 
 	        repeat (2) @(posedge clock);
 		#1;
-                // Remove all the reset
-                if(d_risc_id == 0) begin
-                     $display("STATUS: Working with Risc core 0");
-                     wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h11F);
-                end else if(d_risc_id == 1) begin
-                     $display("STATUS: Working with Risc core 1");
-                     wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h21F);
-                end else if(d_risc_id == 2) begin
-                     $display("STATUS: Working with Risc core 2");
-                     wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h41F);
-                end else if(d_risc_id == 3) begin
-                     $display("STATUS: Working with Risc core 3");
-                     wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h81F);
-                end
+        // Remove all the reset
+        if(d_risc_id == 0) begin
+             $display("STATUS: Working with Risc core 0");
+             //wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h11F);
+        end else if(d_risc_id == 1) begin
+             $display("STATUS: Working with Risc core 1");
+             wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h21F);
+        end else if(d_risc_id == 2) begin
+             $display("STATUS: Working with Risc core 2");
+             wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h41F);
+        end else if(d_risc_id == 3) begin
+             $display("STATUS: Working with Risc core 3");
+             wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h81F);
+        end
 
-                repeat (100) @(posedge clock);  // wait for Processor Get Ready
+        repeat (100) @(posedge clock);  // wait for Processor Get Ready
 
-	        tb_uart0.debug_mode = 1; // enable debug display
-                tb_uart0.uart_init;
-                tb_uart0.control_setup (uart_data_bit, uart_stop_bits, uart_parity_en, uart_even_odd_parity, 
+	    tb_uart0.debug_mode = 1; // enable debug display
+        tb_uart0.uart_init;
+        tb_uart0.control_setup (uart_data_bit, uart_stop_bits, uart_parity_en, uart_even_odd_parity, 
                                                uart_stick_parity, uart_timeout, uart_divisor);
 	        
 		tb_uart1.debug_mode = 1; // enable debug display
-                tb_uart1.uart_init;
-                tb_uart1.control_setup (uart_data_bit, uart_stop_bits, uart_parity_en, uart_even_odd_parity, 
+        tb_uart1.uart_init;
+        tb_uart1.control_setup (uart_data_bit, uart_stop_bits, uart_parity_en, uart_even_odd_parity, 
                                                uart_stick_parity, uart_timeout, uart_divisor);
 
-                repeat (60000) @(posedge clock);  // wait for Processor Get Ready
-	        flag  = 0;
+        repeat (5000) @(posedge clock);  // wait for Processor Get Ready
+	    flag  = 0;
 		check_sum = 0;
                 
-                for (i=0; i<40; i=i+1)
-                    uart0_write_data[i] = $random;
+        for (i=0; i<40; i=i+1)
+            uart0_write_data[i] = $random;
                 
-	       for (i=0; i<40; i=i+1)
-                    uart1_write_data[i] = $random;
+	    for (i=0; i<40; i=i+1)
+            uart1_write_data[i] = $random;
                 
-                fork
-		   //Drive UART-0
-                   begin
-                      for (i=0; i<40; i=i+1)
-                      begin
-                        $display ("\n... UART-0 Agent Writing char %x ...", uart0_write_data[i]);
-                         tb_uart0.write_char (uart0_write_data[i]);
-                      end
-                   end
+        fork
+		//Drive UART-0
+        begin
+           for (i=0; i<40; i=i+1)
+           begin
+              $display ("\n... UART-0 Agent Writing char %x ...", uart0_write_data[i]);
+              tb_uart0.write_char (uart0_write_data[i]);
+           end
+        end
                    
-		   //Drive UART-1
-		   begin
-                      for (j=0; j<40; j=j+1)
-                      begin
-                        $display ("\n... UART-1 Agent Writing char %x ...", uart1_write_data[j]);
-                         tb_uart1.write_char (uart1_write_data[j]);
-                      end
-                   end
+		//Drive UART-1
+		begin
+           for (j=0; j<40; j=j+1)
+           begin
+              $display ("\n... UART-1 Agent Writing char %x ...", uart1_write_data[j]);
+              tb_uart1.write_char (uart1_write_data[j]);
+           end
+        end
 		   
-		   //Receive UART-0
-                   begin
-                      for (k=0; k<40; k=k+1)
-                      begin
-                        tb_uart0.read_char_chk(uart1_write_data[k]);
-                      end
-                   end
+		//Receive UART-0
+        begin
+           for (k=0; k<40; k=k+1)
+           begin
+              tb_uart0.read_char_chk(uart1_write_data[k]);
+           end
+        end
 		   
-		   //Receive UART-1
-                   begin
-                      for (l=0; l<40; l=l+1)
-                      begin
-                        tb_uart1.read_char_chk(uart0_write_data[l]);
-                      end
-                   end
-                   join
+		//Receive UART-1
+        begin
+           for (l=0; l<40; l=l+1)
+           begin
+              tb_uart1.read_char_chk(uart0_write_data[l]);
+           end
+        end
+        join
                 
-                   test_fail = 0;
-                   #100
-                   tb_uart0.report_status(uart_rx_nu, uart_tx_nu);
-                   if(uart_tx_nu != 40) test_fail = 1;
-                   if(uart_rx_nu != 40) test_fail = 1;
+        test_fail = 0;
+        #100
+           tb_uart0.report_status(uart_rx_nu, uart_tx_nu);
+           if(uart_tx_nu != 40) test_fail = 1;
+           if(uart_rx_nu != 40) test_fail = 1;
 
-                   tb_uart1.report_status(uart_rx_nu, uart_tx_nu);
-                   if(uart_tx_nu != 40) test_fail = 1;
-                   if(uart_rx_nu != 40) test_fail = 1;
+           tb_uart1.report_status(uart_rx_nu, uart_tx_nu);
+           if(uart_tx_nu != 40) test_fail = 1;
+           if(uart_rx_nu != 40) test_fail = 1;
                 
 	   
 	    	$display("###################################################");
@@ -309,11 +313,6 @@ module `TB_TOP;
 	    $finish;
 	end
 
-	initial begin
-		wb_rst_i <= 1'b1;
-		#100;
-		wb_rst_i <= 1'b0;	    	// Release reset
-	end
 wire USER_VDD1V8 = 1'b1;
 wire VSS = 1'b0;
 
@@ -352,8 +351,8 @@ user_project_wrapper u_top(
 
 );
 // SSPI Slave I/F
-assign io_in[0]  = 1'b1; // RESET
-assign io_in[16] = 1'b0 ; // SPIS SCK 
+assign io_in[5]  = 1'b1; // RESET
+assign io_in[21] = 1'b0 ; // SPIS SCK 
 
 `ifndef GL // Drive Power for Hold Fix Buf
     // All standard cell need power hook-up for functionality work
@@ -571,6 +570,7 @@ end
 
 `endif
 **/
+`include "user_tasks.sv"
 endmodule
 `include "s25fl256s.sv"
 `default_nettype wire

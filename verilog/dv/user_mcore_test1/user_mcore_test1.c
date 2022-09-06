@@ -16,6 +16,7 @@
  */
 
 
+#include "../c_func/inc/int_reg_map.h"
 #include "common_misc.h"
 #include "common_bthread.h"
 
@@ -24,18 +25,6 @@
 #define uint16_t  int
 #define size      10
 
-#define reg_mprj_globl_reg0  (*(volatile uint32_t*)0x10020000) // Chip ID
-#define reg_mprj_globl_reg1  (*(volatile uint32_t*)0x10020004) // Global Config-0
-#define reg_mprj_globl_reg2  (*(volatile uint32_t*)0x10020008) // Global Config-1
-#define reg_mprj_globl_reg3  (*(volatile uint32_t*)0x1002000C) // Global Interrupt Mask
-#define reg_mprj_globl_reg4  (*(volatile uint32_t*)0x10020010) // Global Interrupt
-#define reg_mprj_globl_reg5  (*(volatile uint32_t*)0x10020014) // Multi functional sel
-#define reg_mprj_globl_soft0  (*(volatile uint32_t*)0x10020018) // Sof Register-0
-#define reg_mprj_globl_soft1  (*(volatile uint32_t*)0x1002001C) // Sof Register-1
-#define reg_mprj_globl_soft2  (*(volatile uint32_t*)0x10020020) // Sof Register-2
-#define reg_mprj_globl_soft3  (*(volatile uint32_t*)0x10020024) // Sof Register-3
-#define reg_mprj_globl_soft4 (*(volatile uint32_t*)0x10020028) // Sof Register-4
-#define reg_mprj_globl_soft5 (*(volatile uint32_t*)0x1002002C) // Sof Register-5
 // -------------------------------------------------------------------------
 // Multi-core test, Two Array is filled with below data, destination hold sum
 //      source           result            remark
@@ -97,6 +86,15 @@ void vvadd_mt(void* arg_vptr )
        int src0[buf_size];
        int src1[buf_size];
        char test_pass = 0x1;
+       if ( bthread_get_core_id() == 0 ) {
+           // GLBL_CFG_MAIL_BOX used as mail box, each core update boot up handshake at 8 bit
+           // bit[7:0]   - core-0
+           // bit[15:8]  - core-1
+           // bit[23:16] - core-2
+           // bit[31:24] - core-3
+           reg_glbl_mail_box = 0x1 << (bthread_get_core_id() * 8); // Start of Main 
+
+       }
 
        for ( int i = 0; i < buf_size; i++ ) {
           src0[i] = 0x1111 * (i); 
@@ -121,18 +119,18 @@ void vvadd_mt(void* arg_vptr )
        // Spawn work onto core 1
        bthread_spawn( 1, &vvadd_mt, &arg1 );
       
-       reg_mprj_globl_soft2  = 0x33445566;  // Sig-2
+       reg_glbl_soft_reg_2  = 0x33445566;  // Sig-2
        // Have core 0 also do some work.
        vvadd_mt(&arg0);
       
-       reg_mprj_globl_soft3  = 0x44556677;  // Sig-3
+       reg_glbl_soft_reg_3  = 0x44556677;  // Sig-3
        // Wait for core 1 to finish.
        bthread_join(1);
 
 
        // Stop counting stats
        //test_stats_off();
-       reg_mprj_globl_soft4 = 0x55667788;  // sig-4
+       reg_glbl_soft_reg_4 = 0x55667788;  // sig-4
       
        // Core 0 will verify the results.
        if ( bthread_get_core_id() == 0 ) {
@@ -143,8 +141,17 @@ void vvadd_mt(void* arg_vptr )
             	test_pass &= 0;
            }
 	   if(test_pass == 0x1) {
-               reg_mprj_globl_soft5 = 0x66778899;  // sig-5
+               reg_glbl_soft_reg_5 = 0x66778899;  // sig-5
 	   }
+
+       }
+       if ( bthread_get_core_id() == 0 ) {
+           // GLBL_CFG_MAIL_BOX used as mail box, each core update boot up handshake at 8 bit
+           // bit[7:0]   - core-0
+           // bit[15:8]  - core-1
+           // bit[23:16] - core-2
+           // bit[31:24] - core-3
+           reg_glbl_mail_box = 0xff << (bthread_get_core_id() * 8); // Start of Main 
 
        }
       

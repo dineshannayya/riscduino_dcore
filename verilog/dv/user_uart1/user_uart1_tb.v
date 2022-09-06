@@ -207,7 +207,7 @@ begin
 	                          uart_stick_parity, uart_timeout, uart_divisor);
 
 
-    wait_riscv_boot();
+    wait_riscv_boot(d_risc_id);
    
    
    for (i=0; i<40; i=i+1)

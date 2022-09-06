@@ -199,7 +199,7 @@ module `TB_TOP;
 		$display("Monitor: Standalone User Risc Boot Test Started");
 
 	       init();
-	       wait_riscv_boot();
+	       wait_riscv_boot(d_risc_id);
 		// Remove Wb Reset
 		//wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h1);
 

@@ -105,6 +105,9 @@ set ::env(RUN_CVC) 0
 set ::env(PL_TIME_DRIVEN) 1
 set ::env(PL_TARGET_DENSITY) "0.42"
 
+#LVS Issue - DEF Base looks to having issue
+set ::env(MAGIC_EXT_USE_GDS) {1}
+
 # helps in anteena fix
 set ::env(USE_ARC_ANTENNA_CHECK) "0"
 
@@ -125,7 +128,7 @@ set ::env(GLB_RESIZER_TIMING_OPTIMIZATIONS) {1}
 set ::env(PL_RESIZER_TIMING_OPTIMIZATIONS) {1}
 
 #set ::env(GLB_RT_ADJUSTMENT) {0.25}
-set ::env(GRT_LAYER_ADJUSTMENTS) {0.25,0,0,0,0,0}
+#set ::env(GRT_LAYER_ADJUSTMENTS) {0.25,0,0,0,0,0}
 set ::env(CELL_PAD) {8}
 
 set ::env(QUIT_ON_TIMING_VIOLATIONS) "0"

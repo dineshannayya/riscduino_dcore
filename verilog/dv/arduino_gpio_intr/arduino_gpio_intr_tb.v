@@ -286,7 +286,7 @@ assign  {
 		$value$plusargs("risc_core_id=%d", d_risc_id);
  
 	    init();
-       	wait_riscv_boot();
+       	wait_riscv_boot(d_risc_id);
 
 		#200; // Wait for reset removal
 	    repeat (10) @(posedge clock);

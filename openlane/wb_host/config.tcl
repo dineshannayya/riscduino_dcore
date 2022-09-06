@@ -85,7 +85,7 @@ set ::env(DIE_AREA) "0 0 450 425"
 
 
 # If you're going to use multiple power domains, then keep this disabled.
-set ::env(RUN_CVC) 1
+set ::env(RUN_CVC) 0
 
 #set ::env(PDN_CFG) $script_dir/pdn.tcl
 
@@ -108,6 +108,9 @@ set ::env(RT_MAX_LAYER) {met4}
 #set ::env(GLB_RT_MAX_DIODE_INS_ITERS) 10
 
 set ::env(DIODE_INSERTION_STRATEGY) 4
+
+#LVS Issue - DEF Base looks to having issue
+set ::env(MAGIC_EXT_USE_GDS) {1}
 
 set ::env(PL_RESIZER_BUFFER_INPUT_PORTS) "0"
 set ::env(PL_RESIZER_BUFFER_OUTPUT_PORTS) "1"

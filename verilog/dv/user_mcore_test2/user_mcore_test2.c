@@ -55,17 +55,22 @@
 
        // Common Sub-Routine 
        if ( bthread_get_core_id() == 0 ) {
-
          // Enable the GPIO UART I/F
          reg_glbl_multi_func = 0x100;
 
-         // Enable the UART TX/RX & STOP=2
-         reg_uart0_ctrl = 0x7;
          // 1152000 Baud at 50Mhz System clock
          reg_uart0_baud_ctrl1 = 0x0;
          reg_uart0_baud_ctrl2 = 0x0;
+         // Enable the UART TX/RX & STOP=2
+         reg_uart0_ctrl = 0x7;
 
-         reg_glbl_soft_reg_5 = 0x1; // Test Start Indication
+           // GLBL_CFG_MAIL_BOX used as mail box, each core update boot up handshake at 8 bit
+           // bit[7:0]   - core-0
+           // bit[15:8]  - core-1
+           // bit[23:16] - core-2
+           // bit[31:24] - core-3
+           reg_glbl_mail_box = 0x1 << (bthread_get_core_id() * 8); // Start of Main 
+
        }
        // Core 0 thread
        if ( bthread_get_core_id() == 0 ) {
@@ -78,7 +83,7 @@
        // Core 1 thread
        if ( bthread_get_core_id() == 1 ) {
 
-         while((reg_glbl_soft_reg_5 & 0x1) == 0x0); // wait for test start
+         while((reg_glbl_mail_box & 0x1) == 0x0); // wait for test start
          print_message("UART command-0 from core-1\n");
          print_message("UART command-1 from core-1\n");
          print_message("UART command-2 from core-1\n");
@@ -87,7 +92,7 @@
        }
        // Core 2 thread
        if ( bthread_get_core_id() == 2 ) {
-         while((reg_glbl_soft_reg_5 & 0x1) == 0x0); // wait for test start
+         while((reg_glbl_mail_box & 0x1) == 0x0); // wait for test start
          print_message("UART command-0 from core-2\n");
          print_message("UART command-1 from core-2\n");
          print_message("UART command-2 from core-2\n");
@@ -96,7 +101,7 @@
        }
        // Core 3 thread
        if ( bthread_get_core_id() == 3 ) {
-         while((reg_glbl_soft_reg_5 & 0x1) == 0x0); // wait for test start
+         while((reg_glbl_mail_box & 0x1) == 0x0); // wait for test start
          print_message("UART command-0 from core-3\n");
          print_message("UART command-1 from core-3\n");
          print_message("UART command-2 from core-3\n");

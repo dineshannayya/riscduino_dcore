@@ -133,9 +133,9 @@ module `TB_TOP;
        `endif
 
 	initial begin
+		$value$plusargs("risc_core_id=%d", d_risc_id);
         init();
 
-		$value$plusargs("risc_core_id=%d", d_risc_id);
 
 		#200; // Wait for reset removal
 	        repeat (10) @(posedge clock);
@@ -155,7 +155,7 @@ module `TB_TOP;
                      wb_user_core_write(`ADDR_SPACE_GLBL+`GLBL_CFG_CFG0,'h21F);
 		end
 
-        wait_riscv_boot();
+        wait_riscv_boot(d_risc_id);
 
 		$display("Monitor: Reading Back the expected value");
 		// User RISC core expect to write these value in global

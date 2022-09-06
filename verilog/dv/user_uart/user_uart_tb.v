@@ -161,6 +161,8 @@ integer i,j;
 initial
 begin
 
+ $value$plusargs("risc_core_id=%d", d_risc_id);
+
    init();
 
    uart_data_bit           = 2'b11;
@@ -209,7 +211,7 @@ begin
 	                          uart_stick_parity, uart_timeout, uart_divisor);
 
 
-    wait_riscv_boot();
+    wait_riscv_boot(d_risc_id);
    
    
    for (i=0; i<40; i=i+1)
