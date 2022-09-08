@@ -85,9 +85,6 @@ set ::env(RUN_CVC) 0
 # helps in anteena fix
 set ::env(USE_ARC_ANTENNA_CHECK) "0"
 
-#LVS Issue - DEF Base looks to having issue
-set ::env(MAGIC_EXT_USE_GDS) {1}
-
 #set ::env(FP_IO_VEXTEND) 4
 #set ::env(FP_IO_HEXTEND) 4
 
@@ -100,6 +97,10 @@ set ::env(FP_PDN_HWIDTH) 6.2
 set ::env(RT_MAX_LAYER) {met4}
 #set ::env(GLB_RT_MAX_DIODE_INS_ITERS) 10
 set ::env(DIODE_INSERTION_STRATEGY) 4
+
+
+#LVS Issue - DEF Base looks to having issue
+set ::env(MAGIC_EXT_USE_GDS) {1}
 
 
 set ::env(QUIT_ON_TIMING_VIOLATIONS) "0"

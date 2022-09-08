@@ -28,7 +28,7 @@ TOOLS?=/opt/riscv32i/
 
 export USER_PROJECT_VERILOG ?=  $(DESIGNS)/verilog
 ## YIFIVE FIRMWARE
-YIFIVE_FIRMWARE_PATH = $(USER_PROJECT_VERILOG)/dv/firmware
+YIFIVE_FIRMWARE_PATH = $(USER_PROJECT_VERILOG)/dv/common/firmware
 GCC_PREFIX?=riscv32-unknown-elf
 
 
@@ -90,6 +90,6 @@ endif
 # ---- Clean ----
 
 clean:
-	rm -f *.elf *.hex *.bin *.vvp *.vcd *.log *.dump
+	rm -f *.elf *.hex *.bin *.vvp *.vcd *.log *.o *.dump
 
 .PHONY: clean hex all

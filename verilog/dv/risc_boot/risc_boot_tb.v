@@ -132,7 +132,7 @@ pullup(mprj_io[3]);
            $dumpfile("simx.vcd");
            $dumpvars(1,risc_boot_tb);
            //$dumpvars(1,risc_boot_tb.u_spi_flash_256mb);
-           //$dumpvars(2,risc_boot_tb.u_top);
+           $dumpvars(2,risc_boot_tb.u_top);
            $dumpvars(1,risc_boot_tb.u_top.mprj);
            $dumpvars(0,risc_boot_tb.u_top.mprj.u_wb_host);
            //$dumpvars(0,risc_boot_tb.tb_uart);
@@ -151,9 +151,9 @@ pullup(mprj_io[3]);
 		$display("%c[1;31m",27);
 		$display ("##########################################################");
 		`ifdef GL
-			$display ("Monitor: Timeout, Test Risc Boot (GL) Failed");
+			$display ("Monitor: Timeout, %m (GL) Failed");
 		`else
-			$display ("Monitor: Timeout, Test Risc Boot (RTL) Failed");
+			$display ("Monitor: Timeout, %m (RTL) Failed");
 		`endif
 		$display ("##########################################################");
 		$display("%c[0m",27);
@@ -186,7 +186,7 @@ pullup(mprj_io[3]);
 					     uart_stick_parity, uart_timeout, uart_divisor);
 
 
-                wait_riscv_boot(d_risc_id);
+                wait_riscv_boot();
 		repeat (50000) @(posedge clock);  
 
 		for (i=0; i<40; i=i+1)
@@ -228,15 +228,15 @@ pullup(mprj_io[3]);
               $display("###################################################");
               if(test_fail == 0) begin
                  `ifdef GL
-                     $display("Monitor: Standalone User Risc Boot Test (GL) Passed");
+                     $display("Monitor: %m (GL) Passed");
                  `else
-                     $display("Monitor: Standalone User Risc Boot Test (RTL) Passed");
+                     $display("Monitor: %m (RTL) Passed");
                  `endif
               end else begin
                   `ifdef GL
-                      $display("Monitor: Standalone User Risc Boot Test (GL) Failed");
+                      $display("Monitor: %m (GL) Failed");
                   `else
-                      $display("Monitor: Standalone User Risc Boot Test (RTL) Failed");
+                      $display("Monitor: %m (RTL) Failed");
                   `endif
                end
               $display("###################################################");

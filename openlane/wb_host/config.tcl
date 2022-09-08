@@ -42,7 +42,8 @@ set ::env(CLOCK_BUFFER_FANOUT) "8"
 set ::env(VERILOG_FILES) "\
      $::env(DESIGN_DIR)/../../verilog/rtl/clk_skew_adjust/src/clk_skew_adjust.gv \
      $::env(DESIGN_DIR)/../../verilog/rtl/wb_host/src/wb_host.sv \
-     $::env(DESIGN_DIR)/../../verilog/rtl/wb_host/src/wb_reset_fsm.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/wb_host/src/wbh_reset_fsm.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/wb_host/src/wbh_reg.sv \
      $::env(DESIGN_DIR)/../../verilog/rtl/lib/async_fifo.sv      \
      $::env(DESIGN_DIR)/../../verilog/rtl/lib/async_wb.sv        \
      $::env(DESIGN_DIR)/../../verilog/rtl/lib/clk_ctl.v          \
@@ -85,7 +86,7 @@ set ::env(DIE_AREA) "0 0 450 425"
 
 
 # If you're going to use multiple power domains, then keep this disabled.
-set ::env(RUN_CVC) 0
+set ::env(RUN_CVC) 1
 
 #set ::env(PDN_CFG) $script_dir/pdn.tcl
 
@@ -95,8 +96,8 @@ set ::env(PL_TARGET_DENSITY) "0.45"
 
 
 
-#set ::env(FP_IO_VEXTEND) 4
-#set ::env(FP_IO_HEXTEND) 4
+set ::env(FP_IO_VEXTEND) 4
+set ::env(FP_IO_HEXTEND) 4
 
 set ::env(FP_PDN_VPITCH) 100
 set ::env(FP_PDN_HPITCH) 100
@@ -108,6 +109,7 @@ set ::env(RT_MAX_LAYER) {met4}
 #set ::env(GLB_RT_MAX_DIODE_INS_ITERS) 10
 
 set ::env(DIODE_INSERTION_STRATEGY) 4
+
 
 #LVS Issue - DEF Base looks to having issue
 set ::env(MAGIC_EXT_USE_GDS) {1}

@@ -16,7 +16,7 @@
  */
 
 
-#include "../c_func/inc/int_reg_map.h"
+#include "int_reg_map.h"
 #include "common_misc.h"
 #include "common_bthread.h"
 
@@ -106,12 +106,12 @@ void vvadd_mt(void* arg_vptr )
        arg_t arg0 = { dest, src0, src1, 0, buf_size/2 };
        arg_t arg1 = { dest, src0, src1, buf_size/2, buf_size };
 
-       reg_mprj_globl_soft0  = 0x11223344;  // Sig-0
+       reg_glbl_soft_reg_0  = 0x11223344;  // Sig-0
        // Initialize bare threads (bthread).
        bthread_init();
       
       
-       reg_mprj_globl_soft1  = 0x22334455;  // Sig-1
+       reg_glbl_soft_reg_1  = 0x22334455;  // Sig-1
        // Start counting stats.
        //test_stats_on();
       

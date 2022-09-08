@@ -18,7 +18,7 @@
 
 #include "common_misc.h"
 #include "common_bthread.h"
-#include "../c_func/inc/int_reg_map.h"
+#include "int_reg_map.h"
 
 #define SC_SIM_OUTPORT (0xf0000000)
 #define uint32_t  long

@@ -96,8 +96,8 @@ Disassembly of section .text:
  2d0:	0062a223          	sw	t1,4(t0)
  2d4:	4501                	li	a0,0
  2d6:	4581                	li	a1,0
- 2d8:	0a8000ef          	jal	ra,380 <main>
- 2dc:	0c40006f          	j	3a0 <sc_exit>
+ 2d8:	0b2000ef          	jal	ra,38a <main>
+ 2dc:	1240006f          	j	400 <sc_exit>
 
 000002e0 <trap_entry>:
  2e0:	716d                	addi	sp,sp,-272
@@ -174,25 +174,53 @@ Disassembly of section .text:
  372:	d83ff06f          	j	f4 <SIM_EXIT>
 	...
 
-00000380 <main>:
- 380:	10010737          	lui	a4,0x10010
- 384:	531c                	lw	a5,32(a4)
- 386:	dffd                	beqz	a5,384 <main+0x4>
- 388:	01872283          	lw	t0,24(a4) # 10010018 <__C_STACK_TOP__+0x3b8f818>
- 38c:	00572a23          	sw	t0,20(a4)
- 390:	bfd5                	j	384 <main+0x4>
+00000380 <exit>:
+ 380:	67c1                	lui	a5,0x10
+ 382:	8d5d                	or	a0,a0,a5
+ 384:	7c051073          	csrw	0x7c0,a0
+ 388:	8082                	ret
+
+0000038a <main>:
+ 38a:	100207b7          	lui	a5,0x10020
+ 38e:	43d8                	lw	a4,4(a5)
+ 390:	80000637          	lui	a2,0x80000
+ 394:	fff64393          	not	t2,a2
+ 398:	01f76293          	ori	t0,a4,31
+ 39c:	0057a223          	sw	t0,4(a5) # 10020004 <__C_STACK_TOP__+0x3b9f804>
+ 3a0:	4bd4                	lw	a3,20(a5)
+ 3a2:	10010337          	lui	t1,0x10010
+ 3a6:	f1402873          	csrr	a6,mhartid
+ 3aa:	0076f533          	and	a0,a3,t2
+ 3ae:	cbc8                	sw	a0,20(a5)
+ 3b0:	4bcc                	lw	a1,20(a5)
+ 3b2:	00381e13          	slli	t3,a6,0x3
+ 3b6:	4e9d                	li	t4,7
+ 3b8:	1005e893          	ori	a7,a1,256
+ 3bc:	0117aa23          	sw	a7,20(a5)
+ 3c0:	4f05                	li	t5,1
+ 3c2:	01d32023          	sw	t4,0(t1) # 10010000 <__C_STACK_TOP__+0x3b8f800>
+ 3c6:	01cf1fb3          	sll	t6,t5,t3
+ 3ca:	03f7ae23          	sw	t6,60(a5)
+ 3ce:	02032783          	lw	a5,32(t1)
+ 3d2:	dff5                	beqz	a5,3ce <main+0x44>
+ 3d4:	01032703          	lw	a4,16(t1)
+ 3d8:	00177293          	andi	t0,a4,1
+ 3dc:	fe0299e3          	bnez	t0,3ce <main+0x44>
+ 3e0:	01832683          	lw	a3,24(t1)
+ 3e4:	00d32a23          	sw	a3,20(t1)
+ 3e8:	b7dd                	j	3ce <main+0x44>
 	...
 
-000003a0 <sc_exit>:
- 3a0:	00000297          	auipc	t0,0x0
- 3a4:	d5428293          	addi	t0,t0,-684 # f4 <SIM_EXIT>
- 3a8:	8282                	jr	t0
- 3aa:	00000013          	nop
- 3ae:	00000013          	nop
- 3b2:	00000013          	nop
- 3b6:	00000013          	nop
- 3ba:	00000013          	nop
- 3be:	0001                	nop
+00000400 <sc_exit>:
+ 400:	00000297          	auipc	t0,0x0
+ 404:	cf428293          	addi	t0,t0,-780 # f4 <SIM_EXIT>
+ 408:	8282                	jr	t0
+ 40a:	00000013          	nop
+ 40e:	00000013          	nop
+ 412:	00000013          	nop
+ 416:	00000013          	nop
+ 41a:	00000013          	nop
+ 41e:	0001                	nop
 	...
 
 Disassembly of section .stack:
