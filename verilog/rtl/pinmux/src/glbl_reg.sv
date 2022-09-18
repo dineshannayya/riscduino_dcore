@@ -93,6 +93,7 @@ module glbl_reg (
                        output logic [2:0]      user_irq               ,
 		               input  logic            usb_intr               ,
 		               input  logic            i2cm_intr              ,
+		               input  logic            pwm_intr              ,
 
 		               output logic [15:0]     cfg_riscv_ctrl         ,
                        output  logic [31:0]    cfg_multi_func_sel     ,// multifunction pins
@@ -108,7 +109,8 @@ module glbl_reg (
                        output logic[25:0]    cfg_dc_trim        , // External trim for DCO mode
                        output logic          pll_ref_clk        , // Input oscillator to match
 
-                       output logic          dbg_clk_mon
+                       output logic          dbg_clk_mon        ,
+                       output logic          cfg_gpio_dgmode    
    ); 
 
 
@@ -134,9 +136,6 @@ logic [31:0]   reg_5;  // Multi Function Sel
 logic [31:0]   reg_6;  // 
 logic [31:0]   reg_7;  // 
 logic [31:0]   reg_8;  // 
-logic [31:0]   reg_9;  // 
-logic [31:0]   reg_10; // 
-logic [31:0]   reg_11; // 
 logic [31:0]   reg_12; // Latched Strap 
 logic [31:0]   reg_13; // Strap Sticky
 logic [31:0]   reg_14; // System Strap
@@ -150,14 +149,6 @@ logic [31:0]   reg_20;  // Software Reg-4  - s_reset
 logic [31:0]   reg_21;  // Software Reg-5  - s_reset
 logic [31:0]   reg_22;  // Software Reg-6  - s_reset
 logic [31:0]   reg_23;  // Software Reg-7  - s_reset
-logic [31:0]   reg_24;  // Reserved
-logic [31:0]   reg_25;  // Reserved
-logic [31:0]   reg_26;  // Reserved
-logic [31:0]   reg_27;  // Reserved
-logic [31:0]   reg_28;  // Reserved
-logic [31:0]   reg_29;  // Reserved
-logic [31:0]   reg_30;  // Reserved
-logic [31:0]   reg_31;  // Reserved
 
 logic           cs_int;
 logic [3:0]     cfg_mon_sel;
@@ -344,10 +335,11 @@ gen_32b_reg2  u_reg_2	(
 	      .data_out   (reg_2         )
 	      );
 
-assign  cfg_mon_sel   = reg_2[7:4];
-assign  soft_irq      = reg_2[3]; 
-assign  user_irq      = reg_2[2:0]; 
-assign cfg_riscv_ctrl = reg_2[31:16];
+assign  cfg_gpio_dgmode   = reg_2[8]; // gpio de-glitch mode selection
+assign  cfg_mon_sel       = reg_2[7:4];
+assign  soft_irq          = reg_2[3]; 
+assign  user_irq          = reg_2[2:0]; 
+assign cfg_riscv_ctrl     = reg_2[31:16];
 
 //-----------------------------------------------------------------------
 //   reg-3 : Global Interrupt Mask
@@ -371,7 +363,7 @@ gen_32b_reg  #(32'h0) u_reg_3	(
 assign  irq_lines     = reg_3[31:0] & reg_4[31:0]; 
 
 // In Arduino GPIO[7:0] is corresponds to PORT-A which is not available for user access
-wire [31:0] hware_intr_req = {gpio_intr[31:8], 3'b0,usb_intr, i2cm_intr,timer_intr[2:0]};
+wire [31:0] hware_intr_req = {gpio_intr[31:8], 2'b0,pwm_intr,usb_intr, i2cm_intr,timer_intr[2:0]};
 
 generic_intr_stat_reg #(.WD(32),
 	                .RESET_DEFAULT(0)) u_reg4 (
@@ -653,9 +645,9 @@ begin
     5'b00110 : reg_out [31:0] = reg_6  ;    
     5'b00111 : reg_out [31:0] = reg_7  ;    
     5'b01000 : reg_out [31:0] = reg_8  ;    
-    5'b01001 : reg_out [31:0] = reg_9  ;    
-    5'b01010 : reg_out [31:0] = reg_10 ;   
-    5'b01011 : reg_out [31:0] = reg_11 ;   
+    5'b01001 : reg_out [31:0] = 'h0  ;    
+    5'b01010 : reg_out [31:0] = 'h0 ;   
+    5'b01011 : reg_out [31:0] = 'h0 ;   
     5'b01100 : reg_out [31:0] = reg_12 ;   
     5'b01101 : reg_out [31:0] = reg_13 ;   
     5'b01110 : reg_out [31:0] = reg_14 ;   
@@ -668,14 +660,14 @@ begin
     5'b10101 : reg_out [31:0] = reg_21  ;    
     5'b10110 : reg_out [31:0] = reg_22  ;    
     5'b10111 : reg_out [31:0] = reg_23  ;    
-    5'b11000 : reg_out [31:0] = reg_24  ;    
-    5'b11001 : reg_out [31:0] = reg_25  ;    
-    5'b11010 : reg_out [31:0] = reg_26 ;   
-    5'b11011 : reg_out [31:0] = reg_27 ;   
-    5'b11100 : reg_out [31:0] = reg_28 ;   
-    5'b11101 : reg_out [31:0] = reg_29 ;   
-    5'b11110 : reg_out [31:0] = reg_30 ;   
-    5'b11111 : reg_out [31:0] = reg_31 ;   
+    5'b11000 : reg_out [31:0] = 'h0  ;    
+    5'b11001 : reg_out [31:0] = 'h0  ;    
+    5'b11010 : reg_out [31:0] = 'h0 ;   
+    5'b11011 : reg_out [31:0] = 'h0 ;   
+    5'b11100 : reg_out [31:0] = 'h0 ;   
+    5'b11101 : reg_out [31:0] = 'h0 ;   
+    5'b11110 : reg_out [31:0] = 'h0 ;   
+    5'b11111 : reg_out [31:0] = 'h0 ;   
     default  : reg_out [31:0] = 32'h0;
   endcase
 end
@@ -755,7 +747,7 @@ clk_ctl #(2) u_pll_ref_clk (
    );
 
 // Debug clock monitor optin
-assign dbg_clk_ref       = (cfg_mon_sel == 4'b000) ? user_clock1    :
+wire  dbg_clk_ref       = (cfg_mon_sel == 4'b000) ? user_clock1    :
 	                       (cfg_mon_sel == 4'b001) ? user_clock2    :
 	                       (cfg_mon_sel == 4'b010) ? xtal_clk     :
 	                       (cfg_mon_sel == 4'b011) ? int_pll_clock: 
@@ -765,6 +757,7 @@ assign dbg_clk_ref       = (cfg_mon_sel == 4'b000) ? user_clock1    :
 	                       (cfg_mon_sel == 4'b111) ? rtc_clk      : 1'b0;
 
 //  DIv16 to debug monitor purpose
+logic dbg_clk_div16;
 
 clk_ctl #(3) u_dbgclk (
    // Outputs

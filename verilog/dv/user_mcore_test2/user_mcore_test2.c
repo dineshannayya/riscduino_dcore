@@ -74,6 +74,7 @@
        }
        // Core 0 thread
        if ( bthread_get_core_id() == 0 ) {
+         while((reg_glbl_mail_box >> (bthread_get_core_id() *8) & 0xFF) != 0x81); // wait for test start
          print_message("UART command-0 from core-0\n");
          print_message("UART command-1 from core-0\n");
          print_message("UART command-2 from core-0\n");
@@ -83,7 +84,7 @@
        // Core 1 thread
        if ( bthread_get_core_id() == 1 ) {
 
-         while((reg_glbl_mail_box & 0x1) == 0x0); // wait for test start
+         while((reg_glbl_mail_box >> (bthread_get_core_id() *8) & 0xFF) != 0x81); // wait for test start
          print_message("UART command-0 from core-1\n");
          print_message("UART command-1 from core-1\n");
          print_message("UART command-2 from core-1\n");
@@ -92,7 +93,7 @@
        }
        // Core 2 thread
        if ( bthread_get_core_id() == 2 ) {
-         while((reg_glbl_mail_box & 0x1) == 0x0); // wait for test start
+         while((reg_glbl_mail_box >> (bthread_get_core_id() *8) & 0xFF) != 0x81); // wait for test start
          print_message("UART command-0 from core-2\n");
          print_message("UART command-1 from core-2\n");
          print_message("UART command-2 from core-2\n");
@@ -101,7 +102,7 @@
        }
        // Core 3 thread
        if ( bthread_get_core_id() == 3 ) {
-         while((reg_glbl_mail_box & 0x1) == 0x0); // wait for test start
+         while((reg_glbl_mail_box >> (bthread_get_core_id() *8) & 0xFF) != 0x81); // wait for test start
          print_message("UART command-0 from core-3\n");
          print_message("UART command-1 from core-3\n");
          print_message("UART command-2 from core-3\n");

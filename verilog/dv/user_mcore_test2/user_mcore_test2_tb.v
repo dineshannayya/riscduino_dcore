@@ -113,6 +113,7 @@ parameter real XTAL_PERIOD = 6;
 	   	$dumpvars(1, `TB_TOP.u_top);
 	   	$dumpvars(0, `TB_TOP.u_top.u_riscv_top);
 	   	$dumpvars(0, `TB_TOP.u_top.u_uart_i2c_usb_spi);
+	   	$dumpvars(0, `TB_TOP.u_top.u_pinmux);
 	   end
        `endif
 
@@ -181,6 +182,7 @@ parameter real XTAL_PERIOD = 6;
         tb_uart.control_setup (uart_data_bit, uart_stop_bits, uart_parity_en, uart_even_odd_parity, uart_stick_parity, uart_timeout, uart_divisor);
 
         wait_riscv_boot();
+        set_tb_ready();
 
 
 	    flag  = 0;

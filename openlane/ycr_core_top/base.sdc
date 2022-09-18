@@ -34,7 +34,7 @@ set_input_delay -min 2.0000 -clock [get_clocks {core_clk}] -add_delay [get_ports
 #DMEM Constraints
 set_output_delay -max 6.0000 -clock [get_clocks {core_clk}] -add_delay [get_ports {core2dmem_cmd_o}]
 set_output_delay -max 8.0000 -clock [get_clocks {core_clk}] -add_delay [get_ports {core2dmem_req_o}]
-set_output_delay -max 2.5000 -clock [get_clocks {core_clk}] -add_delay [get_ports {core2dmem_addr_o[*]}]
+set_output_delay -max 7.0000 -clock [get_clocks {core_clk}] -add_delay [get_ports {core2dmem_addr_o[*]}]
 set_output_delay -max 6.0000 -clock [get_clocks {core_clk}] -add_delay [get_ports {core2dmem_wdata_o[*]}]
 set_output_delay -max 6.0000 -clock [get_clocks {core_clk}] -add_delay [get_ports {core2dmem_width_o[*]}]
 
@@ -60,6 +60,9 @@ set cap_load 0.0334
 puts "\[INFO\]: Setting load to: $cap_load"
 set_load  $cap_load [all_outputs]
 
+set_max_transition 1.00 [current_design]
+set_max_capacitance 0.2 [current_design]
+set_max_fanout 10 [current_design]
 ###############################################################################
 # Design Rules
 ###############################################################################

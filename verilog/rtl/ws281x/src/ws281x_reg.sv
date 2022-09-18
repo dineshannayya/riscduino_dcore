@@ -128,12 +128,10 @@ wire   sw_wr_en_2  = sw_wr_en  & (sw_addr == 4'h2);
 wire   sw_wr_en_3  = sw_wr_en  & (sw_addr == 4'h3);
 wire   sw_wr_en_4  = sw_wr_en  & (sw_addr == 4'h4) & !fifo_full[0]; // Write only if fifo is not full
 wire   sw_wr_en_5  = sw_wr_en  & (sw_addr == 4'h5) & !fifo_full[1]; // Write only if fifo is not full
-wire   sw_wr_en_6  = sw_wr_en  & (sw_addr == 4'h6) & !fifo_full[2]; // Write only if fifo is not full
-wire   sw_wr_en_7  = sw_wr_en  & (sw_addr == 4'h7) & !fifo_full[3]; // Write only if fifo is not full
 
 
 // Generated seperate write enable case to block the reg ack duration when fifo is full
-wire  sw_wr_en_t =  sw_wr_en_0 | sw_wr_en_1 | sw_wr_en_2 | sw_wr_en_3 | sw_wr_en_4 | sw_wr_en_5 | sw_wr_en_6 | sw_wr_en_7;
+wire  sw_wr_en_t =  sw_wr_en_0 | sw_wr_en_1 | sw_wr_en_2 | sw_wr_en_3 | sw_wr_en_4 | sw_wr_en_5 ;
 
 
 always @ (posedge mclk or negedge h_reset_n)
@@ -173,6 +171,8 @@ assign port1_enb    = reg_0[1];
 	      .data_out   (reg_0[3:0]       )
 	      );
 
+assign reg_0[31:4] = 'h0;
+
 // CONFIG-0
 assign cfg_reset_period = reg_1[15:0];
 gen_16b_reg  #(32'h0) u_reg_1	(
@@ -186,6 +186,8 @@ gen_16b_reg  #(32'h0) u_reg_1	(
 	      //List of Outs
 	      .data_out   (reg_1[15:0]         )
 	      );
+
+assign reg_1[31:16] = 0;
 
 // CONFIG-1
 
@@ -239,7 +241,7 @@ genvar port;
 generate
 for (port = 0; $unsigned(port) < NP; port=port+1) begin : gfifo
 
-sync_fifo #(.W(24), .D(8)) u_fifo
+sync_fifo #(.W(24), .D(2)) u_fifo
            (
             .clk         (mclk                 ),
 	        .reset_n     (h_reset_n            ),

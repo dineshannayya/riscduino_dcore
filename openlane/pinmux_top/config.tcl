@@ -45,19 +45,23 @@ set ::env(VERILOG_FILES) "\
      $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/pinmux_top.sv     \
      $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/pinmux.sv     \
      $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/glbl_reg.sv  \
-     $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/gpio_top.sv  \
-     $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/gpio_reg.sv  \
-     $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/gpio_intr.sv \
-     $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/pwm_top.sv   \
-     $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/pwm_reg.sv   \
-     $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/pwm.sv       \
-     $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/timer_top.sv \
-     $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/timer_reg.sv \
-     $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/timer.sv     \
+     $::env(DESIGN_DIR)/../../verilog/rtl/gpio/src/gpio_top.sv  \
+     $::env(DESIGN_DIR)/../../verilog/rtl/gpio/src/gpio_reg.sv  \
+     $::env(DESIGN_DIR)/../../verilog/rtl/gpio/src/gpio_intr.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/gpio/src/gpio_dglicth.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/pwm/src/pwm_top.sv   \
+     $::env(DESIGN_DIR)/../../verilog/rtl/pwm/src/pwm_core.sv   \
+     $::env(DESIGN_DIR)/../../verilog/rtl/pwm/src/pwm_glbl_reg.sv   \
+     $::env(DESIGN_DIR)/../../verilog/rtl/pwm/src/pwm_blk_reg.sv   \
+     $::env(DESIGN_DIR)/../../verilog/rtl/pwm/src/pwm_cfg_dglitch.sv   \
+     $::env(DESIGN_DIR)/../../verilog/rtl/pwm/src/pwm.sv       \
+     $::env(DESIGN_DIR)/../../verilog/rtl/timer/src/timer_top.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/timer/src/timer_reg.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/timer/src/timer.sv     \
      $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/semaphore_reg.sv  \
-     $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/ws281x_top.sv \
-     $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/ws281x_driver.sv \
-     $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/ws281x_reg.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/ws281x/src/ws281x_top.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/ws281x/src/ws281x_driver.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/ws281x/src/ws281x_reg.sv \
      $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/strap_ctrl.sv \
      $::env(DESIGN_DIR)/../../verilog/rtl/pinmux/src/glbl_rst_reg.sv \
      $::env(DESIGN_DIR)/../../verilog/rtl/lib/pulse_gen_type1.sv   \
@@ -88,7 +92,7 @@ set ::env(GND_PIN) [list {vssd1}]
 set ::env(FP_PIN_ORDER_CFG) $::env(DESIGN_DIR)/pin_order.cfg
 
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 500 750"
+set ::env(DIE_AREA) "0 0 500 850"
 
 
 # If you're going to use multiple power domains, then keep this disabled.
@@ -98,8 +102,8 @@ set ::env(RUN_CVC) 0
 
 
 set ::env(PL_TIME_DRIVEN) 1
-set ::env(PL_TARGET_DENSITY) "0.38"
-set ::env(CELL_PAD) "4"
+set ::env(PL_TARGET_DENSITY) "0.37"
+set ::env(CELL_PAD) "8"
 #set ::env(GRT_ADJUSTMENT) {0.2}
 
 
@@ -135,6 +139,14 @@ set ::env(DIODE_INSERTION_STRATEGY) 4
 #LVS Issue - DEF Base looks to having issue
 set ::env(MAGIC_EXT_USE_GDS) {1}
 
+set ::env(GLB_RESIZER_MAX_SLEW_MARGIN) {1.5}
+set ::env(PL_RESIZER_MAX_SLEW_MARGIN) {1.5}
+
+set ::env(GLB_RESIZER_MAX_CAP_MARGIN) {0.25}
+set ::env(PL_RESIZER_MAX_CAP_MARGIN) {0.25}
+
+set ::env(GLB_RESIZER_MAX_WIRE_LENGTH) {500}
+set ::env(PL_RESIZER_MAX_WIRE_LENGTH) {500}
 
 set ::env(QUIT_ON_TIMING_VIOLATIONS) "0"
 set ::env(QUIT_ON_MAGIC_DRC) "1"

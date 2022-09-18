@@ -21,6 +21,7 @@
 `define TB_HEX "uart_master.hex"
 `define TB_TOP  uart_master_tb
 module `TB_TOP;
+
 	reg clock;
 	reg RSTB;
 	reg CSB;
@@ -111,7 +112,7 @@ reg  [15:0]    strap_in;
             uart_stick_parity       = 0; // 1: force even parity
             uart_parity_en          = 0; // parity enable
             uart_even_odd_parity    = 1; // 0: odd parity; 1: even parity
-            uart_divisor            = 15;// divided by n * 16
+	        tb_set_uart_baud(50000000,288000,uart_divisor);// 50Mhz Ref clock, Baud Rate: 230400
             uart_timeout            = 200;// wait time limit
             uart_fifo_enable        = 0;	// fifo mode disable
             tb_master_uart.debug_mode = 0; // disable debug display
@@ -125,6 +126,7 @@ reg  [15:0]    strap_in;
             tb_master_uart.uart_init;
             tb_master_uart.control_setup (uart_data_bit, uart_stop_bits, uart_parity_en, uart_even_odd_parity, 
         	                          uart_stick_parity, uart_timeout, uart_divisor);
+            tb_master_uart.write_char(8'hA); // New line for auto detect
            //$write ("\n(%t)Response:\n",$time);
            // Wait for Initial Command Format from the uart master
            flag = 0;
@@ -243,6 +245,7 @@ reg  [15:0]    strap_in;
 		.resetb	  (RSTB)
 	);
 
+/*** No Caravel SPI needed **************
 	spiflash #(
 		.FILENAME("uart_master.hex")
 	) spiflash (
@@ -253,7 +256,7 @@ reg  [15:0]    strap_in;
 		.io2(),			// not used
 		.io3()			// not used
 	);
-
+************************/
 
 
 
