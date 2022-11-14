@@ -373,7 +373,7 @@ proc run_flow {args} {
     }
 
     set LVS_ENABLED 1
-    set DRC_ENABLED 0
+    set DRC_ENABLED 1
 
     set ANTENNACHECK_ENABLED [expr ![info exists flags_map(-no_antennacheck)] ]
 

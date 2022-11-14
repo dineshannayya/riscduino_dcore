@@ -7,3 +7,9 @@
 [submodule "verilog/dv/common/riscduino_board"]
 	path = verilog/dv/common/riscduino_board
 	url = https://github.com/dineshannayya/riscduino_board.git
+[submodule "verilog/rtl/security_core"]
+	path = verilog/rtl/security_core
+	url = https://github.com/dineshannayya/security_core
+[submodule "verilog/rtl/fpu"]
+	path = verilog/rtl/fpu
+	url = https://github.com/dineshannayya/fpu

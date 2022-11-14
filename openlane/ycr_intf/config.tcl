@@ -69,11 +69,8 @@ set ::env(CELL_PAD) "6"
 
 set ::env(PL_TARGET_DENSITY) 0.37
 
-set ::env(FP_IO_VEXTEND) {4}
-set ::env(FP_IO_HEXTEND) {4}
-
-#LVS Issue - DEF Base looks to having issue
-set ::env(MAGIC_EXT_USE_GDS) {1}
+#set ::env(FP_IO_VEXTEND) {6}
+#set ::env(FP_IO_HEXTEND) {6}
 
 set ::env(RT_MAX_LAYER) {met4}
 #set ::env(GLB_RT_MAXLAYER) "5"

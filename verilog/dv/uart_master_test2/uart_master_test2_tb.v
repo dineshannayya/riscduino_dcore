@@ -21,7 +21,6 @@
 `define TB_HEX "uart_master.hex"
 `define TB_TOP  uart_master_tb
 module `TB_TOP;
-
 	reg clock;
 	reg RSTB;
 	reg CSB;

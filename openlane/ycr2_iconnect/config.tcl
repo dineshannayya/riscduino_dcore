@@ -34,6 +34,7 @@ set ::env(CLOCK_BUFFER_FANOUT) "8"
 set ::env(LEC_ENABLE) 0
 
 set ::env(VERILOG_FILES) "\
+    $::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/lib/clk_skew_adjust.gv                  \
 	$::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/top/ycr2_iconnect.sv                  \
 	$::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/top/ycr2_cross_bar.sv                 \
 	$::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/top/ycr2_router.sv                    \

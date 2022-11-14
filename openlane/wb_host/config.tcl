@@ -85,8 +85,10 @@ set ::env(GND_PIN) [list {vssd1}]
 set ::env(FP_PIN_ORDER_CFG) $::env(DESIGN_DIR)/pin_order.cfg
 
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 450 425"
+set ::env(DIE_AREA) "0 0 400 425"
 
+set ::env(GRT_OBS) "                              \
+	                met4  0 0 400 425"
 
 # If you're going to use multiple power domains, then keep this disabled.
 set ::env(RUN_CVC) 0
@@ -110,6 +112,10 @@ set ::env(FP_PDN_HWIDTH) 6.2
 #set ::env(GLB_RT_MAXLAYER) 5
 set ::env(RT_MAX_LAYER) {met4}
 #set ::env(GLB_RT_MAX_DIODE_INS_ITERS) 10
+
+#Lef 
+set ::env(MAGIC_GENERATE_LEF) {1}
+set ::env(MAGIC_WRITE_FULL_LEF) {0}
 
 set ::env(DIODE_INSERTION_STRATEGY) 4
 

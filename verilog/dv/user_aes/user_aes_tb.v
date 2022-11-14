@@ -21,9 +21,7 @@
 ////  This file is part of the Riscduino cores project            ////
 ////                                                              ////
 ////  Description                                                 ////
-////   This is a standalone test bench to validate the            ////
-////   Digital core with Risc core executing code from TCM/SRAM.  ////
-////   with icache and dcache bypass mode                         ////
+////      To validate Software AES Encription & Decription        ////
 ////                                                              ////
 ////  To Do:                                                      ////
 ////    nothing                                                   ////
@@ -32,7 +30,7 @@
 ////      - Dinesh Annayya, dinesha@opencores.org                 ////
 ////                                                              ////
 ////  Revision :                                                  ////
-////    0.1 - 16th Feb 2021, Dinesh A                             ////
+////    0.1 - 7th Nov 2022, Dinesh A                              ////
 ////                                                              ////
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
@@ -98,24 +96,24 @@ reg 	       uart_fifo_enable     ;	// fifo mode disable
 
 
      /************* Port-B Mapping **********************************
-     *   Pin-14       PB0/CLKO/ICP1             digital_io[11]
-     *   Pin-15       PB1/SS[1]OC1A(PWM3)       digital_io[12]
-     *   Pin-16       PB2/SS[0]/OC1B(PWM4)      digital_io[13]
-     *   Pin-17       PB3/MOSI/OC2A(PWM5)       digital_io[14]
-     *   Pin-18       PB4/MISO                  digital_io[15]
-     *   Pin-19       PB5/SCK                   digital_io[16]
-     *   Pin-9        PB6/XTAL1/TOSC1           digital_io[6]
-     *   Pin-10       PB7/XTAL2/TOSC2           digital_io[7]
+     *   Pin-14       PB0/CLKO/ICP1             digital_io[16]
+     *   Pin-15       PB1/SS[1]OC1A(PWM3)       digital_io[17]
+     *   Pin-16       PB2/SS[0]/OC1B(PWM4)      digital_io[18]
+     *   Pin-17       PB3/MOSI/OC2A(PWM5)       digital_io[19]
+     *   Pin-18       PB4/MISO                  digital_io[20]
+     *   Pin-19       PB5/SCK                   digital_io[21]
+     *   Pin-9        PB6/XTAL1/TOSC1           digital_io[11]
+     *   Pin-10       PB7/XTAL2/TOSC2           digital_io[12]
      *   ********************************************************/
 
-     wire [7:0]  port_b_in = {   io_out[7],
-		                 io_out[6],
-		                 io_out[16],
-		                 io_out[15],
-			         io_out[14],
-			         io_out[13],
-		                 io_out[12],
-		                 io_out[11]
+     wire [7:0]  port_b_in = {   io_out[12],
+		                         io_out[11],
+		                         io_out[21],
+		                         io_out[20],
+			                     io_out[19],
+			                     io_out[18],
+		                         io_out[17],
+		                         io_out[16]
 			     };
 	initial begin
 		test_fail = 0;
@@ -195,7 +193,7 @@ reg 	       uart_fifo_enable     ;	// fifo mode disable
                      repeat (1400000) @(posedge clock); 
 	          end
 	          begin
-                     wait(port_b_in == 8'h18);
+                     wait(port_b_in == 8'h18 || port_b_in == 8'hA8);
 	          end
 	          begin
                      while(1) begin
