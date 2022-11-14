@@ -79,7 +79,7 @@ set ::env(FP_SIZING) absolute
 set ::env(DIE_AREA) "0 0 540 950 "
 
 set ::env(PL_TARGET_DENSITY) 0.45
-set ::env(CELL_PAD) "8"
+#set ::env(CELL_PAD) "8"
 
 ## Routing
 set ::env(GRT_ADJUSTMENT) 0.2
@@ -92,7 +92,7 @@ set ::env(RT_MAX_LAYER) {met4}
 set ::env(DIODE_INSERTION_STRATEGY) 3
 
 #LVS Issue - DEF Base looks to having issue
-set ::env(MAGIC_EXT_USE_GDS) {1}
+set ::env(MAGIC_EXT_USE_GDS) {0}
 
 set ::env(GLB_RESIZER_MAX_SLEW_MARGIN) {1.5}
 set ::env(PL_RESIZER_MAX_SLEW_MARGIN) {1.5}
@@ -110,6 +110,10 @@ set ::env(QUIT_ON_SLEW_VIOLATIONS) "0"
 
 #Need to cross-check why global timing opimization creating setup vio with hugh hold fix
 set ::env(GLB_RESIZER_TIMING_OPTIMIZATIONS) "1"
+set ::env(GLB_OPTIMIZE_MIRRORING) {1}
+set ::env(PL_OPTIMIZE_MIRRORING) {1}
+set ::env(PL_RESIZER_DESIGN_OPTIMIZATIONS) {1}
+set ::env(PL_RESIZER_TIMING_OPTIMIZATIONS) {0}
 
 #PDN
 set ::env(FP_PDN_VPITCH) 100

@@ -64,22 +64,25 @@ set ::env(FP_SIZING) absolute
 set ::env(DIE_AREA) "0 0 390 1200"
 
 set ::env(PL_TARGET_DENSITY) 0.20
-#set ::env(CELL_PAD) 2
-#set ::env(GRT_ADJUSTMENT) {0.2}
+set ::env(CELL_PAD) 8
+set ::env(GRT_ADJUSTMENT) {0.2}
 
-#set ::env(GLB_RT_ADJUSTMENT) {0.2}
 
 #set ::env(PL_ROUTABILITY_DRIVEN) "1"
 set ::env(PL_TIME_DRIVEN) "1"
 
 #set ::env(GLB_RT_MAXLAYER) 5
 set ::env(RT_MAX_LAYER) {met4}
-#set ::env(GLB_RT_MAX_DIODE_INS_ITERS) 10
 
-set ::env(DIODE_INSERTION_STRATEGY) 4
+#Lef 
+set ::env(MAGIC_GENERATE_LEF) {1}
+set ::env(MAGIC_WRITE_FULL_LEF) {0}
+
+#set ::env(GLB_RT_MAX_DIODE_INS_ITERS) 20
+set ::env(DIODE_INSERTION_STRATEGY) 3
 
 #LVS Issue - DEF Base looks to having issue
-set ::env(MAGIC_EXT_USE_GDS) {1}
+set ::env(MAGIC_EXT_USE_GDS) {0}
 
 set ::env(GLB_RESIZER_MAX_SLEW_MARGIN) {1.5}
 set ::env(PL_RESIZER_MAX_SLEW_MARGIN) {1.5}

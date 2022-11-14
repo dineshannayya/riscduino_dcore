@@ -105,7 +105,7 @@ set ::env(RUN_CVC) 0
 set ::env(PL_TIME_DRIVEN) 1
 set ::env(PL_TARGET_DENSITY) "0.38"
 set ::env(CELL_PAD) "8"
-#set ::env(GRT_ADJUSTMENT) {0.2}
+set ::env(GRT_ADJUSTMENT) {0.2}
 
 
 ######################################################################################
@@ -141,7 +141,7 @@ set ::env(DIODE_INSERTION_STRATEGY) 4
 
 
 #LVS Issue - DEF Base looks to having issue
-set ::env(MAGIC_EXT_USE_GDS) {1}
+set ::env(MAGIC_EXT_USE_GDS) {0}
 
 set ::env(GLB_RESIZER_MAX_SLEW_MARGIN) {1.5}
 set ::env(PL_RESIZER_MAX_SLEW_MARGIN) {1.5}
