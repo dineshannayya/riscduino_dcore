@@ -117,7 +117,7 @@ set ::env(GLB_RESIZER_MAX_CAP_MARGIN) {0.25}
 set ::env(GLB_RESIZER_MAX_WIRE_LENGTH) {500}
 
 #LVS Issue - DEF Base looks to having issue
-set ::env(MAGIC_EXT_USE_GDS) {0}
+set ::env(MAGIC_EXT_USE_GDS) {1}
 
 #set ::env(GLB_RT_MAXLAYER) 5
 set ::env(RT_MAX_LAYER) {met4}

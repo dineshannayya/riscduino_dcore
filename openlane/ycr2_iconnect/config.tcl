@@ -61,7 +61,7 @@ set ::env(LEC_ENABLE) 0
 ## Floorplan
 set ::env(FP_PIN_ORDER_CFG) $::env(DESIGN_DIR)/pin_order.cfg
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 390 1200"
+set ::env(DIE_AREA) "0 0 400 1100"
 
 set ::env(PL_TARGET_DENSITY) 0.20
 set ::env(CELL_PAD) 8
@@ -82,7 +82,7 @@ set ::env(MAGIC_WRITE_FULL_LEF) {0}
 set ::env(DIODE_INSERTION_STRATEGY) 3
 
 #LVS Issue - DEF Base looks to having issue
-set ::env(MAGIC_EXT_USE_GDS) {0}
+set ::env(MAGIC_EXT_USE_GDS) {1}
 
 set ::env(GLB_RESIZER_MAX_SLEW_MARGIN) {1.5}
 set ::env(PL_RESIZER_MAX_SLEW_MARGIN) {1.5}

@@ -198,13 +198,15 @@ proc run_floorplan {args} {
 
     apply_def_template
 
-     if { [info exist ::env(MACRO_PLACEMENT_CFG)] } {
-         file copy -force $::env(MACRO_PLACEMENT_CFG) $::env(placement_tmpfiles)/macro_placement.cfg
-         manual_macro_placement -f
-     } else {
-         #global_placement_or
-         #basic_macro_placement
-     }
+    #if { [info exist ::env(EXTRA_LEFS)] } {
+        if { [info exist ::env(MACRO_PLACEMENT_CFG)] } {
+            file copy -force $::env(MACRO_PLACEMENT_CFG) $::env(placement_tmpfiles)/macro_placement.cfg
+            manual_macro_placement -f
+        } else {
+        #    global_placement_or
+        #    basic_macro_placement
+        }
+    #}
 
     if { $::env(RUN_TAP_DECAP_INSERTION) } {
         tap_decap_or
