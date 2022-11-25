@@ -107,6 +107,7 @@ set ::env(EXTRA_GDS_FILES) "\
 	$gds_root/ycr2_iconnect.gds \
 	$gds_root/dg_pll.gds \
 	$gds_root/dac_top.gds \
+	$::env(PDK_ROOT)/$::env(PDK)/libs.ref/sky130_sram_macros/gds/sky130_sram_2kbyte_1rw1r_32x512_8.gds \
 	$gds_root/aes_top.gds \
 	$gds_root/fpu_wrapper.gds \
 	"

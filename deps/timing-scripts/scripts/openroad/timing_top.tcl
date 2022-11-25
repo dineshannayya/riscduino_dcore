@@ -64,7 +64,7 @@ run_puts_logs "report_checks \\
     -format full_clock_expanded \\
     -fields {slew cap input_pins nets fanout} \\
     -no_line_splits \\
-    -group_count 10000 \\
+    -group_count 100 \\
     -slack_max 10 \\
     -digits 4 \\
     -endpoint_count 10 \\
@@ -77,7 +77,7 @@ run_puts_logs "report_checks \\
     -format full_clock_expanded \\
     -fields {slew cap input_pins nets fanout} \\
     -no_line_splits \\
-    -group_count 10000 \\
+    -group_count 100 \\
     -slack_max 10 \\
     -digits 4 \\
     -endpoint_count 10 \\
@@ -91,7 +91,7 @@ run_puts_logs "report_checks \\
     -fields {slew cap input_pins nets fanout} \\
     -no_line_splits \\
     -path_group hk_serial_clk \\
-    -group_count 1000 \\
+    -group_count 100 \\
     -slack_max 10 \\
     -digits 4 \\
     -unique_paths_to_endpoint \\
@@ -105,7 +105,7 @@ run_puts_logs "report_checks \\
     -fields {slew cap input_pins nets fanout} \\
     -no_line_splits \\
     -path_group hk_serial_clk \\
-    -group_count 1000 \\
+    -group_count 100 \\
     -slack_max 10 \\
     -digits 4 \\
     -unique_paths_to_endpoint \\
@@ -118,7 +118,7 @@ run_puts_logs "report_checks \\
     -fields {slew cap input_pins nets fanout} \\
     -no_line_splits \\
     -path_group hkspi_clk \\
-    -group_count 1000 \\
+    -group_count 100 \\
     -slack_max 10 \\
     -digits 4 \\
     -unique_paths_to_endpoint \\
@@ -131,7 +131,7 @@ run_puts_logs "report_checks \\
     -fields {slew cap input_pins nets fanout} \\
     -no_line_splits \\
     -path_group hkspi_clk \\
-    -group_count 1000 \\
+    -group_count 100 \\
     -slack_max 10 \\
     -digits 4 \\
     -unique_paths_to_endpoint \\
@@ -144,7 +144,7 @@ run_puts_logs "report_checks \\
     -fields {slew cap input_pins nets fanout} \\
     -no_line_splits \\
     -path_group clk \\
-    -group_count 1000 \\
+    -group_count 100 \\
     -slack_max 10 \\
     -digits 4 \\
     -unique_paths_to_endpoint \\
@@ -157,7 +157,7 @@ run_puts_logs "report_checks \\
     -fields {slew cap input_pins nets fanout} \\
     -no_line_splits \\
     -path_group clk \\
-    -group_count 1000 \\
+    -group_count 100 \\
     -slack_max 10 \\
     -digits 4 \\
     -unique_paths_to_endpoint \\
@@ -170,7 +170,7 @@ run_puts_logs "report_checks \\
     -format full_clock_expanded \\
     -fields {slew cap input_pins nets fanout} \\
     -no_line_splits \\
-    -group_count 1000 \\
+    -group_count 100 \\
     -slack_max 10 \\
     -digits 4 \\
     -unique_paths_to_endpoint \\
@@ -183,7 +183,7 @@ run_puts_logs "report_checks \\
     -format full_clock_expanded \\
     -fields {slew cap input_pins nets fanout} \\
     -no_line_splits \\
-    -group_count 1000 \\
+    -group_count 100 \\
     -slack_max 10 \\
     -digits 4 \\
     -unique_paths_to_endpoint \\
@@ -196,7 +196,7 @@ run_puts_logs "report_checks \\
     -format full_clock_expanded \\
     -fields {slew cap input_pins nets fanout} \\
     -no_line_splits \\
-    -group_count 1000 \\
+    -group_count 100 \\
     -slack_max 40 \\
     -digits 4 \\
     -unique_paths_to_endpoint \\
@@ -209,7 +209,7 @@ run_puts_logs "report_checks \\
     -format full_clock_expanded \\
     -fields {slew cap input_pins nets fanout} \\
     -no_line_splits \\
-    -group_count 1000 \\
+    -group_count 100 \\
     -slack_max 40 \\
     -digits 4 \\
     -unique_paths_to_endpoint \\

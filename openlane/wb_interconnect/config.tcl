@@ -30,6 +30,8 @@ set ::env(CLOCK_PORT) "clk_i"
 set ::env(CLOCK_NET) "clk_i"
 
 set ::env(SYNTH_MAX_FANOUT) 4
+set ::env(SYNTH_BUFFERING) {0}
+
 
 ## CTS BUFFER
 set ::env(CTS_CLK_BUFFER_LIST) "sky130_fd_sc_hd__clkbuf_4 sky130_fd_sc_hd__clkbuf_8"
@@ -51,7 +53,7 @@ set ::env(VERILOG_FILES) "\
 
 set ::env(SYNTH_DEFINES) [list SYNTHESIS ]
 
-set ::env(SYNTH_PARAMETERS) "CH_CLK_WD=4\
+set ::env(SYNTH_PARAMETERS) "CH_CLK_WD=14\
 	                 CH_DATA_WD=154 \
 			 "
 
@@ -102,7 +104,7 @@ set ::env(CTS_SINK_CLUSTERING_SIZE) 20
 set ::env(PL_RESIZER_DESIGN_OPTIMIZATIONS) 1
 set ::env(PL_RESIZER_TIMING_OPTIMIZATIONS) 1
 set ::env(PL_RESIZER_MAX_CAP_MARGIN) 2
-set ::env(PL_RESIZER_MAX_WIRE_LENGTH) "2000"
+set ::env(PL_RESIZER_MAX_WIRE_LENGTH) "500"
 set ::env(PL_RESIZER_MAX_SLEW_MARGIN) "2.0"
 set ::env(PL_RESIZER_BUFFER_INPUT_PORTS) "0"
 set ::env(PL_RESIZER_BUFFER_OUTPUT_PORTS) "1"
