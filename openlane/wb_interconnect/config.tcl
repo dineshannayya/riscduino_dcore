@@ -43,7 +43,8 @@ set ::env(CLOCK_BUFFER_FANOUT) "8"
 
 # Local sources + no2usb sources
 set ::env(VERILOG_FILES) "\
-        $::env(DESIGN_DIR)/../../verilog/rtl/clk_skew_adjust/src/clk_skew_adjust.gv \
+        $::env(DESIGN_DIR)/../../verilog/rtl/lib/clk_skew_adjust.gv \
+        $::env(DESIGN_DIR)/../../verilog/rtl/lib/ctech_cells.sv     \
         $::env(DESIGN_DIR)/../../verilog/rtl/lib/sync_wbb.sv                \
         $::env(DESIGN_DIR)/../../verilog/rtl/lib/sync_fifo2.sv                \
         $::env(DESIGN_DIR)/../../verilog/rtl/wb_interconnect/src/wb_arb.sv     \
