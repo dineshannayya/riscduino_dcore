@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // SPDX-License-Identifier: Apache-2.0
-// SPDX-FileContributor: Created by Dinesh Annayya <dinesha@opencores.org>
+// SPDX-FileContributor: Created by Dinesh Annayya <dinesh.annayya@gmail.com>
 //
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
@@ -289,7 +289,10 @@
 ////         cpu_clk will be feed through wb_interconnect for     ////
 ////         buffering purpose                                    ////
 ////    6.0  Nov 27, 2022, Dinesh A                               ////
-////         MPW-7 Timing clean setup
+////         MPW-7 Timing clean setup                             ////
+////    6.1  Nov 28, 2022, Dinesh A                               ////
+////        Power Hook up connectivity issue for                  ////
+////        aes,fpu,bus repeater is fixed                         ////
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
 //// Copyright (C) 2000 Authors and OPENCORES.ORG                 ////
@@ -1240,8 +1243,8 @@ sky130_sram_2kbyte_1rw1r_32x512_8 u_dcache_2kb(
 *************************************************/
 aes_top u_aes (
 `ifdef USE_POWER_PINS
-    .vccd1                 (vdda1            ),
-    .vssd1                 (vssa1            ),
+    .vccd1                 (vccd1            ),
+    .vssd1                 (vssd1            ),
 `endif
 
     .mclk                  (cpu_clk_aes      ),
@@ -1266,8 +1269,8 @@ aes_top u_aes (
 *************************************************/
 fpu_wrapper u_fpu (
 `ifdef USE_POWER_PINS
-    .vccd1                 (vdda1            ),
-    .vssd1                 (vssa1            ),
+    .vccd1                 (vccd1            ),
+    .vssd1                 (vssd1            ),
 `endif
 
     .mclk                  (cpu_clk_fpu      ),
