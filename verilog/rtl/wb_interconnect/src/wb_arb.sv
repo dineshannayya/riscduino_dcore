@@ -114,15 +114,15 @@ always@(state or req )
          grant0:
       	// if this req is dropped or next is asserted, check for other req's
       	if(!req[0] ) begin
-      		if(req[1])	next_state = grant1;
+      		if(req[1])	    next_state = grant1;
       		else if(req[2])	next_state = grant2;
       		else if(req[3])	next_state = grant3;
       	end
          grant1:
       	// if this req is dropped or next is asserted, check for other req's
       	if(!req[1] ) begin
-      		if(req[2])	next_state = grant2;
-      		if(req[3])	next_state = grant3;
+      		if(req[2])	    next_state = grant2;
+      		if(req[3])	    next_state = grant3;
       		else if(req[0])	next_state = grant0;
       	end
          grant2:

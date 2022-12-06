@@ -247,18 +247,18 @@ check-riscv_test_repo:
 	fi
 
 zip:
-	gzip -f lef/*
-	gzip -f gds/*
-	gzip -f spef/*
-	gzip -f spi/lvs/*
-	gzip -f verilog/gl/*
+	gzip -f -r lef/*
+	gzip -f -r gds/*
+	gzip -f -r spef/*
+	gzip -f -r spi/lvs/*
+	gzip -f -r verilog/gl/*
 
 unzip:
-	gzip -d lef/*
-	gzip -d gds/*
-	gzip -d spef/*
-	gzip -d spi/lvs/*
-	gzip -d verilog/gl/*
+	gzip -d -r lef/*
+	gzip -d -r gds/*
+	gzip -d -r spef/*
+	gzip -d -r spi/lvs/*
+	gzip -d -r verilog/gl/*
 
 .PHONY: help
 help:
