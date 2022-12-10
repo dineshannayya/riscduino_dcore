@@ -110,7 +110,7 @@ install:
 # Install DV setup
 .PHONY: simenv
 simenv:
-	docker pull riscduino/dv_setup:mpw6
+	docker pull riscduino/dv_setup:mpw7
 
 .PHONY: setup
 setup: install check-env install_mcw openlane pdk-with-volare setup-timing-scripts
@@ -132,7 +132,7 @@ $(DV_PATTERNS): verify-% : ./verilog/dv/%  check-coremark_repo check-riscv_comp_
 		-e TOOLS=/opt/riscv32i \
 		-e DESIGNS=$(TARGET_PATH) \
 		-e GCC_PREFIX=riscv32-unknown-elf \
-		-u $$(id -u $$USER):$$(id -g $$USER) riscduino/dv_setup:mpw6 \
+		-u $$(id -u $$USER):$$(id -g $$USER) riscduino/dv_setup:mpw7 \
 		sh -c $(verify_command)
 
 
@@ -327,3 +327,11 @@ caravel-sta: ./env/spef-mapping.tcl
 	@$(MAKE) -C $(TIMING_ROOT) -f $(TIMING_ROOT)/timing.mk caravel-timing-fast
 	@$(MAKE) -C $(TIMING_ROOT) -f $(TIMING_ROOT)/timing.mk caravel-timing-slow
 	@echo "You can find results for all corners in $(CUP_ROOT)/signoff/caravel/openlane-signoff/timing/"
+
+#Added by Dinesh-A for Klayout Based DRC check
+.PHONY: run-drc
+run-drc: 
+	@echo "run kalyout DRC checks"
+	mkdir -p signoff/user_project_wrapper/openlane-signoff/drc
+	docker run -ti --rm  -v $(PROJECT_ROOT):/project riscduino/openlane:mpw7  sh -c "cd /project && ./scripts/drc/run.sh user_project_wrapper "
+
