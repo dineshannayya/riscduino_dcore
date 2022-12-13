@@ -918,6 +918,7 @@ wire [3:0]   cfg_ccska_riscv_core3  = cfg_clk_skew_ctrl2[23:20];
 assign       cfg_ccska_aes          = cfg_clk_skew_ctrl2[27:24];
 assign       cfg_ccska_fpu          = cfg_clk_skew_ctrl2[31:28];
 
+// BUS Repeater
 wire [127:0] la_data_out_int    = {pinmux_debug,spi_debug,riscv_debug};
 
 wire   int_pll_clock       = pll_clk_out[0];
@@ -1442,7 +1443,7 @@ wb_interconnect  #(
                                      wbd_clk_qspi_rp, 
                                      wbd_clk_risc_rp}              ),
 	  .ch_data_in             ({
-			                      cfg_wcska_peri[3:0],
+			           cfg_wcska_peri[3:0],
                                   cfg_ccska_fpu[3:0],
                                   cfg_ccska_aes[3:0],
                                   strap_sticky[31:0],
@@ -1452,26 +1453,26 @@ wb_interconnect  #(
                                   e_reset_n,
                                   cfg_strap_pad_ctrl,
 			 
-	                              soft_irq,
-			                      irq_lines[31:0],
+	                          soft_irq,
+			           irq_lines[31:0],
 
-			                      cfg_ccska_riscv_core3[3:0],
-			                      cfg_ccska_riscv_core2[3:0],
-			                      cfg_ccska_riscv_core1[3:0],
-			                      cfg_ccska_riscv_core0[3:0],
-			                      cfg_ccska_riscv_icon[3:0],
-			                      cfg_ccska_riscv_intf[3:0],
+			           cfg_ccska_riscv_core3[3:0],
+			           cfg_ccska_riscv_core2[3:0],
+			           cfg_ccska_riscv_core1[3:0],
+			           cfg_ccska_riscv_core0[3:0],
+			           cfg_ccska_riscv_icon[3:0],
+			           cfg_ccska_riscv_intf[3:0],
 
-			                      cfg_wcska_qspi_co[3:0],
-		                          cfg_wcska_pinmux[3:0],
-			                      cfg_wcska_uart[3:0],
-		                          cfg_wcska_qspi[3:0],
+			           cfg_wcska_qspi_co[3:0],
+		                   cfg_wcska_pinmux[3:0],
+			           cfg_wcska_uart[3:0],
+		                   cfg_wcska_qspi[3:0],
                                   cfg_wcska_riscv[3:0]
 			             }                             ),
 	  .ch_data_out            ({
-		                          cfg_wcska_peri_rp[3:0],
-			                      cfg_ccska_fpu_rp[3:0],
-			                      cfg_ccska_aes_rp[3:0],
+		                   cfg_wcska_peri_rp[3:0],
+			           cfg_ccska_fpu_rp[3:0],
+			           cfg_ccska_aes_rp[3:0],
                                   strap_sticky_rp[31:0],
                                   strap_uartm_rp[1:0],
                                   system_strap_rp[31:0],
@@ -1479,20 +1480,20 @@ wb_interconnect  #(
                                   e_reset_n_rp,
                                   cfg_strap_pad_ctrl_rp,
 
-	                              soft_irq_rp,
-			                      irq_lines_rp[31:0],
+	                          soft_irq_rp,
+			           irq_lines_rp[31:0],
 
-			                      cfg_ccska_riscv_core3_rp[3:0],
-			                      cfg_ccska_riscv_core2_rp[3:0],
-			                      cfg_ccska_riscv_core1_rp[3:0],
-			                      cfg_ccska_riscv_core0_rp[3:0],
-			                      cfg_ccska_riscv_icon_rp[3:0],
-			                      cfg_ccska_riscv_intf_rp[3:0],
+			           cfg_ccska_riscv_core3_rp[3:0],
+			           cfg_ccska_riscv_core2_rp[3:0],
+			           cfg_ccska_riscv_core1_rp[3:0],
+			           cfg_ccska_riscv_core0_rp[3:0],
+			           cfg_ccska_riscv_icon_rp[3:0],
+			           cfg_ccska_riscv_intf_rp[3:0],
 
-			                      cfg_wcska_qspi_co_rp[3:0],
-		                          cfg_wcska_pinmux_rp[3:0],
-			                      cfg_wcska_uart_rp[3:0],
-		                          cfg_wcska_qspi_rp[3:0],
+			           cfg_wcska_qspi_co_rp[3:0],
+		                   cfg_wcska_pinmux_rp[3:0],
+			           cfg_wcska_uart_rp[3:0],
+		                   cfg_wcska_qspi_rp[3:0],
                                   cfg_wcska_riscv_rp[3:0]
                                } ),
      // Clock Skew adjust
