@@ -17,7 +17,7 @@ create_generated_clock -name wb_clk -add -source [get_ports {clock}] -master_clo
 create_clock -name int_pll_clock -period 5.0000  [get_pins {mprj/u_pinmux/int_pll_clock}]
 
 create_clock -name wbs_ref_clk -period 5.0000   [get_pins {mprj/u_wb_host/u_reg.u_wbs_ref_clkbuf.u_buf/X}]
-create_clock -name wbs_clk_i   -period 26.0000  [get_pins {mprj/u_wb_host/wbs_clk_out}]
+create_clock -name wbs_clk_i   -period 30.0000  [get_pins {mprj/u_wb_host/wbs_clk_out}]
 
 create_clock -name cpu_ref_clk -period 5.0000   [get_pins {mprj/u_wb_host/u_reg.u_cpu_ref_clkbuf.u_buf/X}]
 create_clock -name cpu_clk     -period 40.0000  [get_pins {mprj/u_wb_host/cpu_clk}]

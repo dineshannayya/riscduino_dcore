@@ -196,11 +196,12 @@ end
 	   	$dumpfile("simx.vcd");
 	   	$dumpvars(1, `TB_TOP);
 	   	$dumpvars(1, `TB_TOP.u_top);
-	   	$dumpvars(0, `TB_TOP.u_top.u_pll);
+	   	//$dumpvars(0, `TB_TOP.u_top.u_pll);
 	   	$dumpvars(0, `TB_TOP.u_top.u_wb_host);
 	   	//$dumpvars(0, `TB_TOP.u_top.u_intercon);
 	   	//$dumpvars(1, `TB_TOP.u_top.u_intercon);
 	   	$dumpvars(0, `TB_TOP.u_top.u_pinmux);
+	   	$dumpvars(0, `TB_TOP.u_top.u_rp_south);
 	   end
        `endif
 
@@ -561,7 +562,7 @@ end
 //  UART Agent integration
 // --------------------------
 
-assign uart_txd   = io_out[7];
+assign uart_txd   = (io_oeb[7] == 1'b0) ? io_out[7] : 1'b0;
 //assign io_in[6]  = uart_rxd ; // Assigned at top-level
  
 uart_agent tb_master_uart(
@@ -677,7 +678,7 @@ end
 endtask
 
 
-wire dbg_clk_mon = io_out[37];
+wire dbg_clk_mon = (io_oeb[37] == 1'b0) ? io_out[37]: 1'b0;
 
 //assign dbg_clk_ref  =    (cfg_mon_sel == 4'b000) ? user_clock1    :
 //	                       (cfg_mon_sel == 4'b001) ? user_clock2    :

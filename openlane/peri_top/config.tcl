@@ -52,6 +52,17 @@ set ::env(VERILOG_FILES) "\
      $::env(DESIGN_DIR)/../../verilog/rtl/lib/reset_sync.sv     \
      $::env(DESIGN_DIR)/../../verilog/rtl/lib/async_reg_bus.sv \
      $::env(DESIGN_DIR)/../../verilog/rtl/lib/registers.v \
+     $::env(DESIGN_DIR)/../../verilog/rtl/nec_ir/src/nec_ir_rx.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/nec_ir/src/nec_ir_frame_decoder.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/nec_ir/src/nec_ir_event_catcher.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/nec_ir/src/nec_ir_regs.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/nec_ir/src/nec_div8.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/nec_ir/src/nec_ir_tx.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/nec_ir/src/nec_ir_top.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/lib/sync_fifo_occ.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/lib/prescaler.v \
+     $::env(DESIGN_DIR)/../../verilog/rtl/lib/metastability_filter.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/lib/pulse_filter.sv \
      "
 
 set ::env(VERILOG_INCLUDE_DIRS) [glob $::env(DESIGN_DIR)/../../verilog/rtl/ ]
@@ -71,9 +82,10 @@ set ::env(GND_PIN) [list {vssd1}]
 # -------------
 
 set ::env(FP_PIN_ORDER_CFG) $::env(DESIGN_DIR)/pin_order.cfg
+#set ::env(MACRO_PLACEMENT_CFG) $::env(DESIGN_DIR)/macro.cfg
 
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 400 200"
+set ::env(DIE_AREA) "0 0 400 400"
 
 
 # If you're going to use multiple power domains, then keep this disabled.
@@ -83,7 +95,7 @@ set ::env(RUN_CVC) 0
 
 
 set ::env(PL_TIME_DRIVEN) 1
-set ::env(PL_TARGET_DENSITY) "0.35"
+set ::env(PL_TARGET_DENSITY) "0.42"
 set ::env(CELL_PAD) "8"
 #set ::env(GRT_ADJUSTMENT) {0.2}
 
@@ -119,6 +131,8 @@ set ::env(MAGIC_WRITE_FULL_LEF) {0}
 
 set ::env(DIODE_INSERTION_STRATEGY) 4
 
+set ::env(PL_RESIZER_BUFFER_INPUT_PORTS) {0}
+set ::env(PL_RESIZER_BUFFER_OUTPUT_PORTS) {1}
 
 #LVS Issue - DEF Base looks to having issue
 set ::env(MAGIC_EXT_USE_GDS) {1}
