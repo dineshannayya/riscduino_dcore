@@ -6,11 +6,25 @@ current_design wb_interconnect
 ###############################################################################
 # Timing Constraints
 ###############################################################################
-create_clock -name clk_i -period 10.0000 [get_ports {clk_i}]
+create_clock -name clk_i    -period 10.0000 [get_ports {clk_i}]
+create_clock -name mclk_raw -period 10.0000 [get_ports {mclk_raw}]
+
+set_clock_groups \
+   -name async_group \
+   -logically_exclusive \
+   -group [get_clocks {clk_i}]\
+   -group [get_clocks {mclk_raw}]\
+   -comment {Async Clock group}
 
 set_clock_transition 0.1500 [all_clocks]
 set_clock_uncertainty -setup 0.5000 [all_clocks]
 set_clock_uncertainty -hold 0.2500 [all_clocks]
+
+# check ocv table (not provided) -- maybe try 8% 
+set derate 0.0375
+puts "\[INFO\]: Setting derate factor to: [expr $derate * 100] %"
+set_timing_derate -early [expr 1-$derate]
+set_timing_derate -late [expr 1+$derate]
 
 #Clock Skew adjustment
 set_case_analysis 0 [get_ports {cfg_cska_wi[0]}]
@@ -20,9 +34,12 @@ set_case_analysis 0 [get_ports {cfg_cska_wi[3]}]
 
 
 # Set max delay for clock skew
-set_max_delay 4.0 -from [get_ports {wbd_clk_int}]
-set_max_delay   2 -to   [get_ports {wbd_clk_wi}]
-set_max_delay 4.0 -from wbd_clk_int -to wbd_clk_wi
+#set_max_delay 4.0 -from [get_ports {wbd_clk_int}]
+#set_max_delay   2 -to   [get_ports {wbd_clk_wi}]
+#set_max_delay 4.0 -from wbd_clk_int -to wbd_clk_wi
+
+## Don't touch delay cells
+set_dont_touch { u_skew_wi.* }
 ##
 set_input_delay -max 2.0000 -clock [get_clocks {clk_i}] -add_delay [get_ports {rst_n}]
 

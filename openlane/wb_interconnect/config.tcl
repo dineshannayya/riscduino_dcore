@@ -34,6 +34,7 @@ set ::env(SYNTH_BUFFERING) {0}
 
 
 ## CTS BUFFER
+set ::env(CTS_CLK_MAX_WIRE_LENGTH) {250}
 set ::env(CTS_CLK_BUFFER_LIST) "sky130_fd_sc_hd__clkbuf_4 sky130_fd_sc_hd__clkbuf_8"
 set ::env(CTS_SINK_CLUSTERING_SIZE) "16"
 set ::env(CLOCK_BUFFER_FANOUT) "8"
@@ -47,14 +48,19 @@ set ::env(VERILOG_FILES) "\
         $::env(DESIGN_DIR)/../../verilog/rtl/lib/ctech_cells.sv     \
         $::env(DESIGN_DIR)/../../verilog/rtl/lib/sync_wbb.sv                \
         $::env(DESIGN_DIR)/../../verilog/rtl/lib/sync_fifo2.sv                \
+        $::env(DESIGN_DIR)/../../verilog/rtl/lib/src_clk_gate.sv              \
+        $::env(DESIGN_DIR)/../../verilog/rtl/lib/double_sync_high.v              \
+        $::env(DESIGN_DIR)/../../verilog/rtl/lib/registers.v              \
+        $::env(DESIGN_DIR)/../../verilog/rtl/lib/reset_sync.sv              \
         $::env(DESIGN_DIR)/../../verilog/rtl/wb_interconnect/src/wb_arb.sv     \
+        $::env(DESIGN_DIR)/../../verilog/rtl/wb_interconnect/src/wbi_reg.sv     \
         $::env(DESIGN_DIR)/../../verilog/rtl/wb_interconnect/src/wb_slave_port.sv  \
         $::env(DESIGN_DIR)/../../verilog/rtl/wb_interconnect/src/wb_interconnect.sv  \
 	"
 
 set ::env(SYNTH_DEFINES) [list SYNTHESIS ]
 
-set ::env(SYNTH_PARAMETERS) "CH_CLK_WD=8\
+set ::env(SYNTH_PARAMETERS) "CH_CLK_WD=3\
 	                 CH_DATA_WD=158 \
 			 "
 
@@ -113,6 +119,7 @@ set ::env(PL_RESIZER_BUFFER_OUTPUT_PORTS) "1"
 ## Routing
 set ::env(GRT_ADJUSTMENT) 0.1
 set ::env(DPL_CELL_PADDING) 1
+set ::env(GPL_CELL_PADDING) 1
 
 set ::env(GLB_RESIZER_TIMING_OPTIMIZATIONS) "1"
 set ::env(GLB_RESIZER_MAX_SLEW_MARGIN) {1.5}

@@ -264,7 +264,7 @@ wire   sw_rd_en_31 = sw_rd_en  & (sw_addr == 5'h1F);
 
 wire [15:0] manu_id      =  16'h8268; // Asci value of RD
 wire [3:0]  total_core   =  4'h2;
-wire [3:0]  chip_id      =  4'h5;
+wire [3:0]  chip_id      =  4'h6;
 wire [7:0]  chip_rev     =  8'h01;
 
 assign reg_0 = {manu_id,total_core,chip_id,chip_rev};
@@ -428,8 +428,9 @@ generic_intr_stat_reg #(.WD(32),
 assign  cfg_multi_func_sel = reg_5[31:0]; // to be used for read
 
 // bit[31] '1' - uart master enable on power up
+// bit[30] '1' - Riscv Tap enable on power up
 
-gen_32b_reg  #(32'h8000_0000) u_reg_5	(
+gen_32b_reg  #(32'hC000_0000) u_reg_5	(
 	      //List of Inputs
 	      .reset_n    (s_reset_n     ),
 	      .clk        (mclk          ),

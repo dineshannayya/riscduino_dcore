@@ -33,6 +33,7 @@ set ::env(SYNTH_MAX_FANOUT) 4
 set ::env(SYNTH_BUFFERING) {0}
 
 ## CTS BUFFER
+set ::env(CTS_CLK_MAX_WIRE_LENGTH) {250}
 set ::env(CTS_CLK_BUFFER_LIST) "sky130_fd_sc_hd__clkbuf_4 sky130_fd_sc_hd__clkbuf_8"
 set ::env(CTS_SINK_CLUSTERING_SIZE) "16"
 set ::env(CLOCK_BUFFER_FANOUT) "8"
@@ -59,6 +60,7 @@ set ::env(VERILOG_FILES) "\
      $::env(DESIGN_DIR)/../../verilog/rtl/nec_ir/src/nec_div8.sv \
      $::env(DESIGN_DIR)/../../verilog/rtl/nec_ir/src/nec_ir_tx.sv \
      $::env(DESIGN_DIR)/../../verilog/rtl/nec_ir/src/nec_ir_top.sv \
+     $::env(DESIGN_DIR)/../../verilog/rtl/sm_ctrl/src/sm_ctrl.sv \
      $::env(DESIGN_DIR)/../../verilog/rtl/lib/sync_fifo_occ.sv \
      $::env(DESIGN_DIR)/../../verilog/rtl/lib/prescaler.v \
      $::env(DESIGN_DIR)/../../verilog/rtl/lib/metastability_filter.sv \
@@ -85,7 +87,7 @@ set ::env(FP_PIN_ORDER_CFG) $::env(DESIGN_DIR)/pin_order.cfg
 #set ::env(MACRO_PLACEMENT_CFG) $::env(DESIGN_DIR)/macro.cfg
 
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 400 400"
+set ::env(DIE_AREA) "0 0 450 450"
 
 
 # If you're going to use multiple power domains, then keep this disabled.
@@ -96,8 +98,8 @@ set ::env(RUN_CVC) 0
 
 set ::env(PL_TIME_DRIVEN) 1
 set ::env(PL_TARGET_DENSITY) "0.42"
-set ::env(CELL_PAD) "8"
-#set ::env(GRT_ADJUSTMENT) {0.2}
+set ::env(CELL_PAD) "4"
+set ::env(GRT_ADJUSTMENT) {0.2}
 
 
 ######################################################################################

@@ -39,6 +39,9 @@
 ////    0.3 - 28th Aug 2022, Dinesh A                             ////
 ////          Due to caravel io[4:0] reserved on power up, we have////
 ////          re-arrange the arduino pins from 5 onward           ////
+////    0.4 - 5 Jan 2023, Dinesh A                                ////
+////          A. Stepper Motor Integration                        ////
+////          B. Riscv Tap Integration                            ////
 //////////////////////////////////////////////////////////////////////
 /************************************************
 * Pin Mapping    Arduino              ATMGE CONFIG
@@ -84,11 +87,11 @@
 *                               sflash_io3                    strap[15]    digital_io[36]
 *                               dbg_clk_mon                                digital_io[37]
 *   These port are not available at power up
-*                               PA0                                        digital_io[0]
-*                               PA1                                        digital_io[1]
-*                               PA2                                        digital_io[2]
-*                               PA3                                        digital_io[3]
-*                               PA4                                        digital_io[4]
+*                               PA0/trst_n/sm_a1                           digital_io[0]
+*                               PA1/tck/sm_a2                              digital_io[1]
+*                               PA2/tms/sm_b1                              digital_io[2]
+*                               PA3/tdi/sm_b2                              digital_io[3]
+*                               PA4/tdo                                    digital_io[4]
 ****************************************************************
 * Pin-1 RESET is not supported as there is no suppport for fuse config
 
@@ -96,6 +99,17 @@
 **************/
 
 module pinmux (
+               `ifdef YCR_DBG_EN
+                   // -- JTAG I/F
+                output   logic         riscv_trst_n,
+                output   logic         riscv_tck,
+                output   logic         riscv_tms,
+                output   logic         riscv_tdi,
+                input    logic         riscv_tdo,
+                input    logic         riscv_tdo_en,
+               `endif // YCR_DBG_EN
+
+
                input logic             cfg_strap_pad_ctrl      , // 1 - Keep the Pad in input direction
                output logic [15:0]     pad_strap_in            , // Strap value
                // Digital IO
@@ -172,7 +186,16 @@ module pinmux (
              
                // IR Receiver
                output  logic           ir_rx,
-               input   logic           ir_tx
+               input   logic           ir_tx,
+
+               //------------------------------
+               // Stepper Motor Variable
+               //------------------------------
+               input logic              sm_a1,  
+               input logic              sm_a2,  
+               input logic              sm_b1,  
+               input logic              sm_b2  
+
 
    ); 
 
@@ -214,6 +237,8 @@ wire [3:0]  cfg_spim_cs_enb      = cfg_multi_func_sel[14:11];
 wire        cfg_i2cm_enb         = cfg_multi_func_sel[15];
 wire        cfg_usb_enb          = cfg_multi_func_sel[16];
 wire        cfg_ir_tx_enb        = cfg_multi_func_sel[17]; // NEC IR TX Enable
+wire        cfg_sm_enb           = cfg_multi_func_sel[18]; // Stepper Motor Enable
+wire        cfg_tap_enb          = cfg_multi_func_sel[30]; // 1 - Riscv Tap Enable
 wire        cfg_muart_enb        = cfg_multi_func_sel[31]; // 1 - uart master enable, 
 
 wire [7:0]  cfg_port_a_dir_sel   = cfg_gpio_dir_sel[7:0];
@@ -345,6 +370,11 @@ always_comb begin
      port_a_in[3] = digital_io_in[3];
      port_a_in[4] = digital_io_in[4];
 
+    riscv_trst_n  = (cfg_tap_enb) ? digital_io_in[0] : 1'b1;
+    riscv_tck     = (cfg_tap_enb) ? digital_io_in[1] : 1'b0;
+    riscv_tms     = (cfg_tap_enb) ? digital_io_in[2] : 1'b0;
+    riscv_tdi     = (cfg_tap_enb) ? digital_io_in[3] : 1'b0;
+
 end
 
 // dataout selection
@@ -473,11 +503,11 @@ always_comb begin
      // dbg_clk_mon - Pll clock output monitor
      digital_io_out[37] = dbg_clk_mon;
 
-     digital_io_out[0] = port_a_out[0] ;
-     digital_io_out[1] = port_a_out[1] ;
-     digital_io_out[2] = port_a_out[2] ;
-     digital_io_out[3] = port_a_out[3] ;
-     digital_io_out[4] = port_a_out[4] ;
+     digital_io_out[0] = (cfg_sm_enb) ? sm_a1 : port_a_out[0] ;
+     digital_io_out[1] = (cfg_sm_enb) ? sm_a2 : port_a_out[1] ;
+     digital_io_out[2] = (cfg_sm_enb) ? sm_b1 : port_a_out[2] ;
+     digital_io_out[3] = (cfg_sm_enb) ? sm_b2 : port_a_out[3] ;
+     digital_io_out[4] = (cfg_tap_enb)? riscv_tdo : port_a_out[4] ;
 end
 
 // dataoen selection
@@ -627,13 +657,26 @@ always_comb begin
                        
      // dbg_clk_mon
      if(cfg_strap_pad_ctrl)          digital_io_oen[37] = 1'b1;
-     else                            digital_io_oen[37] = 1'b0  ;
-                  
-     if(cfg_port_a_dir_sel[0])  digital_io_oen[0]   = 1'b0;
-     if(cfg_port_a_dir_sel[1])  digital_io_oen[1]   = 1'b0;
-     if(cfg_port_a_dir_sel[2])  digital_io_oen[2]   = 1'b0;
-     if(cfg_port_a_dir_sel[3])  digital_io_oen[3]   = 1'b0;
-     if(cfg_port_a_dir_sel[4])  digital_io_oen[4]   = 1'b0;
+     else                            digital_io_oen[37] = 1'b0;
+
+     if(cfg_tap_enb)                 digital_io_oen[0]   = 1'b1; // riscv_trst_n - input
+     else if(cfg_sm_enb)             digital_io_oen[0]   = 1'b0;
+     else if(cfg_port_a_dir_sel[0])  digital_io_oen[0]   = 1'b0;
+
+     if(cfg_tap_enb)                 digital_io_oen[1]   = 1'b1; // riscv_tck - input
+     else if(cfg_sm_enb)             digital_io_oen[1]   = 1'b0;
+     else if(cfg_port_a_dir_sel[1])  digital_io_oen[1]   = 1'b0;
+
+     if(cfg_tap_enb)                 digital_io_oen[2]   = 1'b1; // riscv_tms - input
+     else if(cfg_sm_enb)             digital_io_oen[2]   = 1'b0;
+     else if(cfg_port_a_dir_sel[2])  digital_io_oen[2]   = 1'b0;
+
+     if(cfg_tap_enb)                 digital_io_oen[3]   = 1'b1; // riscv_tdi - input
+     else if(cfg_sm_enb)             digital_io_oen[3]   = 1'b0;
+     else if(cfg_port_a_dir_sel[3])  digital_io_oen[3]   = 1'b0;
+
+     if(cfg_tap_enb)                 digital_io_oen[4]   = riscv_tdo_en; // riscv_tdo - output
+     else if(cfg_port_a_dir_sel[4])  digital_io_oen[4]   = 1'b0;
 end
 
 

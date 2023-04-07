@@ -28,6 +28,7 @@ set ::env(SYNTH_MAX_FANOUT) 4
 set ::env(SYNTH_BUFFERING) {0}
 
 ## CTS BUFFER
+set ::env(CTS_CLK_MAX_WIRE_LENGTH) {250}
 set ::env(CTS_CLK_BUFFER_LIST) "sky130_fd_sc_hd__clkbuf_4 sky130_fd_sc_hd__clkbuf_8"
 set ::env(CTS_SINK_CLUSTERING_SIZE) "16"
 set ::env(CLOCK_BUFFER_FANOUT) "8"
@@ -77,10 +78,10 @@ set ::env(GND_PIN) [list {vssd1}]
 ## Floorplan
 set ::env(FP_PIN_ORDER_CFG) $::env(DESIGN_DIR)/pin_order.cfg
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 540 950 "
+set ::env(DIE_AREA) "0 0 475 875 "
 
-set ::env(PL_TARGET_DENSITY) 0.45
-#set ::env(CELL_PAD) "8"
+set ::env(PL_TARGET_DENSITY) 0.52
+set ::env(CELL_PAD) "8"
 
 ## Routing
 set ::env(GRT_ADJUSTMENT) 0.2

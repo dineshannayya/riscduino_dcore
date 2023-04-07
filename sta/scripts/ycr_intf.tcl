@@ -29,7 +29,7 @@
 
 
 	## User Project Spef
-    read_spef  $::env(USER_ROOT)/spef/ycr_intf.spef
+    read_spef  $::env(USER_ROOT)/spef/multicorner/ycr_intf.min.spef
 
 
 	read_sdc -echo ./sdc/ycr_intf.sdc	

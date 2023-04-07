@@ -173,39 +173,39 @@ set_case_analysis 0 [get_pins {mprj/u_pinmux/cfg_cska_pinmux[0]}]
 
 set_case_analysis 0 [get_pins {mprj/u_uart_i2c_usb_spi/cfg_cska_uart[3]}]
 set_case_analysis 1 [get_pins {mprj/u_uart_i2c_usb_spi/cfg_cska_uart[2]}]
-set_case_analysis 1 [get_pins {mprj/u_uart_i2c_usb_spi/cfg_cska_uart[1]}]
+set_case_analysis 0 [get_pins {mprj/u_uart_i2c_usb_spi/cfg_cska_uart[1]}]
 set_case_analysis 1 [get_pins {mprj/u_uart_i2c_usb_spi/cfg_cska_uart[0]}]
 
-set_case_analysis 1 [get_pins {mprj/u_qspi_master/cfg_cska_spi[3]}]
+set_case_analysis 0 [get_pins {mprj/u_qspi_master/cfg_cska_spi[3]}]
 set_case_analysis 0 [get_pins {mprj/u_qspi_master/cfg_cska_spi[2]}]
-set_case_analysis 0 [get_pins {mprj/u_qspi_master/cfg_cska_spi[1]}]
+set_case_analysis 1 [get_pins {mprj/u_qspi_master/cfg_cska_spi[1]}]
 set_case_analysis 1 [get_pins {mprj/u_qspi_master/cfg_cska_spi[0]}]
 
-set_case_analysis 1 [get_pins {mprj/u_riscv_top.u_intf/cfg_wcska[3]}]
+set_case_analysis 0 [get_pins {mprj/u_riscv_top.u_intf/cfg_wcska[3]}]
 set_case_analysis 1 [get_pins {mprj/u_riscv_top.u_intf/cfg_wcska[2]}]
 set_case_analysis 1 [get_pins {mprj/u_riscv_top.u_intf/cfg_wcska[1]}]
 set_case_analysis 0 [get_pins {mprj/u_riscv_top.u_intf/cfg_wcska[0]}]
 
 set_case_analysis 1 [get_pins {mprj/u_wb_host/cfg_cska_wh[3]}]
-set_case_analysis 0 [get_pins {mprj/u_wb_host/cfg_cska_wh[2]}]
-set_case_analysis 0 [get_pins {mprj/u_wb_host/cfg_cska_wh[1]}]
+set_case_analysis 1 [get_pins {mprj/u_wb_host/cfg_cska_wh[2]}]
+set_case_analysis 1 [get_pins {mprj/u_wb_host/cfg_cska_wh[1]}]
 set_case_analysis 0 [get_pins {mprj/u_wb_host/cfg_cska_wh[0]}]
 
-set_case_analysis 0 [get_pins {mprj/u_intercon/cfg_cska_wi[3]}]
-set_case_analysis 0 [get_pins {mprj/u_intercon/cfg_cska_wi[2]}]
-set_case_analysis 1 [get_pins {mprj/u_intercon/cfg_cska_wi[0]}]
-set_case_analysis 1 [get_pins {mprj/u_intercon/cfg_cska_wi[1]}]
+set_case_analysis 1 [get_pins {mprj/u_intercon/cfg_cska_wi[3]}]
+set_case_analysis 1 [get_pins {mprj/u_intercon/cfg_cska_wi[2]}]
+set_case_analysis 0 [get_pins {mprj/u_intercon/cfg_cska_wi[0]}]
+set_case_analysis 0 [get_pins {mprj/u_intercon/cfg_cska_wi[1]}]
 
 # clock skew cntrl-2
 set_case_analysis 0 [get_pins {mprj/u_fpu/cfg_cska[3]}]
-set_case_analysis 1 [get_pins {mprj/u_fpu/cfg_cska[2]}]
+set_case_analysis 0 [get_pins {mprj/u_fpu/cfg_cska[2]}]
 set_case_analysis 1 [get_pins {mprj/u_fpu/cfg_cska[1]}]
 set_case_analysis 1 [get_pins {mprj/u_fpu/cfg_cska[0]}]
 
-set_case_analysis 1 [get_pins {mprj/u_aes/cfg_cska[3]}]
-set_case_analysis 0 [get_pins {mprj/u_aes/cfg_cska[2]}]
+set_case_analysis 0 [get_pins {mprj/u_aes/cfg_cska[3]}]
+set_case_analysis 1 [get_pins {mprj/u_aes/cfg_cska[2]}]
 set_case_analysis 0 [get_pins {mprj/u_aes/cfg_cska[1]}]
-set_case_analysis 0 [get_pins {mprj/u_aes/cfg_cska[0]}]
+set_case_analysis 1 [get_pins {mprj/u_aes/cfg_cska[0]}]
 
 #set_case_analysis 1 [get_pins {mprj/u_riscv_top.i_core_top_3/cfg_ccska[3]}]
 #set_case_analysis 0 [get_pins {mprj/u_riscv_top.i_core_top_3/cfg_ccska[2]}]
@@ -217,13 +217,13 @@ set_case_analysis 0 [get_pins {mprj/u_aes/cfg_cska[0]}]
 #set_case_analysis 0 [get_pins {mprj/u_riscv_top.i_core_top_2/cfg_ccska[1]}]
 #set_case_analysis 0 [get_pins {mprj/u_riscv_top.i_core_top_2/cfg_ccska[0]}]
 
-set_case_analysis 0 [get_pins {mprj/u_riscv_top.i_core_top_1/cfg_ccska[3]}]
-set_case_analysis 1 [get_pins {mprj/u_riscv_top.i_core_top_1/cfg_ccska[2]}]
+set_case_analysis 1 [get_pins {mprj/u_riscv_top.i_core_top_1/cfg_ccska[3]}]
+set_case_analysis 0 [get_pins {mprj/u_riscv_top.i_core_top_1/cfg_ccska[2]}]
 set_case_analysis 0 [get_pins {mprj/u_riscv_top.i_core_top_1/cfg_ccska[1]}]
-set_case_analysis 0 [get_pins {mprj/u_riscv_top.i_core_top_1/cfg_ccska[0]}]
+set_case_analysis 1 [get_pins {mprj/u_riscv_top.i_core_top_1/cfg_ccska[0]}]
 
-set_case_analysis 0 [get_pins {mprj/u_riscv_top.i_core_top_0/cfg_ccska[3]}]
-set_case_analysis 1 [get_pins {mprj/u_riscv_top.i_core_top_0/cfg_ccska[2]}]
+set_case_analysis 1 [get_pins {mprj/u_riscv_top.i_core_top_0/cfg_ccska[3]}]
+set_case_analysis 0 [get_pins {mprj/u_riscv_top.i_core_top_0/cfg_ccska[2]}]
 set_case_analysis 0 [get_pins {mprj/u_riscv_top.i_core_top_0/cfg_ccska[1]}]
 set_case_analysis 0 [get_pins {mprj/u_riscv_top.i_core_top_0/cfg_ccska[0]}]
 
@@ -264,6 +264,8 @@ set_false_path -through [get_pins {mprj/u_wb_host/ssn}]
 ## SDIN sampled on negedge SCLK
 set_false_path -through [get_pins {mprj/u_wb_host/sdin}]
 
+#Timing at double sync first FF input is async
+set_false_path -to [get_pins {mprj/u_intercon/u_dsync.bus_.bit_[*].u_dsync0/D}]
 
 # set_false_path -from [get_ports mprj_io[*]] -through [get_pins housekeeping/mgmt_gpio_in[*]]
 # reset_path -from [get_ports mprj_io[4]] 

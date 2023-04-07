@@ -1,6 +1,6 @@
 ###############################################################################
 # Created by write_sdc
-# Sat Dec 10 07:47:01 2022
+# Sat Mar 11 02:20:35 2023
 ###############################################################################
 current_design uart_i2c_usb_spi_top
 ###############################################################################
@@ -284,13 +284,6 @@ set_multicycle_path -setup\
            [get_ports {reg_rdata[7]}]\
            [get_ports {reg_rdata[8]}]\
            [get_ports {reg_rdata[9]}]] 2
-set_max_delay\
-    -from [get_ports {wbd_clk_int}] 5.0000
-set_max_delay\
-    -from [get_ports {wbd_clk_int}]\
-    -to [get_ports {wbd_clk_uart}] 5.0000
-set_max_delay\
-    -to [get_ports {wbd_clk_uart}] 5.0000
 ###############################################################################
 # Environment
 ###############################################################################

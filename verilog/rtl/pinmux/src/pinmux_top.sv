@@ -72,6 +72,10 @@
 ////          C. software register address moved, 4 register will ////
 ////             reset under power-on reset, 4 register will reset////
 ////             system reset                                     ////
+////    0.9 - 5 Jan 2023, Dinesh A                                ////
+////          A. Stepper Motor Integration                        ////
+////    1.0 - 5 Mar 2023, Dinesh A                                ////
+////          A. Riscv Tap access integration                     ////
 //////////////////////////////////////////////////////////////////////
 `include "user_params.svh"
 module pinmux_top (
@@ -89,6 +93,16 @@ module pinmux_top (
 	                   input logic             e_reset_n              ,  // external reset
 	                   input logic             p_reset_n              ,  // power-on reset
                        input logic             s_reset_n              ,  // soft reset
+
+                       `ifdef YCR_DBG_EN
+                           // -- JTAG I/F
+                        output   logic         riscv_trst_n,
+                        output   logic         riscv_tck,
+                        output   logic         riscv_tms,
+                        output   logic         riscv_tdi,
+                        input    logic         riscv_tdo,
+                        input    logic         riscv_tdo_en,
+                       `endif // YCR_DBG_EN
 
                        // to/from Global Reset FSM
                         input  logic           cfg_strap_pad_ctrl     ,
@@ -214,7 +228,16 @@ module pinmux_top (
                // IR Receiver I/F
                output logic             ir_rx,
                input  logic             ir_tx,
-               input  logic             ir_intr
+               input  logic             ir_intr,
+
+               //------------------------------
+               // Stepper Motor Variable
+               //------------------------------
+               input logic              sm_a1,  
+               input logic              sm_a2,  
+               input logic              sm_b1,  
+               input logic              sm_b2  
+
 
                
    ); 
@@ -554,6 +577,16 @@ ws281x_top  u_ws281x(
 //----------------------------------------------------------------------
 
 pinmux u_pinmux (
+       `ifdef YCR_DBG_EN
+           // -- JTAG I/F
+              .riscv_trst_n             (riscv_trst_n        ),
+              .riscv_tck                (riscv_tck           ),
+              .riscv_tms                (riscv_tms           ),
+              .riscv_tdi                (riscv_tdi           ),
+              .riscv_tdo                (riscv_tdo           ),
+              .riscv_tdo_en             (riscv_tdo_en        ),
+       `endif // YCR_DBG_EN
+
                .cfg_strap_pad_ctrl      (cfg_strap_pad_ctrl  ),
                .pad_strap_in            (pad_strap_in        ),
                // Digital IO
@@ -621,8 +654,15 @@ pinmux u_pinmux (
 		       .dbg_clk_mon             (dbg_clk_mon         ),
 
                .ir_rx                   (ir_rx               ),
-               .ir_tx                   (ir_tx               )
+               .ir_tx                   (ir_tx               ),
 
+               //-------------------------------------
+               // Stpper Motor outputs
+               //-------------------------------------
+               .sm_a1                   (sm_a1               ),  
+               .sm_a2                   (sm_a2               ),  
+               .sm_b1                   (sm_b1               ),  
+               .sm_b2                   (sm_b2               )   
 
    ); 
 

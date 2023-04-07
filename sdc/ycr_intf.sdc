@@ -1,6 +1,6 @@
 ###############################################################################
 # Created by write_sdc
-# Sat Dec 10 05:54:02 2022
+# Thu Apr  6 17:51:51 2023
 ###############################################################################
 current_design ycr_intf
 ###############################################################################
@@ -9,35 +9,35 @@ current_design ycr_intf
 create_clock -name core_clk -period 10.0000 [get_ports {core_clk}]
 set_clock_transition 0.1500 [get_clocks {core_clk}]
 set_clock_uncertainty -setup 0.5000 core_clk
-set_clock_uncertainty -hold 0.2500 core_clk
+set_clock_uncertainty -hold 0.3000 core_clk
 set_propagated_clock [get_clocks {core_clk}]
 create_clock -name rtc_clk -period 40.0000 
 set_clock_uncertainty -setup 0.5000 rtc_clk
-set_clock_uncertainty -hold 0.2500 rtc_clk
+set_clock_uncertainty -hold 0.3000 rtc_clk
 create_clock -name wb_clk -period 10.0000 [get_ports {wb_clk}]
 set_clock_transition 0.1500 [get_clocks {wb_clk}]
 set_clock_uncertainty -setup 0.5000 wb_clk
-set_clock_uncertainty -hold 0.2500 wb_clk
+set_clock_uncertainty -hold 0.3000 wb_clk
 set_propagated_clock [get_clocks {wb_clk}]
 create_generated_clock -name dcache_mem_clk0 -add -source [get_ports {core_clk}] -master_clock [get_clocks {core_clk}] -divide_by 1 -comment {dcache mem clock0} [get_ports {dcache_mem_clk0}]
 set_clock_transition 0.1500 [get_clocks {dcache_mem_clk0}]
 set_clock_uncertainty -setup 0.5000 dcache_mem_clk0
-set_clock_uncertainty -hold 0.2500 dcache_mem_clk0
+set_clock_uncertainty -hold 0.3000 dcache_mem_clk0
 set_propagated_clock [get_clocks {dcache_mem_clk0}]
 create_generated_clock -name dcache_mem_clk1 -add -source [get_ports {core_clk}] -master_clock [get_clocks {core_clk}] -divide_by 1 -comment {dcache mem clock1} [get_ports {dcache_mem_clk1}]
 set_clock_transition 0.1500 [get_clocks {dcache_mem_clk1}]
 set_clock_uncertainty -setup 0.5000 dcache_mem_clk1
-set_clock_uncertainty -hold 0.2500 dcache_mem_clk1
+set_clock_uncertainty -hold 0.3000 dcache_mem_clk1
 set_propagated_clock [get_clocks {dcache_mem_clk1}]
 create_generated_clock -name icache_mem_clk0 -add -source [get_ports {core_clk}] -master_clock [get_clocks {core_clk}] -divide_by 1 -comment {icache mem clock0} [get_ports {icache_mem_clk0}]
 set_clock_transition 0.1500 [get_clocks {icache_mem_clk0}]
 set_clock_uncertainty -setup 0.5000 icache_mem_clk0
-set_clock_uncertainty -hold 0.2500 icache_mem_clk0
+set_clock_uncertainty -hold 0.3000 icache_mem_clk0
 set_propagated_clock [get_clocks {icache_mem_clk0}]
 create_generated_clock -name icache_mem_clk1 -add -source [get_ports {core_clk}] -master_clock [get_clocks {core_clk}] -divide_by 1 -comment {icache mem clock1} [get_ports {icache_mem_clk1}]
 set_clock_transition 0.1500 [get_clocks {icache_mem_clk1}]
 set_clock_uncertainty -setup 0.5000 icache_mem_clk1
-set_clock_uncertainty -hold 0.2500 icache_mem_clk1
+set_clock_uncertainty -hold 0.3000 icache_mem_clk1
 set_propagated_clock [get_clocks {icache_mem_clk1}]
 set_clock_groups -name async_clock -asynchronous \
  -group [get_clocks {rtc_clk}]\
