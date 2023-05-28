@@ -717,10 +717,11 @@ We are looking for community help in following activity, interested user can pin
 * **Group Email**: <https://groups.google.com/g/riscduino>
 
 # Documentation
-* **Syntacore**      - https://github.com/syntacore/scr1
+* **Syntacore**     - https://github.com/syntacore/scr1
 * **IR-Receiver**   - https://github.com/JulienOury/ChristmasTreeController/
 * **Random Number** - https://github.com/JulienOury/ChristmasTreeController/
 * **Stepper Motor** - https://github.com/JulienOury/ChristmasTreeController/
+* **jtag vpi**      - https://github.com/fjullien/jtag_vpi
 
 News on Riscduino
 ===============

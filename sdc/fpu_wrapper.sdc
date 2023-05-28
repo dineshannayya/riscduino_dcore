@@ -1,6 +1,6 @@
 ###############################################################################
 # Created by write_sdc
-# Fri Mar 10 18:09:22 2023
+# Fri May 26 10:51:58 2023
 ###############################################################################
 current_design fpu_wrapper
 ###############################################################################
@@ -164,6 +164,14 @@ set_output_delay 2.0000 -clock [get_clocks {mclk}] -min -add_delay [get_ports {d
 set_output_delay 6.0000 -clock [get_clocks {mclk}] -max -add_delay [get_ports {dmem_resp[0]}]
 set_output_delay 2.0000 -clock [get_clocks {mclk}] -min -add_delay [get_ports {dmem_resp[1]}]
 set_output_delay 6.0000 -clock [get_clocks {mclk}] -max -add_delay [get_ports {dmem_resp[1]}]
+set_max_delay\
+    -from [list [get_ports {cfg_cska[0]}]\
+           [get_ports {cfg_cska[1]}]\
+           [get_ports {cfg_cska[2]}]\
+           [get_ports {cfg_cska[3]}]\
+           [get_ports {wbd_clk_int}]] 2.0000
+set_max_delay\
+    -to [get_ports {wbd_clk_out}] 2.0000
 ###############################################################################
 # Environment
 ###############################################################################

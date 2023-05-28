@@ -36,8 +36,8 @@ set ::env(CLOCK_BUFFER_FANOUT) "8"
 set ::env(LEC_ENABLE) 0
 
 set ::env(VERILOG_FILES) "\
-        $::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/lib/clk_skew_adjust.gv                  \
-        $::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/lib/ctech_cells.sv                      \
+        $::env(DESIGN_DIR)/../../verilog/rtl/lib/clk_skew_adjust.gv                                   \
+        $::env(DESIGN_DIR)/../../verilog/rtl/lib/ctech_cells.sv                                       \
         $::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/cache/src/core/dcache_top.sv            \
         $::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/cache/src/core/dcache_tag_fifo.sv       \
         $::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/cache/src/core/icache_tag_fifo.sv       \
@@ -66,8 +66,8 @@ set ::env(GND_PIN) [list {vssd1}]
 ## Floorplan
 set ::env(FP_PIN_ORDER_CFG) $::env(DESIGN_DIR)/pin_order.cfg
 set ::env(FP_SIZING) absolute
-set ::env(DIE_AREA) "0 0 700 640 "
-set ::env(CELL_PAD) "8"
+set ::env(DIE_AREA) "0 0 650 625 "
+#set ::env(CELL_PAD) "8"
 set ::env(GRT_ADJUSTMENT) {0.2}
 
 set ::env(PL_TARGET_DENSITY) 0.45

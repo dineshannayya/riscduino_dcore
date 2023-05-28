@@ -8,7 +8,6 @@ CONFIG = caravel_user_project
 #######################################################################
 
 export root_dir := $(shell pwd)
-export bld_dir  := $(root_dir)/build/$(current_goal)_$(BUS)_$(CFG)_$(ARCH)_IPIC_$(IPIC)_TCM_$(TCM)_VIRQ_$(VECT_IRQ)_TRACE_$(TRACE)
 DESIGNS?=${root_dir}/../../..
 
 UPRJ_TESTS_PATH = $(root_dir)
@@ -149,8 +148,9 @@ top_module         = user_risc_regress_tb
 # TB Paths
 export sim_dir  := $(root_dir)
 export tst_dir  := $(sim_dir)/tests
-export inc_dir  := $(sim_dir)/../firmware
+export inc_dir  := $(sim_dir)/../common/firmware
 
+export bld_dir  := $(root_dir)/build/$(current_goal)_$(BUS)_$(CFG)_$(ARCH)_IPIC_$(IPIC)_TCM_$(TCM)_VIRQ_$(VECT_IRQ)_TRACE_$(TRACE)
 test_results := $(bld_dir)/test_results.txt
 test_info    := $(bld_dir)/test_info
 sim_results  := $(bld_dir)/sim_results.txt
@@ -282,7 +282,7 @@ ifeq ($(SIM),RTL)
 	$(sv_list) \
 	-o $(top_module).vvp; \
 	printf "" > $(test_results); \
-        iverilog-vpi ../../../vpi/system/system.c; \
+        iverilog-vpi ../../../common/vpi/system/system.c; \
 	vvp  -M. -msystem  $(top_module).vvp \
 	+risc_core_id=$(RISC_CORE) \
 	+test_info=$(test_info) \
@@ -300,7 +300,7 @@ ifeq ($(SIM),RTL)
 	$(sv_list) \
 	-o $(top_module).vvp; \
 	printf "" > $(test_results); \
-        iverilog-vpi ../../../vpi/system/system.c; \
+        iverilog-vpi ../../../common/vpi/system/system.c; \
 	vvp  -M. -msystem  $(top_module).vvp \
 	+risc_core_id=$(RISC_CORE) \
 	+test_info=$(test_info) \
@@ -319,7 +319,7 @@ else
 	$(sv_list) \
 	-o $(top_module).vvp; \
 	printf "" > $(test_results); \
-        iverilog-vpi ../../../vpi/system/system.c; \
+        iverilog-vpi ../../../common/vpi/system/system.c; \
 	vvp  -M. -msystem  $(top_module).vvp \
 	+risc_core_id=$(RISC_CORE) \
 	+test_info=$(test_info) \
@@ -336,7 +336,7 @@ else
 	$(sv_list) \
 	-o $(top_module).vvp; \
 	printf "" > $(test_results); \
-        iverilog-vpi ../../../vpi/system/system.c; \
+        iverilog-vpi ../../../common/vpi/system/system.c; \
 	vvp  -M. -msystem  $(top_module).vvp \
 	+risc_core_id=$(RISC_CORE) \
 	+test_info=$(test_info) \

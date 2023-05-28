@@ -329,9 +329,12 @@
 ////         A. Centrialized Source Clock gating logic added at wishbone inter connect           ////
 ////         B. QSpim Modified to generate Idle indication                                       ////
 ////         C. Register Space Allocated for Wishbone Interconnect                               ////
-////    6.9 Mar 5, 2023, Dinesh A                                                                ////
+////    6.9 April 8, 2023, Dinesh A                                                              ////
 ////         A. Risc core Tap access enabled                                                     ////
 ////         B. all the cpu clk are routed from ycr_iconnect                                     ////
+////         C. glbl_reg_10 add to support software-wise interrupt set                           ////
+////    6.10 May 1, 2023, Dinesh A                                                               ////
+////         A. AES and FPU idle generation for clock gating purpose                             ////
 ////                                                                                             ////
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 ////                                                                                             ////
@@ -1241,6 +1244,7 @@ ycr2_top_wb u_riscv_top (
           .aes_dmem_req_ack        (aes_dmem_req_ack        ),
           .aes_dmem_rdata          (aes_dmem_rdata          ),
           .aes_dmem_resp           (aes_dmem_resp           ),
+          .aes_idle                (aes_idle                ),
 
           .cpu_clk_fpu             (cpu_clk_fpu             ),
           .fpu_dmem_req            (fpu_dmem_req            ),
@@ -1250,7 +1254,8 @@ ycr2_top_wb u_riscv_top (
           .fpu_dmem_wdata          (fpu_dmem_wdata          ),
           .fpu_dmem_req_ack        (fpu_dmem_req_ack        ),
           .fpu_dmem_rdata          (fpu_dmem_rdata          ),
-          .fpu_dmem_resp           (fpu_dmem_resp           )
+          .fpu_dmem_resp           (fpu_dmem_resp           ),
+          .fpu_idle                (fpu_idle                )
 );
 
 //----------------------------------------------
@@ -1372,7 +1377,9 @@ aes_top u_aes (
     .dmem_wdata            (aes_dmem_wdata   ),
     .dmem_req_ack          (aes_dmem_req_ack ),
     .dmem_rdata            (aes_dmem_rdata   ),
-    .dmem_resp             (aes_dmem_resp    )
+    .dmem_resp             (aes_dmem_resp    ),
+
+    .idle                  (aes_idle         )
 );
 
 /***********************************************
@@ -1398,7 +1405,9 @@ fpu_wrapper u_fpu (
           .dmem_wdata         (fpu_dmem_wdata               ),
           .dmem_req_ack       (fpu_dmem_req_ack             ),
           .dmem_rdata         (fpu_dmem_rdata               ),
-          .dmem_resp          (fpu_dmem_resp                )
+          .dmem_resp          (fpu_dmem_resp                ),
+
+          .idle               (fpu_idle                     )
 );
 
 /*********************************************************

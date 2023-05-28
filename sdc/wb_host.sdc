@@ -1,6 +1,6 @@
 ###############################################################################
 # Created by write_sdc
-# Fri Apr  7 07:15:37 2023
+# Sun May 28 13:48:42 2023
 ###############################################################################
 current_design wb_host
 ###############################################################################
@@ -463,6 +463,14 @@ set_multicycle_path -setup\
            [get_ports {wbm_sel_i[2]}]\
            [get_ports {wbm_sel_i[3]}]\
            [get_ports {wbm_we_i}]] 2
+set_max_delay\
+    -from [list [get_ports {cfg_cska_wh[0]}]\
+           [get_ports {cfg_cska_wh[1]}]\
+           [get_ports {cfg_cska_wh[2]}]\
+           [get_ports {cfg_cska_wh[3]}]\
+           [get_ports {wbd_clk_int}]] 2.0000
+set_max_delay\
+    -to [get_ports {wbd_clk_wh}] 2.0000
 ###############################################################################
 # Environment
 ###############################################################################

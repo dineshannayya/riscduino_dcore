@@ -23,10 +23,11 @@ set ::env(FP_PDN_CORE_RING) "0"
 
 # Timing configuration
 set ::env(CLOCK_PERIOD) "10"
-set ::env(CLOCK_PORT) "u_cclk_cts.genblk1.u_mux/X rtc_clk"
+set ::env(CLOCK_PORT) "u_cclk_cts.genblk1.u_mux/X u_cclk_gate.u_cclk_gate_cts.genblk1.u_mux/X rtc_clk"
 
 set ::env(SYNTH_MAX_FANOUT) 4
 set ::env(SYNTH_BUFFERING) {0}
+set ::env(SYNTH_MIN_BUF_PORT) {sky130_fd_sc_hd__buf_8 A X}
 
 ## CTS BUFFER
 set ::env(CTS_CLK_MAX_WIRE_LENGTH) {250}
@@ -38,6 +39,7 @@ set ::env(LEC_ENABLE) 0
 set ::env(VERILOG_FILES) "\
     $::env(DESIGN_DIR)/../../verilog/rtl/lib/clk_skew_adjust.gv                  \
     $::env(DESIGN_DIR)/../../verilog/rtl/lib/ctech_cells.sv                      \
+    $::env(DESIGN_DIR)/../../verilog/rtl/lib/registers.v                       \
 	$::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/top/ycr2_iconnect.sv                  \
 	$::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/top/ycr2_cross_bar.sv                 \
 	$::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/top/ycr2_router.sv                    \
@@ -46,9 +48,12 @@ set ::env(VERILOG_FILES) "\
 	$::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/top/ycr_tcm.sv                        \
 	$::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/top/ycr_timer.sv                      \
     $::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/top/ycr_req_retiming.sv               \
+    $::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/top/ycr_cclk_ctrl_top.sv               \
     $::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/lib/ycr_arb.sv                        \
     $::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/lib/sync_fifo2.sv                     \
 	$::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/core/primitives/ycr_reset_cells.sv    \
+	$::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/lib/ycr_clk_gate1.sv
+	$::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/lib/ycr_clk_gate2.sv
 	"
 set ::env(VERILOG_INCLUDE_DIRS) [glob $::env(DESIGN_DIR)/../../verilog/rtl/yifive/ycr2c/src/includes ]
 set ::env(SYNTH_READ_BLACKBOX_LIB) 1

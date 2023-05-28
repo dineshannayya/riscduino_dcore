@@ -12,7 +12,14 @@ set_clock_uncertainty 0.2500 mclk
 set_propagated_clock [get_clocks {mclk}]
 
 
-set_dont_touch { u_skew.* }
+set_dont_touch { u_skew.clkbuf_*.* }
+set_max_delay 2 -from [get_ports {wbd_clk_int}]
+set_max_delay 2 -from [get_ports {cfg_cska[3]}]
+set_max_delay 2 -from [get_ports {cfg_cska[2]}]
+set_max_delay 2 -from [get_ports {cfg_cska[1]}]
+set_max_delay 2 -from [get_ports {cfg_cska[0]}]
+set_max_delay 2 -to   [get_ports {wbd_clk_out}]
+
 ### ClkSkew Adjust
 
 set_case_analysis 0 [get_ports {cfg_cska[0]}]

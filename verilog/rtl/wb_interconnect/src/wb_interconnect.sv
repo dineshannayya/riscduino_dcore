@@ -902,6 +902,12 @@ src_clk_gate  u_dcg_s0(
                         .clk_out               (s0_mclk             )  // clock output
      
        );
+
+//---------------------------------------------------------------------------------------
+// Special Note: There is hugh clock skew difference between mclk and mclk_raw clock
+// for timing closure purpose all the mclk_raw output signal need to double sync to mclk
+//----------------------------------------------------------------------------------------
+
 //----------------------------
 // Source Clock Gating for S1
 //----------------------------

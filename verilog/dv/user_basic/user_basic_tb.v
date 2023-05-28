@@ -668,7 +668,7 @@ task uartm_clock_monitor;
 input real exp_period;
 begin
    `ifdef GL
-   force clock_mon = u_top.u_wb_host._10372_.Q;
+   force clock_mon = u_top.u_wb_host._10390_.Q;
     `else
    force clock_mon = u_top.u_wb_host.u_uart2wb.u_core.line_clk_16x;
     `endif

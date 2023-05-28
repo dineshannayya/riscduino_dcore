@@ -75,7 +75,7 @@ wire [31:0] pc_curr_ff         = u_top.u_riscv_top.i_core_top_0.i_pipe_top.i_pip
 wire [31:0] exu2pipe_pc_curr_o = u_top.u_riscv_top.i_core_top_0.i_pipe_top.i_pipe_exu.exu2pipe_pc_curr_o ;
 wire [31:0] mprf_int_10        = u_top.u_riscv_top.i_core_top_0.i_pipe_top.i_pipe_mprf.mprf_int[10]      ;
 
-always @(posedge clk) begin
+always @(posedge clock) begin
     bit test_pass;
     int unsigned                            f_test;
     int unsigned                            f_test_ram;

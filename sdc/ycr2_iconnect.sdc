@@ -1,6 +1,6 @@
 ###############################################################################
 # Created by write_sdc
-# Sat Mar 11 09:02:07 2023
+# Fri May 26 10:52:32 2023
 ###############################################################################
 current_design ycr2_iconnect
 ###############################################################################
@@ -11,6 +11,11 @@ set_clock_transition 0.1500 [get_clocks {core_clk}]
 set_clock_uncertainty -setup 0.5000 core_clk
 set_clock_uncertainty -hold 0.2500 core_clk
 set_propagated_clock [get_clocks {core_clk}]
+create_generated_clock -name cclk_gate_cts -add -source [get_ports {core_clk}] -master_clock [get_clocks {core_clk}] -divide_by 1 -comment {cclk cts} [get_pins {u_cclk_gate.u_cclk_gate_cts.genblk1.u_mux/X}]
+set_clock_transition 0.1500 [get_clocks {cclk_gate_cts}]
+set_clock_uncertainty -setup 0.5000 cclk_gate_cts
+set_clock_uncertainty -hold 0.2500 cclk_gate_cts
+set_propagated_clock [get_clocks {cclk_gate_cts}]
 create_generated_clock -name sram0_clk0 -add -source [get_ports {core_clk}] -master_clock [get_clocks {core_clk}] -divide_by 1 -comment {tcm clock0} [get_ports {sram0_clk0}]
 set_clock_transition 0.1500 [get_clocks {sram0_clk0}]
 set_clock_uncertainty -setup 0.5000 sram0_clk0
@@ -948,7 +953,20 @@ set_output_delay 1.0000 -clock [get_clocks {sram0_clk0}] -max -add_delay [get_po
 set_output_delay -1.0000 -clock [get_clocks {sram0_clk0}] -min -add_delay [get_ports {sram0_wmask0[3]}]
 set_output_delay 1.0000 -clock [get_clocks {sram0_clk0}] -max -add_delay [get_ports {sram0_wmask0[3]}]
 set_max_delay\
+    -from [get_ports {core_clk_int}] 2.0000
+set_max_delay\
+    -to [get_ports {core_clk_skew}] 2.0000
+set_max_delay\
     -to [get_ports {core_icache_req}] 5.0000
+set_false_path\
+    -to [list [get_pins {i_timer.u_wakeup_dsync.bus_.bit_[0].u_dsync0/D}]\
+           [get_pins {i_timer.u_wakeup_dsync.bus_.bit_[1].u_dsync0/D}]\
+           [get_pins {i_timer.u_wakeup_dsync.bus_.bit_[2].u_dsync0/D}]\
+           [get_pins {i_timer.u_wakeup_dsync.bus_.bit_[3].u_dsync0/D}]\
+           [get_pins {i_timer.u_wakeup_dsync.bus_.bit_[4].u_dsync0/D}]\
+           [get_pins {i_timer.u_wakeup_dsync.bus_.bit_[5].u_dsync0/D}]\
+           [get_pins {i_timer.u_wakeup_dsync.bus_.bit_[6].u_dsync0/D}]\
+           [get_pins {i_timer.u_wakeup_dsync.bus_.bit_[7].u_dsync0/D}]]
 ###############################################################################
 # Environment
 ###############################################################################
@@ -959,11 +977,13 @@ set_load -pin_load 0.0334 [get_ports {core0_clk}]
 set_load -pin_load 0.0334 [get_ports {core0_dmem_req_ack}]
 set_load -pin_load 0.0334 [get_ports {core0_imem_req_ack}]
 set_load -pin_load 0.0334 [get_ports {core0_irq_soft}]
+set_load -pin_load 0.0334 [get_ports {core0_sleep}]
 set_load -pin_load 0.0334 [get_ports {core0_timer_irq}]
 set_load -pin_load 0.0334 [get_ports {core1_clk}]
 set_load -pin_load 0.0334 [get_ports {core1_dmem_req_ack}]
 set_load -pin_load 0.0334 [get_ports {core1_imem_req_ack}]
 set_load -pin_load 0.0334 [get_ports {core1_irq_soft}]
+set_load -pin_load 0.0334 [get_ports {core1_sleep}]
 set_load -pin_load 0.0334 [get_ports {core1_timer_irq}]
 set_load -pin_load 0.0334 [get_ports {core_clk_skew}]
 set_load -pin_load 0.0334 [get_ports {core_dcache_cmd}]
@@ -1685,6 +1705,7 @@ set_load -pin_load 0.0334 [get_ports {sram0_wmask0[2]}]
 set_load -pin_load 0.0334 [get_ports {sram0_wmask0[1]}]
 set_load -pin_load 0.0334 [get_ports {sram0_wmask0[0]}]
 set_driving_cell -lib_cell sky130_fd_sc_hd__inv_8 -pin {Y} -input_transition_rise 0.0000 -input_transition_fall 0.0000 [get_ports {aes_dmem_req_ack}]
+set_driving_cell -lib_cell sky130_fd_sc_hd__inv_8 -pin {Y} -input_transition_rise 0.0000 -input_transition_fall 0.0000 [get_ports {aes_idle}]
 set_driving_cell -lib_cell sky130_fd_sc_hd__inv_8 -pin {Y} -input_transition_rise 0.0000 -input_transition_fall 0.0000 [get_ports {cfg_bypass_dcache}]
 set_driving_cell -lib_cell sky130_fd_sc_hd__inv_8 -pin {Y} -input_transition_rise 0.0000 -input_transition_fall 0.0000 [get_ports {cfg_bypass_icache}]
 set_driving_cell -lib_cell sky130_fd_sc_hd__inv_8 -pin {Y} -input_transition_rise 0.0000 -input_transition_fall 0.0000 [get_ports {core0_dmem_cmd}]
@@ -1703,6 +1724,7 @@ set_driving_cell -lib_cell sky130_fd_sc_hd__inv_8 -pin {Y} -input_transition_ris
 set_driving_cell -lib_cell sky130_fd_sc_hd__inv_8 -pin {Y} -input_transition_rise 0.0000 -input_transition_fall 0.0000 [get_ports {core_irq_soft_i}]
 set_driving_cell -lib_cell sky130_fd_sc_hd__inv_8 -pin {Y} -input_transition_rise 0.0000 -input_transition_fall 0.0000 [get_ports {cpu_intf_rst_n}]
 set_driving_cell -lib_cell sky130_fd_sc_hd__inv_8 -pin {Y} -input_transition_rise 0.0000 -input_transition_fall 0.0000 [get_ports {fpu_dmem_req_ack}]
+set_driving_cell -lib_cell sky130_fd_sc_hd__inv_8 -pin {Y} -input_transition_rise 0.0000 -input_transition_fall 0.0000 [get_ports {fpu_idle}]
 set_driving_cell -lib_cell sky130_fd_sc_hd__inv_8 -pin {Y} -input_transition_rise 0.0000 -input_transition_fall 0.0000 [get_ports {pwrup_rst_n}]
 set_driving_cell -lib_cell sky130_fd_sc_hd__inv_8 -pin {Y} -input_transition_rise 0.0000 -input_transition_fall 0.0000 [get_ports {rtc_clk}]
 set_driving_cell -lib_cell sky130_fd_sc_hd__inv_8 -pin {Y} -input_transition_rise 0.0000 -input_transition_fall 0.0000 [get_ports {aes_dmem_rdata[31]}]
