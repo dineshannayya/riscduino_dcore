@@ -162,51 +162,8 @@ begin
    end
 
 
-   repeat (100) @(posedge clock);  // wait for Processor Get Ready
+   repeat (100000) @(posedge clock);  // wait for Processor Get Ready
 
-   tb_uart.uart_init;
-   //wb_user_core_write(`ADDR_SPACE_UART0+`UART_CTRL,{3'h0,2'b00,1'b1,1'b1,1'b1});  
-   tb_uart.control_setup (uart_data_bit, uart_stop_bits, uart_parity_en, uart_even_odd_parity, 
-	                          uart_stick_parity, uart_timeout, uart_divisor);
-
-
-    wait_riscv_boot();
-   
-   
-   for (i=0; i<40; i=i+1)
-   	uart_write_data[i] = $random;
-   
-   
-   
-   fork
-      begin
-         for (i=0; i<40; i=i+1)
-         begin
-           $display ("\n... UART Agent Writing char %x ...", uart_write_data[i]);
-            tb_uart.write_char (uart_write_data[i]);
-         end
-      end
-   
-      begin
-         for (j=0; j<40; j=j+1)
-         begin
-           tb_uart.read_char_chk(uart_write_data[j]);
-         end
-      end
-      join
-   
-      #100
-      tb_uart.report_status(uart_rx_nu, uart_tx_nu);
-   
-      test_fail = 0;
-
-      // Check 
-      // if all the 40 byte transmitted
-      // if all the 40 byte received
-      // if no error 
-      if(uart_tx_nu != 40) test_fail = 1;
-      if(uart_rx_nu != 40) test_fail = 1;
-      if(tb_uart.err_cnt != 0) test_fail = 1;
 
       $display("###################################################");
       if(test_fail == 0) begin

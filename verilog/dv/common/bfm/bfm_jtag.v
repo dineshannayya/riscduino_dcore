@@ -6,11 +6,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-`define CMD_RESET		0
-`define CMD_TMS_SEQ		1
-`define CMD_SCAN_CHAIN		2
-`define CMD_SCAN_CHAIN_FLIP_TMS	3
-`define CMD_STOP_SIMU		4
 
 module bfm_jtag
 #(	parameter DEBUG_INFO = 0,
@@ -26,12 +21,19 @@ module bfm_jtag
 	input		enable,
 	input		init_done);
 
+`define CMD_RESET		            0
+`define CMD_TMS_SEQ		            1
+`define CMD_SCAN_CHAIN		        2
+`define CMD_SCAN_CHAIN_FLIP_TMS	    3
+`define CMD_STOP_SIMU		        4
+
+
 integer		cmd;
 integer		length;
 integer		nb_bits;
 
-reg [31:0]	buffer_out [0:4095];   // Data storage from the jtag server
-reg [31:0]	buffer_in  [0:4095];   // Data storage to the jtag server
+reg [31:0]	buffer_out [0:127];   // Data storage from the jtag server
+reg [31:0]	buffer_in  [0:127];   // Data storage to the jtag server
 
 integer		flip_tms;
 

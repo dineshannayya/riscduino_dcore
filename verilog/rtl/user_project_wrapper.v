@@ -335,6 +335,9 @@
 ////         C. glbl_reg_10 add to support software-wise interrupt set                           ////
 ////    6.10 May 1, 2023, Dinesh A                                                               ////
 ////         A. AES and FPU idle generation for clock gating purpose                             ////
+////    6.11 June 1, 2023, Dinesh A                                                              ////
+////         A. Clock Gating for Riscv Core                                                      ////
+////         B. Bug fix inside Riscv Core - Tap Reset connectivity                               ////
 ////                                                                                             ////
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 ////                                                                                             ////

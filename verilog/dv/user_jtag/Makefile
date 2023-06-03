@@ -28,7 +28,8 @@ DESIGNS?=../../..
 export USER_PROJECT_VERILOG ?=  $(DESIGNS)/verilog
 export USER_DV   ?=  $(USER_PROJECT_VERILOG)/dv
 
-IVERILOG_VPI_SRC = $(USER_DV)/common/jtag_common.c $(SOURCE_DIR)/jtag_vpi.c
+Q ?=@
+IVERILOG_VPI_SRC = $(USER_DV)/common/vpi/jtag/jtag_common.c $(USER_DV)/common/vpi/jtag/jtag_vpi.c
 
 
 
@@ -49,8 +50,11 @@ all:  ${PATTERN:=.vcd}
 
 vvp:  ${PATTERN:=.vvp}
 
+
 %.vvp: %_tb.v
-	iverilog-vpi -name=jtag_vpi pli_rtc.c
+	@echo '##### Building ######'
+	$(Q)gcc -ojtag_client jtag_client.c
+	$(Q)iverilog-vpi --name=jtag_vpi $(IVERILOG_VPI_SRC) 
 ifeq ($(SIM),RTL)
    ifeq ($(DUMP),OFF)
 	iverilog -g2012 -DFUNCTIONAL -DSIM -I $(PDK_PATH) \
@@ -78,12 +82,17 @@ else
 endif
 
 %.vcd: %.vvp
-	vvp -M. -m pli_rtc $< 
+	$(Q)vvp -n -M. -mjtag_vpi $< +jtag_vpi_enable=1 &
+	@sleep 30
+	@echo '##### Running the test client ######'
+	$(Q)./jtag_client
+	@sleep 1
+
 
 
 # ---- Clean ----
 
 clean:
-	rm -f *.elf *.hex *.bin *.vvp *.vcd *.log *.dump *.vpi *.o
+	rm -f *.elf *.hex *.bin *.vvp *.vcd *.log *.dump *.vpi *.o jtag_client
 
 .PHONY: clean hex all
