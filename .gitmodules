@@ -14,5 +14,5 @@
 	path = verilog/rtl/fpu
 	url = https://github.com/dineshannayya/fpu
 [submodule "rtc"]
-	path = rtc
+	path = verilog/rtl/rtc
 	url = https://github.com/dineshannayya/rtc
