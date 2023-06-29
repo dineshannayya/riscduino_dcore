@@ -249,16 +249,22 @@ check-riscv_test_repo:
 zip:
 	gzip -f -r lef/*
 	gzip -f -r gds/*
+	gzip -f -r def/*
+	gzip -f -r lib/*
 	gzip -f -r spef/*
 	gzip -f -r spi/lvs/*
 	gzip -f -r verilog/gl/*
+	gzip -f -r signoff/caravel/*
 
 unzip:
 	gzip -d -r lef/*
 	gzip -d -r gds/*
+	gzip -d -r def/*
+	gzip -d -r lib/*
 	gzip -d -r spef/*
 	gzip -d -r spi/lvs/*
 	gzip -d -r verilog/gl/*
+	gzip -d -r signoff/caravel/*
 
 .PHONY: help
 help:

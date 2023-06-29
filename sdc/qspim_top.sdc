@@ -1,6 +1,6 @@
 ###############################################################################
 # Created by write_sdc
-# Mon May 22 15:32:14 2023
+# Mon Jun 12 17:19:24 2023
 ###############################################################################
 current_design qspim_top
 ###############################################################################
@@ -258,6 +258,8 @@ set_output_delay -2.7500 -clock [get_clocks {mclk}] -min -add_delay [get_ports {
 set_output_delay 1.0000 -clock [get_clocks {mclk}] -max -add_delay [get_ports {wbd_dat_o[9]}]
 set_output_delay -2.7500 -clock [get_clocks {mclk}] -min -add_delay [get_ports {wbd_err_o}]
 set_output_delay 1.0000 -clock [get_clocks {mclk}] -max -add_delay [get_ports {wbd_err_o}]
+set_output_delay -2.7500 -clock [get_clocks {mclk}] -min -add_delay [get_ports {wbd_lack_o}]
+set_output_delay 1.0000 -clock [get_clocks {mclk}] -max -add_delay [get_ports {wbd_lack_o}]
 set_max_delay\
     -to [get_ports {spi_debug[0]}] 10.0000
 set_max_delay\

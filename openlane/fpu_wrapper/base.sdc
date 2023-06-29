@@ -8,8 +8,15 @@ current_design fpu_wrapper
 ###############################################################################
 create_clock -name mclk -period 10.0000 [get_ports {mclk}]
 set_clock_transition 0.1500 [get_clocks {mclk}]
-set_clock_uncertainty 0.2500 mclk
+
+set_clock_uncertainty -setup 0.5000 [all_clocks]
+set_clock_uncertainty -hold 0.2500 [all_clocks]
 set_propagated_clock [get_clocks {mclk}]
+
+set ::env(SYNTH_TIMING_DERATE) 0.05
+puts "\[INFO\]: Setting timing derate to: [expr {$::env(SYNTH_TIMING_DERATE) * 10}] %"
+set_timing_derate -early [expr {1-$::env(SYNTH_TIMING_DERATE)}]
+set_timing_derate -late [expr {1+$::env(SYNTH_TIMING_DERATE)}]
 
 
 set_dont_touch { u_skew.clkbuf_*.* }

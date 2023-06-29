@@ -478,6 +478,38 @@ Following Design changes are done on the basic version of syntacore RISC core
         CARAVEL_ROOT=/opt/caravel
         PDK_ROOT=/opt/pdk_mpw6
 ```
+## Note-3: Clock Gate Plugin integration
+1. **Hack-1: Modify following files for synthesis script update**
+```
+   Directory: OpenSTA (hacks/src/OpenSTA)
+   Source Files:
+	   OpenLane/scripts/yosys/synth.tcl
+	   OpenLane/configuration/synthesis.tcl
+	   OpenLane/scripts/utils/utils.tcl
+    Modifield File: 
+       hacks/clk_gating/synth.tcl
+       hacks/clk_gating/synthesis.tcl
+       hacks/clk_gating/utils.tcl
+```
+2. **Hack-2: Create a pluging directory in openlane and add following files**
+```
+plugin
+   └── yosys
+       └── Lighter
+           ├── clock_gating_plugin.cc
+           ├── README.md
+           ├── sky130_clkg_blackbox.v
+           └── sky130_ff_map.v
+```
+
+3. **Hack-3: Add ENV to enable clock gating in config.tcl**
+```
+   set ::env(SYNTH_ENB_CG) 1
+```
+4. **Hack-4: Check Clock gate insertion in Generated netlist file**
+```
+   grep sky130_fd_sc_hd__dlclkp  <your netlist file>
+```
 
 # Tests preparation
 
@@ -695,8 +727,6 @@ Riscduino Soc flow uses Openlane tool sets.
     4. `CVC` - Performs Circuit Validity Checks
 
 
-# News
-* **Riscduino Aim** - <https://www.youtube.com/watch?v=lFVnicPhTI0>
 
 # How To Contribute
 
@@ -716,16 +746,32 @@ We are looking for community help in following activity, interested user can pin
 * **Report an issue**: <https://github.com/dineshannayya/riscduino/issues>
 * **Group Email**: <https://groups.google.com/g/riscduino>
 
-# Documentation
+# Reference
 * **Syntacore**     - https://github.com/syntacore/scr1
+* **DCore Riscv**   - https://github.com/dineshannayya/ycr2c
+* **quad spi**      - https://github.com/dineshannayya/qspim
+* **security core** - https://github.com/dineshannayya/security_core
+* **fpu**           - https://github.com/dineshannayya/fpu
+* **rtc**           - https://github.com/dineshannayya/rtc
+* **uart**          - https://github.com/dineshannayya/uart2spi
+* **jtag vpi**      - https://github.com/fjullien/jtag_vpi
+* **clock gating**  - https://github.com/AUCOHL/Lighter
+* **i2c**           - http://www.opencores.org/projects/i2c/
+* **USB1 core**     - https://github.com/ultraembedded/core_usb_host
+* **USB1 phy**      - https://github.com/ultraembedded/core_usb_fs_phy
+* **8 bit DAC**     - https://github.com/pramitpal/8bit_dac
 * **IR-Receiver**   - https://github.com/JulienOury/ChristmasTreeController/
 * **Random Number** - https://github.com/JulienOury/ChristmasTreeController/
 * **Stepper Motor** - https://github.com/JulienOury/ChristmasTreeController/
-* **jtag vpi**      - https://github.com/fjullien/jtag_vpi
+
+Youtube video on Riscduino
+===============
+* **Riscduino Aim** - https://www.youtube.com/watch?v=lFVnicPhTI0
+* **Riscduino MPW-2 Bringup Status** - https://www.youtube.com/watch?v=Qo_RZ8Fo--c
 
 News on Riscduino
 ===============
-* **Riscduino Aim** - https://www.youtube.com/watch?v=lFVnicPhTI0
 * **Riscduino OpenRoad Article** - https://theopenroadproject.org/implementation-of-riscduino-core-using-a-hierarchical-design-flow/
+* **riscv.org News** - https://riscv.org/news/2023/01/implementation-of-riscduino-core-using-a-hierarchical-design-flow-dinesh-annayya-openroad/
 
 

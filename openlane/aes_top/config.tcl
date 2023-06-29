@@ -81,7 +81,7 @@ set ::env(GRT_ADJUSTMENT) 0.2
 
 
 set ::env(PL_TIME_DRIVEN) 1
-set ::env(PL_TARGET_DENSITY) "0.42"
+set ::env(PL_TARGET_DENSITY) "0.43"
 
 # If you're going to use multiple power domains, then keep this disabled.
 set ::env(RUN_CVC) 0

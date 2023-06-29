@@ -1,6 +1,6 @@
 ###############################################################################
 # Created by write_sdc
-# Fri May 26 10:51:58 2023
+# Thu Jun 15 12:27:45 2023
 ###############################################################################
 current_design fpu_wrapper
 ###############################################################################
@@ -8,7 +8,8 @@ current_design fpu_wrapper
 ###############################################################################
 create_clock -name mclk -period 10.0000 [get_ports {mclk}]
 set_clock_transition 0.1500 [get_clocks {mclk}]
-set_clock_uncertainty 0.2500 mclk
+set_clock_uncertainty -setup 0.5000 mclk
+set_clock_uncertainty -hold 0.2500 mclk
 set_propagated_clock [get_clocks {mclk}]
 set_input_delay 1.0000 -clock [get_clocks {mclk}] -min -add_delay [get_ports {dmem_addr[0]}]
 set_input_delay 6.0000 -clock [get_clocks {mclk}] -max -add_delay [get_ports {dmem_addr[0]}]

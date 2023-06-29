@@ -338,6 +338,9 @@
 ////    6.11 June 1, 2023, Dinesh A                                                              ////
 ////         A. Clock Gating for Riscv Core                                                      ////
 ////         B. Bug fix inside Riscv Core - Tap Reset connectivity                               ////
+////    6.12 June 14, 2023, Dinesh A                                                             ////
+////         A. Inferred Clock Gating (At Synthesis) add for SPIQ                                ////
+////         b. New 4x8bit DAC added with voltage follower and issolation for digital input      //// 
 ////                                                                                             ////
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 ////                                                                                             ////
@@ -1926,18 +1929,20 @@ peri_top u_peri(
 
 dac_top  u_4x8bit_dac(
 `ifdef USE_POWER_PINS
-          .vccd1              (vdda1                        ),
-          .vssd1              (vssa1                        ),
+          .VDDA               (vdda1                        ),
+          .VSSA               (vssa1                        ),
+          .VCCD               (vccd1                        ),
+          .VSSD               (vssd1                        ),
 `endif
-          .Vref               (analog_io[23]                ),
-          .DIn0               (cfg_dac0_mux_sel             ),
-          .DIn1               (cfg_dac1_mux_sel             ),
-          .DIn2               (cfg_dac2_mux_sel             ),
-          .DIn3               (cfg_dac3_mux_sel             ),
-          .Vout0              (analog_io[15]                ),
-          .Vout1              (analog_io[16]                ),
-          .Vout2              (analog_io[17]                ),
-          .Vout3              (analog_io[18]                )
+          .VREFH              (analog_io[23]                ),
+          .Din0               (cfg_dac0_mux_sel             ),
+          .Din1               (cfg_dac1_mux_sel             ),
+          .Din2               (cfg_dac2_mux_sel             ),
+          .Din3               (cfg_dac3_mux_sel             ),
+          .VOUT0              (analog_io[15]                ),
+          .VOUT1              (analog_io[16]                ),
+          .VOUT2              (analog_io[17]                ),
+          .VOUT3              (analog_io[18]                )
    );
 
 

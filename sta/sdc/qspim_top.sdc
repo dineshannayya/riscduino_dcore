@@ -24,7 +24,7 @@ set_case_analysis 0 [get_ports {cfg_cska_sp_co[0]}]
 set_propagated_clock [get_clocks {spiclk}]
 
 set_clock_transition 0.1500 [all_clocks]
-set_clock_uncertainty -setup 0.2500 [all_clocks]
+set_clock_uncertainty -setup 0.5000 [all_clocks]
 set_clock_uncertainty -hold 0.2500 [all_clocks]
 
 set ::env(SYNTH_TIMING_DERATE) 0.05
@@ -39,9 +39,14 @@ set_case_analysis 0 [get_ports {cfg_cska_spi[2]}]
 set_case_analysis 0 [get_ports {cfg_cska_spi[3]}]
 
 
-set_max_delay   3.5 -from [get_ports {wbd_clk_int}]
-set_max_delay   2 -to   [get_ports {wbd_clk_spi}]
-set_max_delay 3.5 -from wbd_clk_int -to wbd_clk_spi
+#set_max_delay   3.5 -from [get_ports {wbd_clk_int}]
+#set_max_delay   2 -to   [get_ports {wbd_clk_spi}]
+#set_max_delay 3.5 -from wbd_clk_int -to wbd_clk_spi
+
+## Don't touch delay cells
+set_dont_touch { u_skew_spi.* }
+#set_dont_touch { u_skew_sp_co.* }
+#set_dont_touch { u_delay*.* }
 
 #Static Clock Skew control
 set_case_analysis 0 [get_ports {cfg_cska_sp_co[0]}]
@@ -269,13 +274,15 @@ set_max_delay  10.0000 -to [get_ports {spi_debug[7]}]
 set_max_delay  10.0000 -to [get_ports {spi_debug[8]}]
 set_max_delay  10.0000 -to [get_ports {spi_debug[9]}]
 
+set_output_delay -max 1.0000 -clock [get_clocks {mclk}] -add_delay [get_ports {wbd_lack_o}]
 set_output_delay -max 1.0000 -clock [get_clocks {mclk}] -add_delay [get_ports {wbd_ack_o}]
 set_output_delay -max 1.0000 -clock [get_clocks {mclk}] -add_delay [get_ports {wbd_dat_o[*]}]
 set_output_delay -max 1.0000 -clock [get_clocks {mclk}] -add_delay [get_ports {wbd_err_o}]
 
-set_output_delay -min -2.7500 -clock [get_clocks {mclk}] -add_delay [get_ports {wbd_ack_o}]
-set_output_delay -min -2.7500 -clock [get_clocks {mclk}] -add_delay [get_ports {wbd_dat_o[*]}]
-set_output_delay -min -2.7500 -clock [get_clocks {mclk}] -add_delay [get_ports {wbd_err_o}]
+set_output_delay -min -2.75 -clock [get_clocks {mclk}] -add_delay [get_ports {wbd_lack_o}]
+set_output_delay -min -2.75 -clock [get_clocks {mclk}] -add_delay [get_ports {wbd_ack_o}]
+set_output_delay -min -2.75 -clock [get_clocks {mclk}] -add_delay [get_ports {wbd_dat_o[*]}]
+set_output_delay -min -2.75 -clock [get_clocks {mclk}] -add_delay [get_ports {wbd_err_o}]
 ###############################################################################
 # Environment
 ###############################################################################
