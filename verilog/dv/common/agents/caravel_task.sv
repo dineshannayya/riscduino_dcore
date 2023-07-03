@@ -105,8 +105,18 @@ begin
    //#1 - Apply Reset
    RSTB = 0; 
    //#2 - Apply Strap
-   force u_top.mprj_io[36:29] = strap[15:8];
-   force u_top.mprj_io[20:13] = strap[7:0];
+   force u_top.mprj_io[37] = strap[11];
+   force u_top.mprj_io[32] = strap[10];
+   force u_top.mprj_io[31] = strap[9];
+   force u_top.mprj_io[30] = strap[8];
+   force u_top.mprj_io[29] = strap[7];
+   force u_top.mprj_io[28] = strap[6];
+   force u_top.mprj_io[21] = strap[5];
+   force u_top.mprj_io[18] = strap[4];
+   force u_top.mprj_io[17] = strap[3];
+   force u_top.mprj_io[13] = strap[2];
+   force u_top.mprj_io[10] = strap[1];
+   force u_top.mprj_io[7]  = strap[0];
    repeat (10) @(posedge clock);
     
    //#3 - Remove Reset
@@ -116,8 +126,18 @@ begin
    wait(u_top.mprj.p_reset_n == 1);          
 
    // #5 - Release the Strap
-   release u_top.mprj_io[36:29];
-   release u_top.mprj_io[20:13];
+   release u_top.mprj_io[37] ;
+   release u_top.mprj_io[32] ;
+   release u_top.mprj_io[31] ;
+   release u_top.mprj_io[30] ;
+   release u_top.mprj_io[29] ;
+   release u_top.mprj_io[28] ;
+   release u_top.mprj_io[21] ;
+   release u_top.mprj_io[18] ;
+   release u_top.mprj_io[17] ;
+   release u_top.mprj_io[13] ;
+   release u_top.mprj_io[10] ;
+   release u_top.mprj_io[7]  ;
 
    // #6 - Wait for system reset removal
    wait(u_top.mprj.s_reset_n == 1);          // Wait for system reset removal
@@ -130,23 +150,69 @@ endtask
 // Create Pull Up/Down Based on Reset Strap Parameter
 //---------------------------------------------------------
 
-genvar gCnt;
 generate
- for(gCnt=0; gCnt<16; gCnt++) begin : g_strap
-    if(gCnt < 8) begin
-       if(PAD_STRAP[gCnt]) begin
-           pullup(mprj_io[13+gCnt]); 
-       end else begin
-           pulldown(mprj_io[13+gCnt]); 
-       end
+    if(PAD_STRAP[0]) begin
+        pullup(mprj_io[7]); 
     end else begin
-       if(PAD_STRAP[gCnt]) begin
-           pullup(mprj_io[29+gCnt-8]); 
-       end else begin
-           pulldown(mprj_io[29+gCnt-8]); 
-       end
+        pulldown(mprj_io[7]); 
     end
- end 
+
+    if(PAD_STRAP[1]) begin
+        pullup(mprj_io[10]); 
+    end else begin
+        pulldown(mprj_io[10]); 
+    end
+    if(PAD_STRAP[2]) begin
+        pullup(mprj_io[13]); 
+    end else begin
+        pulldown(mprj_io[13]); 
+    end
+    if(PAD_STRAP[3]) begin
+        pullup(mprj_io[17]); 
+    end else begin
+        pulldown(mprj_io[17]); 
+    end
+    if(PAD_STRAP[4]) begin
+        pullup(mprj_io[18]); 
+    end else begin
+        pulldown(mprj_io[18]); 
+    end
+    if(PAD_STRAP[5]) begin
+        pullup(mprj_io[21]); 
+    end else begin
+        pulldown(mprj_io[21]); 
+    end
+    if(PAD_STRAP[6]) begin
+        pullup(mprj_io[28]); 
+    end else begin
+        pulldown(mprj_io[28]); 
+    end
+    if(PAD_STRAP[7]) begin
+        pullup(mprj_io[29]); 
+    end else begin
+        pulldown(mprj_io[29]); 
+    end
+    if(PAD_STRAP[8]) begin
+        pullup(mprj_io[30]); 
+    end else begin
+        pulldown(mprj_io[30]); 
+    end
+    if(PAD_STRAP[9]) begin
+        pullup(mprj_io[31]); 
+    end else begin
+        pulldown(mprj_io[31]); 
+    end
+    if(PAD_STRAP[10]) begin
+        pullup(mprj_io[32]); 
+    end else begin
+        pulldown(mprj_io[32]); 
+    end
+    if(PAD_STRAP[11]) begin
+        pullup(mprj_io[37]); 
+    end else begin
+        pulldown(mprj_io[37]); 
+    end
+endgenerate
 
 `ifdef RISC_BOOT // RISCV Based Test case
 //-------------------------------------------
@@ -168,7 +234,6 @@ endtask
 `endif
 
 
-endgenerate
 
  /*************************************************************************
  * This is Baud Rate to clock divider conversion for Test Bench
