@@ -11,50 +11,52 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-# inputs expected as env vars
-#set opt $::env(SYNTH_OPT)
-set buffering $::env(SYNTH_BUFFERING)
-set sizing $::env(SYNTH_SIZING)
-
 yosys -import
 
+# inputs expected as env vars
+#
+set buffering $::env(SYNTH_BUFFERING)
+set sizing $::env(SYNTH_SIZING)
 set vtop $::env(DESIGN_NAME)
-#set sdc_file $::env(SDC_FILE)
 set sclib $::env(LIB_SYNTH)
+if {[info exists ::env(DFF_LIB_SYNTH)]} {
+    set dfflib $::env(DFF_LIB_SYNTH)
+} else {
+    set dfflib $sclib
+}
 
 if { [info exists ::env(SYNTH_DEFINES) ] } {
-	foreach define $::env(SYNTH_DEFINES) {
-		log "Defining $define"
-		verilog_defines -D$define
-	}
+    foreach define $::env(SYNTH_DEFINES) {
+        log "Defining $define"
+        verilog_defines -D$define
+    }
 }
 
 set vIdirsArgs ""
 if {[info exist ::env(VERILOG_INCLUDE_DIRS)]} {
-	foreach dir $::env(VERILOG_INCLUDE_DIRS) {
-		lappend vIdirsArgs "-I$dir"
-	}
-	set vIdirsArgs [join $vIdirsArgs]
+    foreach dir $::env(VERILOG_INCLUDE_DIRS) {
+        lappend vIdirsArgs "-I$dir"
+    }
+    set vIdirsArgs [join $vIdirsArgs]
 }
 
 if { $::env(SYNTH_READ_BLACKBOX_LIB) } {
-	log "Reading $::env(LIB_SYNTH_COMPLETE_NO_PG) as a blackbox"
-	foreach lib $::env(LIB_SYNTH_COMPLETE_NO_PG) {
-		read_liberty -lib -ignore_miss_dir -setattr blackbox $lib
-	}
+    log "Reading $::env(LIB_SYNTH_COMPLETE_NO_PG) as a blackbox"
+    foreach lib $::env(LIB_SYNTH_COMPLETE_NO_PG) {
+        read_liberty -lib -ignore_miss_dir -setattr blackbox $lib
+    }
 }
 
 if { [info exists ::env(EXTRA_LIBS) ] } {
-	foreach lib $::env(EXTRA_LIBS) {
-		read_liberty -lib -ignore_miss_dir -setattr blackbox $lib
-	}
+    foreach lib $::env(EXTRA_LIBS) {
+        read_liberty -lib -ignore_miss_dir -setattr blackbox $lib
+    }
 }
 
 if { [info exists ::env(VERILOG_FILES_BLACKBOX)] } {
-	foreach verilog_file $::env(VERILOG_FILES_BLACKBOX) {
-		read_verilog -sv -lib {*}$vIdirsArgs $verilog_file
-	}
+    foreach verilog_file $::env(VERILOG_FILES_BLACKBOX) {
+        read_verilog -sv -lib {*}$vIdirsArgs $verilog_file
+    }
 }
 
 
@@ -66,9 +68,9 @@ set cload   $::env(SYNTH_CAP_LOAD)
 # input pin cap of IN_3VX8
 set max_FO $::env(SYNTH_MAX_FANOUT)
 if {![info exist ::env(SYNTH_MAX_TRAN)]} {
-	set ::env(SYNTH_MAX_TRAN) [expr {0.1*$clock_period}]
+    set ::env(SYNTH_MAX_TRAN) [expr {0.1*$clock_period}]
 } else {
-	set ::env(SYNTH_MAX_TRAN) [expr {$::env(SYNTH_MAX_TRAN) * 1000}]
+    set ::env(SYNTH_MAX_TRAN) [expr {$::env(SYNTH_MAX_TRAN) * 1000}]
 }
 set max_Tran $::env(SYNTH_MAX_TRAN)
 
@@ -87,16 +89,15 @@ set timing_ext  ".timing.txt"
 set abc_ext     ".abc"
 
 
-# get old sdc, add library specific stuff for abc scripts
-set sdc_file $::env(yosys_tmp_file_tag).sdc
+# Create SDC File
+set sdc_file $::env(synthesis_tmpfiles)/synthesis.sdc
 set outfile [open ${sdc_file} w]
-#puts $outfile $sdc_data
 puts $outfile "set_driving_cell ${driver}"
 puts $outfile "set_load ${cload}"
 close $outfile
 
 
-# ABC Scrips
+# Assemble Scripts (By Strategy)
 set abc_rs_K    "resub,-K,"
 set abc_rs      "resub"
 set abc_rsz     "resub,-z"
@@ -132,96 +133,99 @@ set abc_retime_dly    	"retime,-D,{D},-M,6"
 set abc_map_new_area  	"amap,-m,-Q,0.1,-F,20,-A,20,-C,5000"
 
 if {$buffering==1} {
-	set abc_fine_tune		"buffer,-N,${max_FO},-S,${max_Tran};upsize,{D};dnsize,{D}"
+    set abc_fine_tune		"buffer,-N,${max_FO},-S,${max_Tran};upsize,{D};dnsize,{D}"
 } elseif {$sizing} {
-	set abc_fine_tune       "upsize,{D};dnsize,{D}"
+    set abc_fine_tune       "upsize,{D};dnsize,{D}"
 } else {
-	set abc_fine_tune       ""
+    set abc_fine_tune       ""
 }
 
 
 set delay_scripts [list \
-	"+read_constr,${sdc_file};fx;mfs;strash;refactor;${abc_resyn2};${abc_retime_dly}; scleanup;${abc_map_old_dly};retime,-D,{D};${abc_fine_tune};stime,-p;print_stats -m" \
-	\
-	"+read_constr,${sdc_file};fx;mfs;strash;refactor;${abc_resyn2};${abc_retime_dly}; scleanup;${abc_choice2};${abc_map_old_dly};${abc_area_recovery_2}; retime,-D,{D};${abc_fine_tune};stime,-p;print_stats -m" \
-	\
-	"+read_constr,${sdc_file};fx;mfs;strash;refactor;${abc_resyn2};${abc_retime_dly}; scleanup;${abc_choice};${abc_map_old_dly};${abc_area_recovery_1}; retime,-D,{D};${abc_fine_tune};stime,-p;print_stats -m" \
-	\
-	"+read_constr,${sdc_file};fx;mfs;strash;refactor;${abc_resyn2};${abc_retime_area};scleanup;${abc_choice2};${abc_map_new_area};${abc_choice2};${abc_map_old_dly};retime,-D,{D};${abc_fine_tune};stime,-p;print_stats -m" \
-	]
+    "+read_constr,${sdc_file};fx;mfs;strash;refactor;${abc_resyn2};${abc_retime_dly}; scleanup;${abc_map_old_dly};retime,-D,{D};&get,-n;&st;&dch;&nf;&put;${abc_fine_tune};stime,-p;print_stats -m" \
+    \
+    "+read_constr,${sdc_file};fx;mfs;strash;refactor;${abc_resyn2};${abc_retime_dly}; scleanup;${abc_choice2};${abc_map_old_dly};${abc_area_recovery_2}; retime,-D,{D};&get,-n;&st;&dch;&nf;&put;${abc_fine_tune};stime,-p;print_stats -m" \
+    \
+    "+read_constr,${sdc_file};fx;mfs;strash;refactor;${abc_resyn2};${abc_retime_dly}; scleanup;${abc_choice};${abc_map_old_dly};${abc_area_recovery_1}; retime,-D,{D};&get,-n;&st;&dch;&nf;&put;${abc_fine_tune};stime,-p;print_stats -m" \
+    \
+    "+read_constr,${sdc_file};fx;mfs;strash;refactor;${abc_resyn2};${abc_retime_area};scleanup;${abc_choice2};${abc_map_new_area};${abc_choice2};${abc_map_old_dly};retime,-D,{D};&get,-n;&st;&dch;&nf;&put;${abc_fine_tune};stime,-p;print_stats -m" \
+    "+read_constr,${sdc_file};&get -n;&st;&dch;&nf;&put;&get -n;&st;&syn2;&if -g -K 6;&synch2;&nf;&put;&get -n;&st;&syn2;&if -g -K 6;&synch2;&nf;&put;&get -n;&st;&syn2;&if -g -K 6;&synch2;&nf;&put;&get -n;&st;&syn2;&if -g -K 6;&synch2;&nf;&put;&get -n;&st;&syn2;&if -g -K 6;&synch2;&nf;&put;buffer -c -N ${max_FO};topo;stime -c;upsize -c;dnsize -c;;stime,-p;print_stats -m" \
+]
 
 set area_scripts [list \
-	"+read_constr,${sdc_file};fx;mfs;strash;refactor;${abc_resyn2};${abc_retime_area};scleanup;${abc_choice2};${abc_map_new_area};retime,-D,{D};${abc_fine_tune};stime,-p;print_stats -m" \
-	\
-	"+read_constr,${sdc_file};fx;mfs;strash;refactor;${abc_resyn2};${abc_retime_area};scleanup;${abc_choice2};${abc_map_new_area};${abc_choice2};${abc_map_new_area};retime,-D,{D};${abc_fine_tune};stime,-p;print_stats -m" \
-	\
-	"+read_constr,${sdc_file};fx;mfs;strash;refactor;${abc_choice2};${abc_retime_area};scleanup;${abc_choice2};${abc_map_new_area};${abc_choice2};${abc_map_new_area};retime,-D,{D};${abc_fine_tune};stime,-p;print_stats -m" \
-	]
+    "+read_constr,${sdc_file};fx;mfs;strash;refactor;${abc_resyn2};${abc_retime_area};scleanup;${abc_choice2};${abc_map_new_area};retime,-D,{D};&get,-n;&st;&dch;&nf;&put;${abc_fine_tune};stime,-p;print_stats -m" \
+    \
+    "+read_constr,${sdc_file};fx;mfs;strash;refactor;${abc_resyn2};${abc_retime_area};scleanup;${abc_choice2};${abc_map_new_area};${abc_choice2};${abc_map_new_area};retime,-D,{D};&get,-n;&st;&dch;&nf;&put;${abc_fine_tune};stime,-p;print_stats -m" \
+    \
+    "+read_constr,${sdc_file};fx;mfs;strash;refactor;${abc_choice2};${abc_retime_area};scleanup;${abc_choice2};${abc_map_new_area};${abc_choice2};${abc_map_new_area};retime,-D,{D};&get,-n;&st;&dch;&nf;&put;${abc_fine_tune};stime,-p;print_stats -m" \
+    "+read_constr,${sdc_file};strash;dch;map -B 0.9;topo;stime -c;buffer -c -N ${max_FO};upsize -c;dnsize -c;stime,-p;print_stats -m" \
+]
 
 set all_scripts [list {*}$delay_scripts {*}$area_scripts]
 
 set strategy_parts [split $::env(SYNTH_STRATEGY)]
 
 proc synth_strategy_format_err { } {
-	upvar area_scripts area_scripts
-	upvar delay_scripts delay_scripts
-	log -stderr "\[ERROR] Misformatted SYNTH_STRATEGY (\"$::env(SYNTH_STRATEGY)\")."
-	log -stderr "\[ERROR] Correct format is \"DELAY|AREA 0-[expr [llength $delay_scripts]-1]|0-[expr [llength $area_scripts]-1]\"."
-	exit 1
+    upvar area_scripts area_scripts
+    upvar delay_scripts delay_scripts
+    log -stderr "\[ERROR] Misformatted SYNTH_STRATEGY (\"$::env(SYNTH_STRATEGY)\")."
+    log -stderr "\[ERROR] Correct format is \"DELAY|AREA 0-[expr [llength $delay_scripts]-1]|0-[expr [llength $area_scripts]-1]\"."
+    exit 1
 }
 
 if { [llength $strategy_parts] != 2 } {
-	synth_strategy_format_err
+    synth_strategy_format_err
 }
 
 set strategy_type [lindex $strategy_parts 0]
 set strategy_type_idx [lindex $strategy_parts 1]
 
 if { $strategy_type != "AREA" && $strategy_type != "DELAY" } {
-	log -stderr "\[ERROR] AREA|DELAY tokens not found. ($strategy_type)"
-	synth_strategy_format_err
+    log -stderr "\[ERROR] AREA|DELAY tokens not found. ($strategy_type)"
+    synth_strategy_format_err
 }
 
 if { $strategy_type == "DELAY" && $strategy_type_idx >= [llength $delay_scripts] } {
-	log -stderr "\[ERROR] strategy index ($strategy_type_idx) is too high."
-	synth_strategy_format_err
+    log -stderr "\[ERROR] strategy index ($strategy_type_idx) is too high."
+    synth_strategy_format_err
 }
 
 if { $strategy_type == "AREA" && $strategy_type_idx >= [llength $area_scripts] } {
-	log -stderr "\[ERROR] strategy index ($strategy_type_idx) is too high."
-	synth_strategy_format_err
+    log -stderr "\[ERROR] strategy index ($strategy_type_idx) is too high."
+    synth_strategy_format_err
 }
 
 if { $strategy_type == "DELAY" } {
-	set strategy $strategy_type_idx
+    set strategy_script [lindex $delay_scripts $strategy_type_idx]
+    set strategy_name "DELAY $strategy_type_idx"
 } else {
-	set strategy [expr {[llength $delay_scripts]+$strategy_type_idx}]
+    set strategy_script [lindex $area_scripts $strategy_type_idx]
+    set strategy_name "AREA $strategy_type_idx"
 }
 
+# Get Adder Type
 set adder_type $::env(SYNTH_ADDER_TYPE)
 if { !($adder_type in [list "YOSYS" "FA" "RCA" "CSA"]) } {
-	log -stderr "\[ERROR] Misformatted SYNTH_ADDER_TYPE (\"$::env(SYNTH_ADDER_TYPE)\")."
-	log -stderr "\[ERROR] Correct format is \"YOSYS|FA|RCA|CSA\"."
-	exit 1
+    log -stderr "\[ERROR] Misformatted SYNTH_ADDER_TYPE (\"$::env(SYNTH_ADDER_TYPE)\")."
+    log -stderr "\[ERROR] Correct format is \"YOSYS|FA|RCA|CSA\"."
+    exit 1
 }
 
+# Start Synthesis
 for { set i 0 } { $i < [llength $::env(VERILOG_FILES)] } { incr i } {
-	read_verilog -sv {*}$vIdirsArgs [lindex $::env(VERILOG_FILES) $i]
+    read_verilog -sv {*}$vIdirsArgs [lindex $::env(VERILOG_FILES) $i]
 }
-## Module level parameter overide - Dinesh
-if { [info exists ::env(SYNTH_PARAMS) ] } {
-    log "Reading $::env(SYNTH_PARAMS) as a parameter"
-    set records [split $::env(SYNTH_PARAMS) ","]
-    foreach rec $records {
-       chparam -set [lindex $rec 0] [lindex $rec 1] $vtop
+
+if { [info exists ::env(SYNTH_PARAMETERS) ] } {
+    foreach define $::env(SYNTH_PARAMETERS) {
+        set param_and_value [split $define "="]
+        lassign $param_and_value param value
+        chparam -set $param $value $vtop
     }
-} else {
-	log "No parameter define found"
 }
 
 select -module $vtop
-
-show -format dot -prefix $::env(TMP_DIR)/synthesis/hierarchy
+show -format dot -prefix $::env(synthesis_tmpfiles)/hierarchy
 select -clear
 
 hierarchy -check -top $vtop
@@ -229,145 +233,202 @@ hierarchy -check -top $vtop
 # Infer tri-state buffers.
 set tbuf_map false
 if { [info exists ::env(TRISTATE_BUFFER_MAP)] } {
-        if { [file exists $::env(TRISTATE_BUFFER_MAP)] } {
-                set tbuf_map true
-                tribuf
-        } else {
-          log "WARNING: TRISTATE_BUFFER_MAP is defined but could not be found: $::env(TRISTATE_BUFFER_MAP)"
-        }
+    if { [file exists $::env(TRISTATE_BUFFER_MAP)] } {
+        set tbuf_map true
+        tribuf
+    } else {
+        log "WARNING: TRISTATE_BUFFER_MAP is defined but could not be found: $::env(TRISTATE_BUFFER_MAP)"
+    }
 }
 
-# handle technology mapping of rca and csa adders
+# Handle technology mapping of RCS/CSA adders
 if { $adder_type == "RCA"} {
-	if { [info exists ::env(RIPPLE_CARRY_ADDER_MAP)] && [file exists $::env(RIPPLE_CARRY_ADDER_MAP)] } {
-		techmap -map $::env(RIPPLE_CARRY_ADDER_MAP)
-	}
+    if { [info exists ::env(RIPPLE_CARRY_ADDER_MAP)] && [file exists $::env(RIPPLE_CARRY_ADDER_MAP)] } {
+        techmap -map $::env(RIPPLE_CARRY_ADDER_MAP)
+    }
 } elseif { $adder_type == "CSA"} {
-	if { [info exists ::env(CARRY_SELECT_ADDER_MAP)] && [file exists $::env(CARRY_SELECT_ADDER_MAP)] } {
-		techmap -map $::env(CARRY_SELECT_ADDER_MAP)
-	}
+    if { [info exists ::env(CARRY_SELECT_ADDER_MAP)] && [file exists $::env(CARRY_SELECT_ADDER_MAP)] } {
+        techmap -map $::env(CARRY_SELECT_ADDER_MAP)
+    }
 }
 
 if { $::env(SYNTH_NO_FLAT) } {
-	synth -top $vtop
+    synth -top $vtop
 } else {
-	synth -top $vtop -flatten
+    synth -top $vtop -flatten
 }
 
-# write a post techmap dot file
-show -format dot -prefix $::env(TMP_DIR)/synthesis/post_techmap
+if { $::env(SYNTH_EXTRA_MAPPING_FILE) ne "" } {
+    if { [file exists $::env(SYNTH_EXTRA_MAPPING_FILE)] } {
+        log "\[INFO\] applying mappings in $::env(SYNTH_EXTRA_MAPPING_FILE)"
+        techmap -map $::env(SYNTH_EXTRA_MAPPING_FILE)
+    } else {
+        log -stderr "\[ERROR] file not found $::env(SYNTH_EXTRA_MAPPING_FILE)."
+    }
+}
+
+show -format dot -prefix $::env(synthesis_tmpfiles)/post_techmap
 
 if { $::env(SYNTH_SHARE_RESOURCES) } {
-	share -aggressive
+    share -aggressive
 }
 
 set fa_map false
 if { $adder_type == "FA" } {
-	if { [info exists ::env(FULL_ADDER_MAP)] && [file exists $::env(FULL_ADDER_MAP)] } {
-		extract_fa -fa -v
-		extract_fa -ha -v
-		set fa_map true
-	}
+    if { [info exists ::env(FULL_ADDER_MAP)] && [file exists $::env(FULL_ADDER_MAP)] } {
+        extract_fa -fa -v
+        extract_fa -ha -v
+        set fa_map true
+    }
 }
 
 opt
 opt_clean -purge
 
-tee -o "$::env(yosys_report_file_tag)_pre.stat" stat
+tee -o "$::env(synth_report_prefix)_pre.stat" stat
 
-# Map tri-state buffers.
+# Map tri-state buffers
 if { $tbuf_map } {
-        log {mapping tbuf}
-        techmap -map $::env(TRISTATE_BUFFER_MAP)
-        simplemap
+    log {mapping tbuf}
+    techmap -map $::env(TRISTATE_BUFFER_MAP)
+    simplemap
 }
 
-# Map Full Adders.
+# Map full adders
 if { $fa_map } {
-	techmap -map $::env(FULL_ADDER_MAP)
+    techmap -map $::env(FULL_ADDER_MAP)
 }
 
-# handle technology mapping of 4-MUX, and tell Yosys to infer 4-muxes
-if { [info exists ::env(SYNTH_MUX4_MAP)] && [file exists $::env(SYNTH_MUX4_MAP)] } {
-  muxcover -mux4 
-  techmap -map $::env(SYNTH_MUX4_MAP)
-  simplemap
-}
-
-# handle technology mapping of 2-MUX
-if { [info exists ::env(SYNTH_MUX_MAP)] && [file exists $::env(SYNTH_MUX_MAP)] } {
-  techmap -map $::env(SYNTH_MUX_MAP)
-  simplemap
-}
-
-# handle technology mapping of latches
+# Handle technology mapping of latches
 if { [info exists ::env(SYNTH_LATCH_MAP)] && [file exists $::env(SYNTH_LATCH_MAP)] } {
-	techmap -map $::env(SYNTH_LATCH_MAP)
-	simplemap
+    techmap -map $::env(SYNTH_LATCH_MAP)
+    simplemap
 }
 
-dfflibmap -liberty $sclib
-tee -o "$::env(yosys_report_file_tag)_dff.stat" stat
+dfflibmap -liberty $dfflib
+tee -o "$::env(synth_report_prefix)_dff.stat" stat
 
+proc run_strategy {output script strategy_name {postfix_with_strategy 0}} {
+    upvar clock_period clock_period
+    upvar sdc_file sdc
+    upvar sclib lib
+
+    log "\[INFO\]: USING STRATEGY $strategy_name"
+
+    set strategy_escaped [string map {" " _} $strategy_name]
+
+    design -load checkpoint
+
+    abc -D "$clock_period" \
+        -constr "$sdc" \
+        -liberty "$lib" \
+        -script "$script" \
+        -showtmp
+
+    setundef -zero
+
+    hilomap -hicell {*}$::env(SYNTH_TIEHI_PORT) -locell {*}$::env(SYNTH_TIELO_PORT)
+
+    splitnets
+    opt_clean -purge
+    insbuf -buf {*}$::env(SYNTH_MIN_BUF_PORT)
+
+    set stat_libs ""
+    foreach stat_lib "$::env(LIB_SYNTH_NO_PG)" {
+        set stat_libs "$stat_libs -liberty $stat_lib"
+    }
+    if { [info exists ::env(EXTRA_LIBS)] } {
+        foreach stat_lib "$::env(EXTRA_LIBS)" {
+            set stat_libs "$stat_libs -liberty $stat_lib"
+        }
+    }
+    tee -o "$::env(synth_report_prefix).$strategy_escaped.chk.rpt" check
+    tee -o "$::env(synth_report_prefix).$strategy_escaped.stat.rpt" stat -top $::env(DESIGN_NAME) {*}$stat_libs
+
+    if { [info exists ::env(SYNTH_AUTONAME)] && $::env(SYNTH_AUTONAME) } {
+        # Generate public names for the various nets, resulting in very long names that include
+        # the full heirarchy, which is preferable to the internal names that are simply
+        # sequential numbers such as `_000019_`. Renamed net names can be very long, such as:
+        #     manual_reset_gf180mcu_fd_sc_mcu7t5v0__dffq_1_Q_D_gf180mcu_ \
+        #     fd_sc_mcu7t5v0__nor3_1_ZN_A1_gf180mcu_fd_sc_mcu7t5v0__aoi21_ \
+        #     1_A2_A1_gf180mcu_fd_sc_mcu7t5v0__nand3_1_ZN_A3_gf180mcu_fd_ \
+        #     sc_mcu7t5v0__and3_1_A3_Z_gf180mcu_fd_sc_mcu7t5v0__buf_1_I_Z
+        autoname
+    }
+
+    if { $postfix_with_strategy } {
+        set output "$output.$strategy_escaped.nl.v"
+    }
+
+    write_verilog -noattr -noexpr -nohex -nodec -defparam $output
+    if { $::env(QUIT_ON_SYNTH_CHECKS) == 1 } {
+        read_liberty -ignore_miss_func $::env(LIB_SYNTH)
+        check -assert $::env(DESIGN_NAME)
+    }
+    design -reset
+}
+design -save checkpoint
+
+# Explore/Finalize
 if { [info exists ::env(SYNTH_EXPLORE)] && $::env(SYNTH_EXPLORE) } {
-	design -save myDesign
+    for { set index 0 }  { $index < [llength $delay_scripts] }  { incr index } {
+        set name "DELAY $index"
+        run_strategy\
+            "$::env(synthesis_results)/$::env(DESIGN_NAME)"\
+            [lindex $delay_scripts $index]\
+            "$name"\
+            1
+    }
 
-	for { set index 0 }  { $index < [llength $all_scripts] }  { incr index } {
-		log "\[INFO\]: ABC: WireLoad : S_$index"
-		design -load myDesign
-
-		abc -D $clock_period \
-			-constr "$sdc_file" \
-			-liberty $sclib  \
-			-script [lindex $all_scripts $index]
-
-		setundef -zero
-
-		hilomap -hicell {*}$::env(SYNTH_TIEHI_PORT) -locell {*}$::env(SYNTH_TIELO_PORT)
-
-		splitnets
-		opt_clean -purge
-		insbuf -buf {*}$::env(SYNTH_MIN_BUF_PORT)
-
-		tee -o "$::env(yosys_report_file_tag)_$index$chk_ext" check
-		tee -o "$::env(yosys_report_file_tag)$index$stat_ext" stat -top $vtop -liberty [lindex $::env(LIB_SYNTH_COMPLETE_NO_PG) 0]
-		write_verilog -noattr -noexpr -nohex -nodec -defparam "$::env(yosys_result_file_tag)_$index.v"
-		design -reset
-	}
+    for { set index 0 }  { $index < [llength $area_scripts] }  { incr index } {
+        set name "AREA $index"
+        run_strategy\
+            "$::env(synthesis_results)/$::env(DESIGN_NAME)"\
+            [lindex $area_scripts $index]\
+            "$name"\
+            1
+    }
 } else {
+    run_strategy\
+        "$::env(SAVE_NETLIST)"\
+        "$strategy_script"\
+        "$strategy_name"
 
-	log "\[INFO\]: ABC: WireLoad : S_$strategy"
+    if { $::env(SYNTH_NO_FLAT) } {
+        design -reset
 
-	abc -D $clock_period \
-		-constr "$sdc_file" \
-		-liberty $sclib  \
-		-script [lindex $all_scripts $strategy] \
-		-showtmp;
+        if { [info exists ::env(SYNTH_DEFINES) ] } {
+            foreach define $::env(SYNTH_DEFINES) {
+                log "Defining $define"
+                verilog_defines -D$define
+            }
+        }
 
-	setundef -zero
+        foreach lib $::env(LIB_SYNTH_COMPLETE_NO_PG) {
+            read_liberty -lib -ignore_miss_dir -setattr blackbox $lib
+        }
 
-	hilomap -hicell {*}$::env(SYNTH_TIEHI_PORT) -locell {*}$::env(SYNTH_TIELO_PORT)
+        if { [info exists ::env(EXTRA_LIBS) ] } {
+            foreach lib $::env(EXTRA_LIBS) {
+                read_liberty -lib -ignore_miss_dir -setattr blackbox $lib
+            }
+        }
 
-	# get rid of the assignments that make init_floorplan fail
-	splitnets
-	opt_clean -purge
-	insbuf -buf {*}$::env(SYNTH_MIN_BUF_PORT)
+        if { [info exists ::env(VERILOG_FILES_BLACKBOX)] } {
+            foreach verilog_file $::env(VERILOG_FILES_BLACKBOX) {
+                read_verilog -sv -lib {*}$vIdirsArgs $verilog_file
+            }
+        }
 
-	tee -o "$::env(yosys_report_file_tag)_$strategy$chk_ext" check
-	tee -o "$::env(yosys_report_file_tag)_$strategy$stat_ext" stat -top $vtop -liberty [lindex $::env(LIB_SYNTH_COMPLETE_NO_PG) 0]
-	write_verilog -noattr -noexpr -nohex -nodec -defparam "$::env(SAVE_NETLIST)"
-}
+        file copy -force $::env(SAVE_NETLIST) $::env(synthesis_results)/$::env(DESIGN_NAME).hierarchy.nl.v
+        read_verilog -sv $::env(SAVE_NETLIST)
+        synth -top $vtop -flatten
 
-if { $::env(SYNTH_NO_FLAT) } {
-	design -reset
-	read_liberty -lib -ignore_miss_dir -setattr blackbox $::env(LIB_SYNTH_COMPLETE_NO_PG)
-	file copy -force $::env(SAVE_NETLIST) $::env(yosys_tmp_file_tag)_unflat.v
-	read_verilog -sv $::env(SAVE_NETLIST)
-	synth -top $vtop -flatten
-	splitnets
-	opt_clean -purge
-	insbuf -buf {*}$::env(SYNTH_MIN_BUF_PORT)
-	write_verilog -noattr -noexpr -nohex -nodec -defparam "$::env(SAVE_NETLIST)"
-	tee -o "$::env(yosys_report_file_tag)_$strategy$chk_ext" check
-	tee -o "$::env(yosys_report_file_tag)_$strategy$stat_ext" stat -top $vtop -liberty [lindex $::env(LIB_SYNTH_COMPLETE_NO_PG) 0]
+        design -save checkpoint
+        run_strategy\
+            "$::env(SAVE_NETLIST)"\
+            "$strategy_script"\
+            "$strategy_name"
+    }
+
 }

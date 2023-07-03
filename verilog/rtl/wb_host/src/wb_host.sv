@@ -109,7 +109,6 @@ module wb_host (
     output  logic              cfg_strap_pad_ctrl,
 	output  logic [31:0]       system_strap      ,
 	input   logic [31:0]       strap_sticky      ,
-	input   logic [1:0]        strap_uartm       ,
 
 
     // Master Port
@@ -167,6 +166,7 @@ module wb_host (
 //--------------------------------
 logic               wbm_rst_n;
 logic               wbs_rst_n;
+logic               strap_uartm;
 
 logic               reg_sel    ;
 logic [31:0]        reg_rdata  ;
@@ -279,23 +279,18 @@ wbh_reset_fsm u_reset_fsm (
 //      it has additional 1 cycle additional count,
 //      so we are subtracting desired count by 2
 // strap_uartm
-//     2'b00 - Auto Baud Detect
-//     2'b01 - 50Mhz - 324
-//     2'b10 - 4Mhz - 24
-//     2'b11 - Load from LA
+//     1'b0 - Auto Baud Detect
+//     1'b1 - Load from LA
 //-------------------------------------------------
 
+assign     strap_uartm           = system_strap[`STRAP_UARTM_CFG];
 
-wire       cfg_uartm_tx_enable   = (strap_uartm==2'b11) ? la_data_in[1]     : 1'b1;
-wire       cfg_uartm_rx_enable   = (strap_uartm==2'b11) ? la_data_in[2]     : 1'b1;
-wire       cfg_uartm_stop_bit    = (strap_uartm==2'b11) ? la_data_in[3]     : 1'b1;
-wire [1:0] cfg_uartm_cfg_pri_mod = (strap_uartm==2'b11) ? la_data_in[17:16] : 2'b0;
-
-wire [11:0]cfg_uart_baud_16x     = (strap_uartm==2'b00) ? 'h0:
-                                   (strap_uartm==2'b01) ? 324:
-                                   (strap_uartm==2'b10) ? 24: la_data_in[15:4];
-
-wire       cfg_uartm_aut_det     = (strap_uartm==2'b00) ? 1'b1: 1'b0;
+wire       cfg_uartm_tx_enable   = (strap_uartm==1'b1) ? la_data_in[1]     : 1'b1;
+wire       cfg_uartm_rx_enable   = (strap_uartm==1'b1) ? la_data_in[2]     : 1'b1;
+wire       cfg_uartm_stop_bit    = (strap_uartm==1'b1) ? la_data_in[3]     : 1'b1;
+wire [1:0] cfg_uartm_cfg_pri_mod = (strap_uartm==1'b1) ? la_data_in[17:16] : 2'b0;
+wire [11:0]cfg_uart_baud_16x     = (strap_uartm==1'b0) ? 'h0: la_data_in[15:4];
+wire       cfg_uartm_aut_det     = (strap_uartm==1'b0) ? 1'b1: 1'b0;
 
 
 

@@ -24,7 +24,7 @@ set ::env(FP_PDN_CORE_RING) "0"
 set ::env(CLOCK_PERIOD) "10"
 set ::env(CLOCK_PORT) "clk"
 
-set ::env(SYNTH_MAX_FANOUT) 8
+set ::env(SYNTH_MAX_FANOUT) 4
 set ::env(SYNTH_BUFFERING) {0}
 
 ## CTS BUFFER
@@ -69,8 +69,9 @@ set ::env(SYNTH_DEFINES) [list SYNTHESIS ]
 set ::env(SDC_FILE) $::env(DESIGN_DIR)/base.sdc
 set ::env(BASE_SDC_FILE) $::env(DESIGN_DIR)/base.sdc
 
-#set ::env(SYNTH_ENB_CG) 1
+set ::env(SYNTH_ENB_CG) 1
 set ::env(LEC_ENABLE) 0
+set ::env(GRT_ALLOW_CONGESTION) {1}
 
 set ::env(VDD_PIN) [list {vccd1}]
 set ::env(GND_PIN) [list {vssd1}]

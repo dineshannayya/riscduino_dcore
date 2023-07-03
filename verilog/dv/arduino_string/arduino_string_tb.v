@@ -117,11 +117,12 @@ parameter real XTAL_PERIOD = 6;
 	`ifdef WFDUMP
 	   initial begin
 	   	$dumpfile("simx.vcd");
-	   	$dumpvars(3, `TB_TOP);
-	   	$dumpvars(0, `TB_TOP.u_top.u_riscv_top.i_core_top_0);
-	   	$dumpvars(0, `TB_TOP.u_top.u_riscv_top.u_connect);
-	   	$dumpvars(0, `TB_TOP.u_top.u_riscv_top.u_intf);
-	   	$dumpvars(0, `TB_TOP.u_top.u_uart_i2c_usb_spi.u_uart0_core);
+	   	$dumpvars(1, `TB_TOP);
+	   	//$dumpvars(1, `TB_TOP.u_top.u_riscv_top.i_core_top_0);
+	   	//$dumpvars(1, `TB_TOP.u_top.u_riscv_top.u_connect);
+	   	//$dumpvars(1, `TB_TOP.u_top.u_riscv_top.u_intf);
+	   	$dumpvars(1, `TB_TOP.u_top.u_uart_i2c_usb_spi);
+	   	$dumpvars(0, `TB_TOP.tb_uart);
 	   end
        `endif
 
@@ -200,9 +201,9 @@ parameter real XTAL_PERIOD = 6;
            // Check 
            // if all the 102 byte received
            // if no error 
-           if(uart_rx_nu != 102) test_fail = 1;
-           if(check_sum != 32'h1fab) test_fail = 1;
-           if(tb_uart.err_cnt != 0) test_fail = 1;
+           if(uart_rx_nu !== 102) test_fail = 1;
+           if(check_sum !== 32'h1fab) test_fail = 1;
+           if(tb_uart.err_cnt !== 0) test_fail = 1;
 
 	   
 	    	$display("###################################################");

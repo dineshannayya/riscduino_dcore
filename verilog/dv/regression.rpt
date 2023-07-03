@@ -26,3 +26,12 @@ Monitor: arduino_multi_serial_tb (GL) Passed
 Monitor: arduino_switchCase2_tb (GL) Passed
 Monitor: user_aes_core_tb (GL) Passed
 Monitor: user_fpu_core_tb (GL) Passed
+Monitor: user_aes_tb (GL) Passed
+Monitor: user_ir_tx_tb (GL) Passed
+Monitor: user_ir_rx_tb (GL) Passed
+Monitor: user_qspis_tb (GL) Passed
+Monitor: user_mcore_test1_tb (GL) Passed
+Monitor: user_mcore_test2_tb (GL) Passed
+Monitor: user_cpu_clkgate_tb (GL) Passed
+Monitor: arduino_digital_port_control_tb (GL) Passed
+Monitor: arduino_i2c_scaner_tb (GL) Passed

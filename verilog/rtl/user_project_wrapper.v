@@ -341,6 +341,11 @@
 ////    6.12 June 14, 2023, Dinesh A                                                             ////
 ////         A. Inferred Clock Gating (At Synthesis) add for SPIQ                                ////
 ////         b. New 4x8bit DAC added with voltage follower and issolation for digital input      //// 
+////    6.13. July 2, 2023, Dinesh A                                                             ////
+////         Based on CI2206Q Silicon debug, following strap changes are done                    ////
+////           A. uart master strap reduced from 2 to 1 bits                                     ////
+////           B. Skew adjustment through strap is removed                                       ////
+////           C. Total Strap reduced from 16 to 12                                              ////
 ////                                                                                             ////
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 ////                                                                                             ////
@@ -906,11 +911,9 @@ wire                           riscv_tdo_en                          ;
 //---------------------------------------------------------------------
 wire [31:0]                    system_strap                           ;
 wire [31:0]                    strap_sticky                           ;
-wire [1:0]                     strap_uartm                            ;
 
 wire [31:0]                    system_strap_rp                        ;
 wire [31:0]                    strap_sticky_rp                        ;
-wire [1:0]                     strap_uartm_rp                         ;
 
 wire [1:0]  strap_qspi_flash       = system_strap[`STRAP_QSPI_FLASH];
 wire        strap_qspi_sram        = system_strap[`STRAP_QSPI_SRAM];
@@ -1011,7 +1014,6 @@ wb_host u_wb_host(
           .cfg_strap_pad_ctrl      (cfg_strap_pad_ctrl      ),
 	      .system_strap            (system_strap            ),
 	      .strap_sticky            (strap_sticky_rp         ),
-	      .strap_uartm             (strap_uartm_rp          ),
 
           .wbd_int_rst_n           (wbd_int_rst_n           ),
           .wbd_pll_rst_n           (wbd_pll_rst_n           ),
@@ -1482,7 +1484,7 @@ qspim_top
 wb_interconnect  #(
 	`ifndef SYNTHESIS
           .CH_CLK_WD          (3                            ),
-          .CH_DATA_WD         (158                          )
+          .CH_DATA_WD         (156                          )
         `endif
 	) u_intercon (
 `ifdef USE_POWER_PINS
@@ -1502,7 +1504,6 @@ wb_interconnect  #(
                                   cfg_ccska_fpu[3:0],
                                   cfg_ccska_aes[3:0],
                                   strap_sticky[31:0],
-                                  strap_uartm[1:0],
                                   system_strap[31:0],
                                   p_reset_n,
                                   e_reset_n,
@@ -1529,7 +1530,6 @@ wb_interconnect  #(
 			                      cfg_ccska_fpu_rp[3:0],
 			                      cfg_ccska_aes_rp[3:0],
                                   strap_sticky_rp[31:0],
-                                  strap_uartm_rp[1:0],
                                   system_strap_rp[31:0],
                                   p_reset_n_rp,
                                   e_reset_n_rp,
@@ -1752,7 +1752,6 @@ pinmux_top u_pinmux(
           .cfg_strap_pad_ctrl (cfg_strap_pad_ctrl_rp        ),
           .system_strap       (system_strap_rp              ),
           .strap_sticky       (strap_sticky                 ),
-          .strap_uartm        (strap_uartm                  ),
 
           .user_clock1        (wb_clk_i_rp                  ),
           .user_clock2        (user_clock2_rp               ),

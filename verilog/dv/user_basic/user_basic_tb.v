@@ -104,7 +104,6 @@ reg [15:0]     uart_tx_nu           ;
 reg 	       uart_fifo_enable     ;	// fifo mode disable
 
 wire           clock_mon;
-integer        test_step;
 reg  [15:0]    strap_in;
 wire [31:0]    strap_sticky;
 reg  [7:0]     test_id;
@@ -116,18 +115,18 @@ assign io_in = {26'h0,xtal_clk,4'h0,uart_rxd,6'h0};
 
 wire [14:0] pstrap_select;
 
-assign pstrap_select = (strap_in[15] == 1'b1) ?  PSTRAP_DEFAULT_VALUE : strap_in[14:0];
+assign pstrap_select = (strap_in[11] == 1'b1) ?  PSTRAP_DEFAULT_VALUE : strap_in[14:0];
 
 
 assign strap_sticky = {
                    2'b0            , // bit[31:30]   - reserved
-                   pstrap_select[12:11] , // bit[29:28]   - cfg_cska_qspi_co Skew selection
-                   pstrap_select[12:11] , // bit[27:26]   - cfg_cska_pinmux Skew selection
-                   pstrap_select[12:11] , // bit[25:24]   - cfg_cska_uart  Skew selection
-                   pstrap_select[12:11] , // bit[23:22]   - cfg_cska_qspi  Skew selection
-                   pstrap_select[12:11] , // bit[21:20]   - cfg_cska_riscv Skew selection
-                   pstrap_select[12:11] , // bit[19:18]   - cfg_cska_wh Skew selection
-                   pstrap_select[12:11] , // bit[17:16]   - cfg_cska_wi Skew selection
+                   2'b0 ,            // bit[29:28]   - cfg_cska_qspi_co Skew selection
+                   2'b0 ,            // bit[27:26]   - cfg_cska_pinmux Skew selection
+                   2'b0 ,            // bit[25:24]   - cfg_cska_uart  Skew selection
+                   2'b0 ,            // bit[23:22]   - cfg_cska_qspi  Skew selection
+                   2'b0 ,            // bit[21:20]   - cfg_cska_riscv Skew selection
+                   2'b0 ,            // bit[19:18]   - cfg_cska_wh Skew selection
+                   2'b0 ,            // bit[17:16]   - cfg_cska_wi Skew selection
                    1'b0               , // bit[15]      - Soft Reboot Request - Need to double sync to local clock
                    pstrap_select[10]    , // bit[14]      - Riscv SRAM clock edge selection
                    pstrap_select[9]     , // bit[13]      - Riscv Cache Bypass
@@ -145,35 +144,8 @@ assign strap_sticky = {
 reg [1:0]  strap_skew;
 wire [31:0] skew_config;
 
-assign skew_config[3:0]   =   (strap_skew == 2'b00) ?  CLK_SKEW1_RESET_VAL[3:0] :
-                              (strap_skew == 2'b01) ?  CLK_SKEW1_RESET_VAL[3:0] + 2 :
-                              (strap_skew == 2'b10) ?  CLK_SKEW1_RESET_VAL[3:0] + 4 : CLK_SKEW1_RESET_VAL[3:0]-4;
+assign skew_config  = CLK_SKEW1_RESET_VAL ;
 
-assign skew_config[7:4]   =   (strap_skew == 2'b00) ?  CLK_SKEW1_RESET_VAL[7:4]  :
-                              (strap_skew == 2'b01) ?  CLK_SKEW1_RESET_VAL[7:4] + 2 :
-                              (strap_skew == 2'b10) ?  CLK_SKEW1_RESET_VAL[7:4] + 4 : CLK_SKEW1_RESET_VAL[7:4]-4;
-
-assign skew_config[11:8]  =   (strap_skew == 2'b00) ?  CLK_SKEW1_RESET_VAL[11:8]  :
-                              (strap_skew == 2'b01) ?  CLK_SKEW1_RESET_VAL[11:8] + 2 :
-                              (strap_skew == 2'b10) ?  CLK_SKEW1_RESET_VAL[11:8] + 4 : CLK_SKEW1_RESET_VAL[11:8]-4;
-
-assign skew_config[15:12] =   (strap_skew == 2'b00) ?  CLK_SKEW1_RESET_VAL[15:12]  :
-                              (strap_skew == 2'b01) ?  CLK_SKEW1_RESET_VAL[15:12] + 2 :
-                              (strap_skew == 2'b10) ?  CLK_SKEW1_RESET_VAL[15:12] + 4 : CLK_SKEW1_RESET_VAL[15:12]-4;
-
-assign skew_config[19:16] =   (strap_skew == 2'b00) ?  CLK_SKEW1_RESET_VAL[19:16]  :
-                              (strap_skew == 2'b01) ?  CLK_SKEW1_RESET_VAL[19:16] + 2 :
-                              (strap_skew == 2'b10) ?  CLK_SKEW1_RESET_VAL[19:16] + 4 : CLK_SKEW1_RESET_VAL[19:16]-4;
-
-assign skew_config[23:20] =   (strap_skew == 2'b00) ?  CLK_SKEW1_RESET_VAL[23:20]  :
-                              (strap_skew == 2'b01) ?  CLK_SKEW1_RESET_VAL[23:20] + 2 :
-                              (strap_skew == 2'b10) ?  CLK_SKEW1_RESET_VAL[23:20] + 4 : CLK_SKEW1_RESET_VAL[23:20]-4;
-
-assign skew_config[27:24] =   (strap_skew == 2'b00) ?  CLK_SKEW1_RESET_VAL[27:24] :
-                              (strap_skew == 2'b01) ?  CLK_SKEW1_RESET_VAL[27:24] + 2 :
-                              (strap_skew == 2'b10) ?  CLK_SKEW1_RESET_VAL[27:24] + 4 : CLK_SKEW1_RESET_VAL[27:24]-4;
-
-assign skew_config[31:28] = CLK_SKEW1_RESET_VAL[31:28];
 
 //----------------------------------------------------------
 reg [3:0] cpu_clk_cfg,wbs_clk_cfg;
@@ -187,19 +159,18 @@ wire [7:0] clk_ctrl2 = {cpu_clk_cfg,wbs_clk_cfg};
 integer i,j;
 
 
-initial begin
-   test_step = 0;
-end
 
 	`ifdef WFDUMP
 	   initial begin
 	   	$dumpfile("simx.vcd");
 	   	$dumpvars(1, `TB_TOP);
 	   	$dumpvars(1, `TB_TOP.u_top);
-	   	$dumpvars(1, `TB_TOP.u_top.u_wb_host);
-	   	$dumpvars(1, `TB_TOP.u_top.u_intercon);
-	   	$dumpvars(1, `TB_TOP.u_top.u_pinmux);
-	   	$dumpvars(1, `TB_TOP.u_top.u_rp_south);
+	   	//$dumpvars(0, `TB_TOP.u_top.u_pll);
+	   	$dumpvars(0, `TB_TOP.u_top.u_wb_host);
+	   	$dumpvars(0, `TB_TOP.u_top.u_intercon);
+	   	//$dumpvars(1, `TB_TOP.u_top.u_intercon);
+	   	$dumpvars(0, `TB_TOP.u_top.u_pinmux);
+	   	$dumpvars(0, `TB_TOP.u_top.u_rp_south);
 	   end
        `endif
 
@@ -221,7 +192,6 @@ begin
        $display("Step-0,Monitor: Checking the chip signature :");
        $display("###################################################");
        test_id = 0;
-       test_step = 0;
        // Remove Wb/PinMux Reset
        wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h1);
 
@@ -238,7 +208,7 @@ begin
        $display("##########################################################");
        $display("Step-1, Checking the Strap Loading");
        test_id = 1;
-       for(i = 0; i < 16; i = i+1) begin
+       for(i = 0; i < 12; i = i+1) begin
           strap_in = 0;
           strap_in = 1 << i;
           apply_strap(strap_in);
@@ -247,7 +217,6 @@ begin
           wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_PAD_STRAP,read_data,strap_in);
           wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_STRAP_STICKY,read_data,strap_sticky);
           wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SYSTEM_STRAP,read_data,strap_sticky);
-          test_step = 7;
        end
  
        
@@ -259,18 +228,9 @@ begin
        $display("##########################################################");
        $display("Step-2, Checking the Clock Skew Configuration");
        test_id = 2;
-       for(i = 0; i < 4; i = i+1) begin
-          strap_in = 0;
-          strap_in[12:11] = i;
-          strap_skew = i;
-          apply_strap(strap_in);
 
-          //#7 - Check the strap reg value
-          wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_PAD_STRAP,read_data,strap_in);
-          wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_STRAP_STICKY,read_data,strap_sticky);
-          wb_user_core_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SYSTEM_STRAP,read_data,strap_sticky);
-          wb_user_core_read_check(`ADDR_SPACE_WBHOST+`WBHOST_CLK_CTRL1,read_data,skew_config);
-       end
+       //#7 - Check the strap reg value
+       wb_user_core_read_check(`ADDR_SPACE_WBHOST+`WBHOST_CLK_CTRL1,read_data,skew_config);
        if(test_fail == 1) begin
           $display("ERROR: Step-2, Checking the Clock Skew Configuration - FAILED");
        end else begin
@@ -334,11 +294,19 @@ begin
        end
 
        $display("##########################################################");
-       $display("Step-5, Checking the uart Master baud-16x clock is 9600* 16");
+       $display("Step-5, Checking the uart Master baud-16x clock is 9600* 16 based on LA ");
        test_id = 5;
 
+    // Enable UART MASTER with LA control
+    // la0_data[1] - 1- User Uart Master Tx Enable 
+    // la0_data[2] - 1- User Uart Master Rx Enable 
+    // la0_data[3] - 1- User Uart Master Stop bit 2
+    // la0_data[17:16] - 0x145; // Setting User Baud to 9600 with system clock 50Mhz = (50,000,000/(16 * (325+1))
+
+       la_data_in = 32'h145E;
+
        strap_in = 0;
-       strap_in[`PSTRAP_UARTM_CFG] = 2'b01; // constant value based on system clock-50Mhz
+       strap_in[`PSTRAP_UARTM_CFG] = 1'b1; // constant value based on Caravel LA
        apply_strap(strap_in); 
 
        repeat (10) @(posedge clock);
@@ -356,7 +324,7 @@ begin
        test_id = 6;
 
        strap_in = 0;
-       strap_in[`PSTRAP_UARTM_CFG] = 2'b00; // Auto Detect Mode
+       strap_in[`PSTRAP_UARTM_CFG] = 1'b0; // Auto Detect Mode
        apply_strap(strap_in); 
 
        tb_master_uart.uart_init;
@@ -399,7 +367,7 @@ begin
        test_id = 7;
 
        strap_in = 0;
-       strap_in[`PSTRAP_UARTM_CFG] = 2'b00; // Auto Detect Mode
+       strap_in[`PSTRAP_UARTM_CFG] = 1'b0; // Auto Detect Mode
        apply_strap(strap_in); 
 
        tb_master_uart.uart_init;
@@ -457,7 +425,6 @@ begin
            bcount = bcount | (1 << i ); 
         end
        /***
-       test_step = 12;
        // Set PLL enable, DCO mode ; Set PLL output divider to 0x05
        // Input Ref Clock Divider - 0 , Means Div-2, So Osc clock = 40Mhz/2 = 20Mhz = 50ns
        // Since PLL has divider by 4, Efectivly PLL Output Fequency = 20Mhz * 5 = 100Mhz
@@ -479,7 +446,6 @@ begin
        $display("###################################################");
        $display("Monitor: CPU: CLOCK2/(2+3), USB: CLOCK2/(2+9), RTC: CLOCK2/(2+255), WBS:CLOCK2/(2+4)");
        test_id = 9;
-       test_step = 13;
        init();
        repeat (10) @(posedge clock);
        // Configured the PLL to highest frequency, 5.008ns
@@ -500,7 +466,6 @@ begin
        $display("Step-10,Monitor: Analog Config checks                     ");
        $display("##########################################################");
        test_id = 10;
-       test_step = 14;
 
         // Remove Wb/PinMux Reset
         wb_user_core_write(`ADDR_SPACE_WBHOST+`WBHOST_GLBL_CFG,'h1);
@@ -514,8 +479,8 @@ begin
         wb_user_core_read_check(`ADDR_SPACE_ANALOG+`ANALOG_CFG_DAC2,read_data,'h33);
         wb_user_core_read_check(`ADDR_SPACE_ANALOG+`ANALOG_CFG_DAC3,read_data,'h44);
         repeat (10) @(posedge clock);
-        if((u_top.u_4x8bit_dac.DIn0 != 'h11) || (u_top.u_4x8bit_dac.DIn1 != 'h22) ||
-           (u_top.u_4x8bit_dac.DIn2 != 'h33) || (u_top.u_4x8bit_dac.DIn3 != 'h44)) begin
+        if((u_top.u_4x8bit_dac.Din0 != 'h11) || (u_top.u_4x8bit_dac.Din1 != 'h22) ||
+           (u_top.u_4x8bit_dac.Din2 != 'h33) || (u_top.u_4x8bit_dac.Din3 != 'h44)) begin
            test_fail = 1;
         end
 
