@@ -4,9 +4,6 @@
 [submodule "verilog/rtl/qspim"]
 	path = verilog/rtl/qspim
 	url = https://github.com/dineshannayya/qspim.git
-[submodule "verilog/dv/common/riscduino_board"]
-	path = verilog/dv/common/riscduino_board
-	url = https://github.com/dineshannayya/riscduino_board.git
 [submodule "verilog/rtl/security_core"]
 	path = verilog/rtl/security_core
 	url = https://github.com/dineshannayya/security_core
@@ -16,3 +13,6 @@
 [submodule "rtc"]
 	path = verilog/rtl/rtc
 	url = https://github.com/dineshannayya/rtc
+[submodule "verilog/dv/common/riscduino_firmware"]
+	path = verilog/dv/common/riscduino_firmware
+	url = https://github.com/dineshannayya/riscduino_firmware
