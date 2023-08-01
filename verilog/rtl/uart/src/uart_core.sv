@@ -41,6 +41,8 @@
 ////    0.3 - 20th Dec 2022, Dinesh A                             ////
 ////        changed the async fifo mode to FAST mode to handle    ////
 ////        any back-to back read case                            ////
+////    0.4 - 31st July 2023, Dinesh A                            ////
+////         Seperated Tx and Rx Stop Bit                         ////
 ////                                                              ////
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
@@ -122,7 +124,8 @@ wire [1  : 0]   error_ind;
 // Wire 
 wire            cfg_tx_enable        ; // Tx Enable
 wire            cfg_rx_enable        ; // Rx Enable
-wire            cfg_stop_bit         ; // 0 -> 1 Stop, 1 -> 2 Stop
+wire            cfg_tx_stop_bit      ; // 0 -> 1 Stop, 1 -> 2 Stop
+wire            cfg_rx_stop_bit      ; // 0 -> 1 Stop, 1 -> 2 Stop
 wire   [1:0]    cfg_pri_mod          ; // priority mode, 0 -> nop, 1 -> Even, 2 -> Odd
 
 wire            frm_error_o          ; // framing error
@@ -164,7 +167,8 @@ uart_cfg u_cfg (
        // configuration
             . cfg_tx_enable       (cfg_tx_enable),
             . cfg_rx_enable       (cfg_rx_enable),
-            . cfg_stop_bit        (cfg_stop_bit),
+            . cfg_tx_stop_bit     (cfg_tx_stop_bit),
+            . cfg_rx_stop_bit     (cfg_rx_stop_bit),
             . cfg_pri_mod         (cfg_pri_mod),
 
             . cfg_baud_16x        (cfg_baud_16x),  
@@ -238,7 +242,7 @@ uart_txfsm u_txfsm (
                .baud_clk_16x      ( line_clk_16x      ),
 
                .cfg_tx_enable     ( cfg_tx_enable     ),
-               .cfg_stop_bit      ( cfg_stop_bit      ),
+               .cfg_stop_bit      ( cfg_tx_stop_bit      ),
                .cfg_pri_mod       ( cfg_pri_mod       ),
 
        // FIFO control signal
@@ -256,7 +260,7 @@ uart_rxfsm u_rxfsm (
                .baud_clk_16x      (  line_clk_16x     ) ,
 
                .cfg_rx_enable     (  cfg_rx_enable    ),
-               .cfg_stop_bit      (  cfg_stop_bit     ),
+               .cfg_stop_bit      (  cfg_rx_stop_bit  ),
                .cfg_pri_mod       (  cfg_pri_mod      ),
 
                .error_ind         (  error_ind        ),

@@ -29,7 +29,6 @@ module `TB_TOP;
 
 	wire gpio;
 	wire [37:0] mprj_io;
-	wire [7:0] mprj_io_0;
 	wire [15:0] checkbits;
 
 //----------------------------------
@@ -73,7 +72,7 @@ reg  [15:0]    strap_in;
 	`ifdef WFDUMP
 	initial begin
 		$dumpfile("simx.vcd");
-		$dumpvars(2, `TB_TOP);
+		$dumpvars(0, `TB_TOP);
 		$dumpvars(0, `TB_TOP.tb_master_uart);
 		$dumpvars(1, `TB_TOP.u_top.mprj.u_wb_host);
 		$dumpvars(0, `TB_TOP.u_top.mprj.u_wb_host.u_uart2wb);
@@ -103,11 +102,11 @@ reg  [15:0]    strap_in;
 	initial begin
 
             strap_in = 0;
-            strap_in[`PSTRAP_UARTM_CFG] = 2'b11; // uart master config control - load from LA
+            strap_in[`PSTRAP_UARTM_CFG] = 1'b1; // uart master config control - load from LA
             apply_strap(strap_in);
 
             uart_data_bit           = 2'b11;
-            uart_stop_bits          = 0; // 0: 1 stop bit; 1: 2 stop bit;
+            uart_stop_bits          = 1; // 0: 1 stop bit; 1: 2 stop bit;
             uart_stick_parity       = 0; // 1: force even parity
             uart_parity_en          = 0; // parity enable
             uart_even_odd_parity    = 1; // 0: odd parity; 1: even parity

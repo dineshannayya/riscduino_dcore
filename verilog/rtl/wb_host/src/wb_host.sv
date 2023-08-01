@@ -53,6 +53,9 @@
 ////    0.5 - Aug 30 2022, Dinesh A                               ////
 ////          A. System strap related changes, reset_fsm added    ////
 ////          B. rtc and usb clock moved to pinmux                ////
+////    0.6 - July 31, 2023, Dinesh A                             ////
+////          Seperated Stop bit for uart tx and rx               ////
+////          recomended setting rx = 0, tx = 1                   ////
 ////                                                              //// 
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
@@ -287,9 +290,10 @@ assign     strap_uartm           = system_strap[`STRAP_UARTM_CFG];
 
 wire       cfg_uartm_tx_enable   = (strap_uartm==1'b1) ? la_data_in[1]     : 1'b1;
 wire       cfg_uartm_rx_enable   = (strap_uartm==1'b1) ? la_data_in[2]     : 1'b1;
-wire       cfg_uartm_stop_bit    = (strap_uartm==1'b1) ? la_data_in[3]     : 1'b1;
-wire [1:0] cfg_uartm_cfg_pri_mod = (strap_uartm==1'b1) ? la_data_in[17:16] : 2'b0;
-wire [11:0]cfg_uart_baud_16x     = (strap_uartm==1'b0) ? 'h0: la_data_in[15:4];
+wire       cfg_uartm_tx_stop_bit = (strap_uartm==1'b1) ? la_data_in[3]     : 1'b1;
+wire       cfg_uartm_rx_stop_bit = (strap_uartm==1'b1) ? la_data_in[4]     : 1'b0;
+wire [1:0] cfg_uartm_cfg_pri_mod = (strap_uartm==1'b1) ? la_data_in[6:5]   : 2'b0;
+wire [11:0]cfg_uart_baud_16x     = (strap_uartm==1'b0) ? 'h0: la_data_in[19:8];
 wire       cfg_uartm_aut_det     = (strap_uartm==1'b0) ? 1'b1: 1'b0;
 
 
@@ -303,7 +307,8 @@ uart2wb u_uart2wb (
        .cfg_auto_det     (cfg_uartm_aut_det       ), // Auto Baud Value detect
        .cfg_tx_enable    (cfg_uartm_tx_enable     ), // Enable Transmit Path
        .cfg_rx_enable    (cfg_uartm_rx_enable     ), // Enable Received Path
-       .cfg_stop_bit     (cfg_uartm_stop_bit      ), // 0 -> 1 Start , 1 -> 2 Stop Bits
+       .cfg_tx_stop_bit  (cfg_tx_uartm_stop_bit   ), // 0 -> 1 Start , 1 -> 2 Stop Bits
+       .cfg_rx_stop_bit  (cfg_rx_uartm_stop_bit   ), // 0 -> 1 Start , 1 -> 2 Stop Bits
        .cfg_baud_16x     (cfg_uart_baud_16x       ), // 16x Baud clock generation
        .cfg_pri_mod      (cfg_uartm_cfg_pri_mod   ), // priority mode, 0 -> nop, 1 -> Even, 2 -> Odd
 

@@ -33,6 +33,9 @@
 ////    0.1 - 12th Sep 2022, Dinesh A                             ////
 ////          baud config auto detect for unknow system clock case////
 ////          implemented specific to unknown caravel system clk  ////
+////    0.2 - 31 July 2023, Dinesh A                              ////
+////          Seperated Stop bit for tx and rx                    ////
+////          recomended setting rx = 0, tx = 1                   ////
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
 //// Copyright (C) 2000 Authors and OPENCORES.ORG                 ////
@@ -68,7 +71,8 @@ module uart2wb (
        input wire                  cfg_auto_det     , // Auto Baud Config detect mode
        input wire                  cfg_tx_enable    , // Enable Transmit Path
        input wire                  cfg_rx_enable    , // Enable Received Path
-       input wire                  cfg_stop_bit     , // 0 -> 1 Start , 1 -> 2 Stop Bits
+       input wire                  cfg_tx_stop_bit  , // Tx Stop Bit; 0 -> 1 Start , 1 -> 2 Stop Bits
+       input wire                  cfg_rx_stop_bit  , // Rx Stop Bit; 0 -> 1 Start , 1 -> 2 Stop Bits
        input wire [1:0]            cfg_pri_mod      , // priority mode, 0 -> nop, 1 -> Even, 2 -> Odd
        input wire [11:0]	    cfg_baud_16x     , // 16x Baud clock generation
 
@@ -206,7 +210,8 @@ uart2_core u_core (
 	// configuration control
           .cfg_tx_enable      (cfg_tx_enable_i) , 
           .cfg_rx_enable      (cfg_rx_enable_i) , 
-          .cfg_stop_bit       (cfg_stop_bit)  , 
+          .cfg_tx_stop_bit    (cfg_tx_stop_bit)  , 
+          .cfg_rx_stop_bit    (cfg_rx_stop_bit)  , 
           .cfg_pri_mod        (cfg_pri_mod)   , 
 	  .cfg_baud_16x           (cfg_baud_16x_i)  ,
 

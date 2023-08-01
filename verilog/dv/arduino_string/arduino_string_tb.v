@@ -201,9 +201,9 @@ parameter real XTAL_PERIOD = 6;
            // Check 
            // if all the 102 byte received
            // if no error 
-           if(uart_rx_nu !== 102) test_fail = 1;
-           if(check_sum !== 32'h1fab) test_fail = 1;
-           if(tb_uart.err_cnt !== 0) test_fail = 1;
+           if(uart_rx_nu != 102) test_fail = 1;
+           if(check_sum != 32'h1fab) test_fail = 1;
+           if(tb_uart.err_cnt != 0) test_fail = 1;
 
 	   
 	    	$display("###################################################");

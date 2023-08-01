@@ -4,9 +4,9 @@
 // ASCI Representation of RDD0 - RiscDuino D0 = 32'h52444430
 parameter CHIP_SIGNATURE = 32'h5244_4430;
 // Software Reg-1, Release date: <DAY><MONTH><YEAR>
-parameter CHIP_RELEASE_DATE = 32'h1406_2023;
+parameter CHIP_RELEASE_DATE = 32'h0207_2023;
 // Software Reg-2: Poject Revison 5.1 = 0005200
-parameter CHIP_REVISION   = 32'h0006_1200;
+parameter CHIP_REVISION   = 32'h0006_1300;
 
 parameter CLK_SKEW1_RESET_VAL = 32'b0110_0000_0011_0110_0101_1000_1101_1100;
 parameter CLK_SKEW2_RESET_VAL = 32'b0010_1000_1000_1000_0111_0110_1011_1101;

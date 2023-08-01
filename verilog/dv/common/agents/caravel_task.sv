@@ -105,18 +105,18 @@ begin
    //#1 - Apply Reset
    RSTB = 0; 
    //#2 - Apply Strap
-   force u_top.mprj_io[37] = strap[11];
-   force u_top.mprj_io[32] = strap[10];
-   force u_top.mprj_io[31] = strap[9];
-   force u_top.mprj_io[30] = strap[8];
-   force u_top.mprj_io[29] = strap[7];
-   force u_top.mprj_io[28] = strap[6];
-   force u_top.mprj_io[21] = strap[5];
-   force u_top.mprj_io[18] = strap[4];
-   force u_top.mprj_io[17] = strap[3];
-   force u_top.mprj_io[13] = strap[2];
-   force u_top.mprj_io[10] = strap[1];
-   force u_top.mprj_io[7]  = strap[0];
+   force mprj_io[37] = strap[11];
+   force mprj_io[32] = strap[10];
+   force mprj_io[31] = strap[9];
+   force mprj_io[30] = strap[8];
+   force mprj_io[29] = strap[7];
+   force mprj_io[28] = strap[6];
+   force mprj_io[21] = strap[5];
+   force mprj_io[18] = strap[4];
+   force mprj_io[17] = strap[3];
+   force mprj_io[13] = strap[2];
+   force mprj_io[10] = strap[1];
+   force mprj_io[7]  = strap[0];
    repeat (10) @(posedge clock);
     
    //#3 - Remove Reset
@@ -126,18 +126,18 @@ begin
    wait(u_top.mprj.p_reset_n == 1);          
 
    // #5 - Release the Strap
-   release u_top.mprj_io[37] ;
-   release u_top.mprj_io[32] ;
-   release u_top.mprj_io[31] ;
-   release u_top.mprj_io[30] ;
-   release u_top.mprj_io[29] ;
-   release u_top.mprj_io[28] ;
-   release u_top.mprj_io[21] ;
-   release u_top.mprj_io[18] ;
-   release u_top.mprj_io[17] ;
-   release u_top.mprj_io[13] ;
-   release u_top.mprj_io[10] ;
-   release u_top.mprj_io[7]  ;
+   release mprj_io[37] ;
+   release mprj_io[32] ;
+   release mprj_io[31] ;
+   release mprj_io[30] ;
+   release mprj_io[29] ;
+   release mprj_io[28] ;
+   release mprj_io[21] ;
+   release mprj_io[18] ;
+   release mprj_io[17] ;
+   release mprj_io[13] ;
+   release mprj_io[10] ;
+   release mprj_io[7]  ;
 
    // #6 - Wait for system reset removal
    wait(u_top.mprj.s_reset_n == 1);          // Wait for system reset removal

@@ -148,13 +148,12 @@ void main()
 
     reg_la0_data = 0x000;
     //reg_la0_data = 0x000;
-    //reg_la0_data |= 0x1; // bit[0] - Remove Software Reset
     //reg_la0_data |= 0x1; // bit[1] - Enable Transmit Path
     //reg_la0_data |= 0x2; // bit[2] - Enable Receive Path
-    //reg_la0_data |= 0x4; // bit[3] - Set 2 Stop Bit
-    //reg_la0_data |= 0x0; // bit[15:4] - 16x Baud Clock
-    //reg_la0_data |= 0x0; // bit[17:16] - Priority mode = 0
-    reg_la0_data = 0x001;
+    //reg_la0_data |= 0x4; // bit[3] - Tx Set 2 Stop Bit
+    //reg_la0_data |= 0x4; // bit[4] - Rx Set 2 Stop Bit
+    //reg_la0_data |= 0x0; // bit[6:5] - Priority mode = 0
+    //reg_la0_data |= 0x0; // bit[19:8] - 16x Baud Clock
     reg_la0_data = 0x00F;
 
 

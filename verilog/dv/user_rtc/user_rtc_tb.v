@@ -81,7 +81,6 @@ parameter RTC_PERIOD = 30518; // 32768 Hz
 `include "user_tasks.sv"
 
 reg		    rtc_clk;
-reg		    rst_n;
 reg [15:0]  error_cnt;
 
 //---------------------

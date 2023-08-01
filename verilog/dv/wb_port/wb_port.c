@@ -108,7 +108,7 @@ void main()
     reg_glbl_cfg0 = 0x01f;
     
     // Chip Version ID - Different for score/dcore/qcore
-    if (reg_glbl_chip_id != 0x82682601) bFail = 1;
+    if (reg_glbl_chip_id != 0x82682701) bFail = 1;
     if (bFail == 1) reg_mprj_datal = 0xAB610000;
 
     // write software write & read Register

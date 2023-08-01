@@ -346,6 +346,14 @@
 ////           A. uart master strap reduced from 2 to 1 bits                                     ////
 ////           B. Skew adjustment through strap is removed                                       ////
 ////           C. Total Strap reduced from 16 to 12                                              ////
+////           D. QPSIM de-assertion at clock_enable=0 does not take out of spi_clk ratio        ////
+////           E. QSPIM Direct SRAM access does not support byte enabled based write             ////
+////           F. Need to add seperate Stop bit config for TX and RX UART logic                  ////
+////           G. If Possbile, Make Dcache as Extended TCM Memory                                ////
+////    6.13 - July 31, 2023, Dinesh A                                                           ////
+////          Seperated Stop bit for uart tx and rx                                              ////
+////          recomended setting rx = 0, tx = 1                                                  ////
+////                                                                                             ////
 ////                                                                                             ////
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 ////                                                                                             ////
