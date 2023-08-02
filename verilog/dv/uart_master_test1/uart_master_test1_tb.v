@@ -28,7 +28,7 @@ module `TB_TOP;
 	reg power3, power4;
 
 	wire gpio;
-	wire [37:0] mprj_io;
+	tri [37:0] mprj_io;
 	wire [15:0] checkbits;
 
 //----------------------------------
@@ -122,7 +122,7 @@ reg  [15:0]    strap_in;
 
 	   repeat (10000) @(posedge clock);  
             tb_master_uart.uart_init;
-            tb_master_uart.control_setup (uart_data_bit, uart_stop_bits, uart_parity_en, uart_even_odd_parity, 
+            tb_master_uart.control_setup (uart_data_bit, uart_stop_bits,uart_stop_bits, uart_parity_en, uart_even_odd_parity, 
         	                          uart_stick_parity, uart_timeout, uart_divisor);
            //$write ("\n(%t)Response:\n",$time);
            // Wait for Initial Command Format from the uart master

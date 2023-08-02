@@ -90,7 +90,8 @@ parameter real XTAL_PERIOD = 6;
 // Uart Configuration
 // ---------------------------------
 reg [1:0]      uart_data_bit        ;
-reg	           uart_stop_bits       ; // 0: 1 stop bit; 1: 2 stop bit;
+reg	           uart_tx_stop_bits       ; // 0: 1 stop bit; 1: 2 stop bit;
+reg	           uart_rx_stop_bits       ; // 0: 1 stop bit; 1: 2 stop bit;
 reg	           uart_stick_parity    ; // 1: force even parity
 reg	           uart_parity_en       ; // parity enable
 reg	           uart_even_odd_parity ; // 0: odd parity; 1: even parity
@@ -164,6 +165,7 @@ integer i,j;
 	   initial begin
 	   	$dumpfile("simx.vcd");
 	   	$dumpvars(1, `TB_TOP);
+	   	$dumpvars(0, `TB_TOP.tb_master_uart);
 	   	$dumpvars(1, `TB_TOP.u_top);
 	   	//$dumpvars(0, `TB_TOP.u_top.u_pll);
 	   	$dumpvars(0, `TB_TOP.u_top.u_wb_host);
@@ -300,10 +302,12 @@ begin
     // Enable UART MASTER with LA control
     // la0_data[1] - 1- User Uart Master Tx Enable 
     // la0_data[2] - 1- User Uart Master Rx Enable 
-    // la0_data[3] - 1- User Uart Master Stop bit 2
-    // la0_data[17:16] - 0x145; // Setting User Baud to 9600 with system clock 50Mhz = (50,000,000/(16 * (325+1))
+    // la0_data[3] - 1- User Uart Master Tx Stop bit 2
+    // la0_data[4] - 1- User Uart Master Rx Stop bit 2
+    // la0_data[6:5] -  Partity None
+    // la0_data[19:8] - 0x145; // Setting User Baud to 9600 with system clock 50Mhz = (50,000,000/(16 * (325+1))
 
-       la_data_in = 32'h145E;
+       la_data_in = 32'h1451E;
 
        strap_in = 0;
        strap_in[`PSTRAP_UARTM_CFG] = 1'b1; // constant value based on Caravel LA
@@ -329,7 +333,8 @@ begin
 
        tb_master_uart.uart_init;
        uart_data_bit           = 2'b11;
-       uart_stop_bits          = 1; // 0: 1 stop bit; 1: 2 stop bit;
+       uart_tx_stop_bits       = 1; // 0: 1 stop bit; 1: 2 stop bit;
+       uart_rx_stop_bits       = 0; // 0: 1 stop bit; 1: 2 stop bit;
        uart_stick_parity       = 0; // 1: force even parity
        uart_parity_en          = 0; // parity enable
        uart_even_odd_parity    = 1; // 0: odd parity; 1: even parity
@@ -338,7 +343,7 @@ begin
        uart_fifo_enable        = 0;	// fifo mode disable
        tb_master_uart.debug_mode = 0; // disable debug display
 	   tb_set_uart_baud(50000000,288000,uart_divisor);// 50Mhz Ref clock, Baud Rate: 288000
-       tb_master_uart.control_setup (uart_data_bit, uart_stop_bits, uart_parity_en, uart_even_odd_parity, uart_stick_parity, uart_timeout, uart_divisor);
+       tb_master_uart.control_setup (uart_data_bit, uart_tx_stop_bits, uart_rx_stop_bits,uart_parity_en, uart_even_odd_parity, uart_stick_parity, uart_timeout, uart_divisor);
 
        repeat (10) @(posedge clock);
        tb_master_uart.write_char(8'hA); // New line for auto detect
@@ -372,7 +377,8 @@ begin
 
        tb_master_uart.uart_init;
        uart_data_bit           = 2'b11;
-       uart_stop_bits          = 1; // 0: 1 stop bit; 1: 2 stop bit;
+       uart_tx_stop_bits       = 1; // 0: 1 stop bit; 1: 2 stop bit;
+       uart_rx_stop_bits       = 0; // 0: 1 stop bit; 1: 2 stop bit;
        uart_stick_parity       = 0; // 1: force even parity
        uart_parity_en          = 0; // parity enable
        uart_even_odd_parity    = 1; // 0: odd parity; 1: even parity
@@ -381,7 +387,7 @@ begin
        uart_fifo_enable        = 0;	// fifo mode disable
        tb_master_uart.debug_mode = 0; // disable debug display
 	   tb_set_uart_baud(50000000,38400,uart_divisor);// 50Mhz Ref clock, Baud Rate: 38400
-       tb_master_uart.control_setup (uart_data_bit, uart_stop_bits, uart_parity_en, uart_even_odd_parity, uart_stick_parity, uart_timeout, uart_divisor);
+       tb_master_uart.control_setup (uart_data_bit, uart_tx_stop_bits,uart_rx_stop_bits, uart_parity_en, uart_even_odd_parity, uart_stick_parity, uart_timeout, uart_divisor);
 
        repeat (10) @(posedge clock);
        tb_master_uart.write_char(8'hA); // New line for auto detect

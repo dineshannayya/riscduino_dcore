@@ -180,7 +180,7 @@ reg 	       uart_fifo_enable     ;	// fifo mode disable
 
                tb_uart.uart_init;
                wb_user_core_write(`ADDR_SPACE_UART0+8'h0,{3'h0,2'b00,1'b1,1'b1,1'b1});  
-               tb_uart.control_setup (uart_data_bit, uart_stop_bits, uart_parity_en, uart_even_odd_parity, 
+               tb_uart.control_setup (uart_data_bit, uart_stop_bits,uart_stop_bits, uart_parity_en, uart_even_odd_parity, 
                                               uart_stick_parity, uart_timeout, uart_divisor);
 
 		// Set the PORT-B Direction as Output

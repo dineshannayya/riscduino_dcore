@@ -1060,7 +1060,7 @@ wb_host u_wb_host(
           .cfg_clk_skew_ctrl1      (cfg_clk_skew_ctrl1      ),
           .cfg_clk_skew_ctrl2      (cfg_clk_skew_ctrl2      ),
 
-          .la_data_in              (la_data_in_rp[17:0]     ),
+          .la_data_in              (la_data_in_rp[19:0]     ),
 
           .uartm_rxd               (uartm_rxd               ),
           .uartm_txd               (uartm_txd               ),

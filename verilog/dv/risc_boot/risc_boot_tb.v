@@ -191,7 +191,7 @@ pullup(mprj_io[3]);
 
 		// Wait for user risc core to boot up 
 		tb_uart.uart_init;
-		tb_uart.control_setup (uart_data_bit, uart_stop_bits, uart_parity_en, uart_even_odd_parity, 
+		tb_uart.control_setup (uart_data_bit, uart_stop_bits,uart_stop_bits, uart_parity_en, uart_even_odd_parity, 
 					     uart_stick_parity, uart_timeout, uart_divisor);
 
 

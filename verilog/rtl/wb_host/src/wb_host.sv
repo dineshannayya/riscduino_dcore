@@ -148,7 +148,7 @@ module wb_host (
     output logic [31:0]         cfg_clk_skew_ctrl1    ,
     output logic [31:0]         cfg_clk_skew_ctrl2    ,
 
-    input  logic [17:0]         la_data_in       ,
+    input  logic [19:0]         la_data_in       ,
 
     input  logic                uartm_rxd        ,
     output logic                uartm_txd        ,
@@ -307,8 +307,8 @@ uart2wb u_uart2wb (
        .cfg_auto_det     (cfg_uartm_aut_det       ), // Auto Baud Value detect
        .cfg_tx_enable    (cfg_uartm_tx_enable     ), // Enable Transmit Path
        .cfg_rx_enable    (cfg_uartm_rx_enable     ), // Enable Received Path
-       .cfg_tx_stop_bit  (cfg_tx_uartm_stop_bit   ), // 0 -> 1 Start , 1 -> 2 Stop Bits
-       .cfg_rx_stop_bit  (cfg_rx_uartm_stop_bit   ), // 0 -> 1 Start , 1 -> 2 Stop Bits
+       .cfg_tx_stop_bit  (cfg_uartm_tx_stop_bit   ), // 0 -> 1 Start , 1 -> 2 Stop Bits
+       .cfg_rx_stop_bit  (cfg_uartm_rx_stop_bit   ), // 0 -> 1 Start , 1 -> 2 Stop Bits
        .cfg_baud_16x     (cfg_uart_baud_16x       ), // 16x Baud clock generation
        .cfg_pri_mod      (cfg_uartm_cfg_pri_mod   ), // priority mode, 0 -> nop, 1 -> Even, 2 -> Odd
 

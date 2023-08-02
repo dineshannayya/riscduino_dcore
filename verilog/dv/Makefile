@@ -34,6 +34,7 @@ all:  ${PATTERNS}
 	#for i in ${PATTERNS}; do \
 	#	( cd $$i && make SIM=GL | tee run.gl.log && grep Monitor run.gl.log | grep $$i >> ../regression.rpt) ; \
 	#done
+	#./runTest.pl -parse -tl test_list.f -rdir ./ -log=run.gl.log
 	#echo "################# End of Test case Summary #####################" >> regression.rpt
 
 DV_PATTERNS = $(foreach dv, $(PATTERNS), verify-$(dv))

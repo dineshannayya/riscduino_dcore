@@ -99,11 +99,13 @@ endtask
 
 task  apply_strap;
 input [15:0] strap;
+reg   strap_load;
 begin
-
+   
    repeat (10) @(posedge clock);
    //#1 - Apply Reset
    RSTB = 0; 
+   strap_load = 1;
    //#2 - Apply Strap
    force mprj_io[37] = strap[11];
    force mprj_io[32] = strap[10];
@@ -142,6 +144,7 @@ begin
    // #6 - Wait for system reset removal
    wait(u_top.mprj.s_reset_n == 1);          // Wait for system reset removal
    repeat (10) @(posedge clock);
+   strap_load = 0;
 
 end
 endtask
@@ -149,68 +152,82 @@ endtask
 //---------------------------------------------------------
 // Create Pull Up/Down Based on Reset Strap Parameter
 //---------------------------------------------------------
+    // Assign TriState for Strap ports - Otherwse iverilog is assumming pullup/down as strong driver
+    assign  mprj_io[37] = 1'bz;
+    assign  mprj_io[32] = 1'bz;
+    assign  mprj_io[31] = 1'bz;
+    assign  mprj_io[30] = 1'bz;
+    assign  mprj_io[29] = 1'bz;
+    assign  mprj_io[28] = 1'bz;
+    assign  mprj_io[21] = 1'bz;
+    assign  mprj_io[18] = 1'bz;
+    assign  mprj_io[17] = 1'bz;
+    assign  mprj_io[13] = 1'bz;
+    assign  mprj_io[10] = 1'bz;
+    assign  mprj_io[7] = 1'bz;
+
 
 generate
     if(PAD_STRAP[0]) begin
-        pullup(mprj_io[7]); 
+        pullup  (mprj_io[7]); 
     end else begin
-        pulldown(mprj_io[7]); 
+        pulldown  (mprj_io[7]); 
     end
 
     if(PAD_STRAP[1]) begin
-        pullup(mprj_io[10]); 
+        pullup  (mprj_io[10]); 
     end else begin
-        pulldown(mprj_io[10]); 
+        pulldown (mprj_io[10]); 
     end
     if(PAD_STRAP[2]) begin
-        pullup(mprj_io[13]); 
+        pullup  (mprj_io[13]); 
     end else begin
-        pulldown(mprj_io[13]); 
+        pulldown  (mprj_io[13]); 
     end
     if(PAD_STRAP[3]) begin
-        pullup(mprj_io[17]); 
+        pullup  (mprj_io[17]); 
     end else begin
-        pulldown(mprj_io[17]); 
+        pulldown  (mprj_io[17]); 
     end
     if(PAD_STRAP[4]) begin
-        pullup(mprj_io[18]); 
+        pullup  (mprj_io[18]); 
     end else begin
-        pulldown(mprj_io[18]); 
+        pulldown  (mprj_io[18]); 
     end
     if(PAD_STRAP[5]) begin
-        pullup(mprj_io[21]); 
+        pullup  (mprj_io[21]); 
     end else begin
-        pulldown(mprj_io[21]); 
+        pulldown  (mprj_io[21]); 
     end
     if(PAD_STRAP[6]) begin
-        pullup(mprj_io[28]); 
+        pullup  (mprj_io[28]); 
     end else begin
-        pulldown(mprj_io[28]); 
+        pulldown  (mprj_io[28]); 
     end
     if(PAD_STRAP[7]) begin
-        pullup(mprj_io[29]); 
+        pullup  (mprj_io[29]); 
     end else begin
-        pulldown(mprj_io[29]); 
+        pulldown  (mprj_io[29]); 
     end
     if(PAD_STRAP[8]) begin
-        pullup(mprj_io[30]); 
+        pullup  (mprj_io[30]); 
     end else begin
-        pulldown(mprj_io[30]); 
+        pulldown  (mprj_io[30]); 
     end
     if(PAD_STRAP[9]) begin
-        pullup(mprj_io[31]); 
+        pullup  (mprj_io[31]); 
     end else begin
-        pulldown(mprj_io[31]); 
+        pulldown  (mprj_io[31]); 
     end
     if(PAD_STRAP[10]) begin
-        pullup(mprj_io[32]); 
+        pullup  (mprj_io[32]); 
     end else begin
-        pulldown(mprj_io[32]); 
+        pulldown  (mprj_io[32]); 
     end
     if(PAD_STRAP[11]) begin
-        pullup(mprj_io[37]); 
+        pullup  (mprj_io[37]); 
     end else begin
-        pulldown(mprj_io[37]); 
+        pulldown  (mprj_io[37]); 
     end
 endgenerate
 

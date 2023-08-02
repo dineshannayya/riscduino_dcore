@@ -13,9 +13,9 @@ wire   [31:0] wbs_dat_i_rp;
 wire          wbs_ack_int_o ;     
 wire   [31:0] wbs_dat_int_o;
 
-wire   [17:0] la_data_in_rp;
+wire   [19:0] la_data_in_rp;
 
-wire [252:0] ch_in_south = {
+wire [254:0] ch_in_south = {
                     user_clock2,
                     la_data_out_int[127],
                     la_data_out_int[126],
@@ -126,7 +126,9 @@ wire [252:0] ch_in_south = {
                     la_data_out_int[21],
                     la_data_out_int[20],
                     la_data_out_int[19],
+                    la_data_in[19],
                     la_data_out_int[18],
+                    la_data_in[18],
                     la_data_out_int[17],
                     la_data_in[17],
                     la_data_out_int[16],
@@ -271,7 +273,7 @@ wire [252:0] ch_in_south = {
                     wb_rst_i           ,  
                     wb_clk_i           
             };
-wire [252:0] ch_out_south ;
+wire [254:0] ch_out_south ;
 assign {
                     user_clock2_rp  ,
                     la_data_out[127],
@@ -383,7 +385,9 @@ assign {
                     la_data_out[21],
                     la_data_out[20],
                     la_data_out[19],
+                    la_data_in_rp[19],
                     la_data_out[18],
+                    la_data_in_rp[18],
                     la_data_out[17],
                     la_data_in_rp[17],
                     la_data_out[16],
@@ -532,7 +536,7 @@ assign {
 
 bus_rep_south  #(
 `ifndef SYNTHESIS
-.BUS_REP_WD(253)
+.BUS_REP_WD(255)
 `endif
       ) u_rp_south(
 `ifdef USE_POWER_PINS

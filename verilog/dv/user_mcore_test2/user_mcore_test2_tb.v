@@ -149,7 +149,7 @@ parameter real XTAL_PERIOD = 6;
 
 	    tb_uart.debug_mode = 0; // disable debug display
         tb_uart.uart_init;
-        tb_uart.control_setup (uart_data_bit, uart_stop_bits, uart_parity_en, uart_even_odd_parity, uart_stick_parity, uart_timeout, uart_divisor);
+        tb_uart.control_setup (uart_data_bit, uart_stop_bits,uart_stop_bits, uart_parity_en, uart_even_odd_parity, uart_stick_parity, uart_timeout, uart_divisor);
 
         wait_riscv_boot();
         set_tb_ready();

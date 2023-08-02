@@ -85,7 +85,8 @@ parameter real XTAL_PERIOD = 6;
 // Uart Configuration
 // ---------------------------------
 reg [1:0]      uart_data_bit        ;
-reg	           uart_stop_bits       ; // 0: 1 stop bit; 1: 2 stop bit;
+reg	           uart_tx_stop_bits       ; // 0: 1 stop bit; 1: 2 stop bit;
+reg	           uart_rx_stop_bits       ; // 0: 1 stop bit; 1: 2 stop bit;
 reg	           uart_stick_parity    ; // 1: force even parity
 reg	           uart_parity_en       ; // parity enable
 reg	           uart_even_odd_parity ; // 0: odd parity; 1: even parity
@@ -123,7 +124,8 @@ begin
    apply_strap(strap_in);
 
    uart_data_bit           = 2'b11;
-   uart_stop_bits          = 1; // 0: 1 stop bit; 1: 2 stop bit;
+   uart_tx_stop_bits       = 1; // 0: 1 stop bit; 1: 2 stop bit;
+   uart_rx_stop_bits       = 0; // 0: 1 stop bit; 1: 2 stop bit;
    uart_stick_parity       = 0; // 1: force even parity
    uart_parity_en          = 0; // parity enable
    uart_even_odd_parity    = 1; // 0: odd parity; 1: even parity
@@ -134,9 +136,10 @@ begin
    // UPDATE the RTL UART MASTER
    la_data_in[1] = 1; //  Enable Transmit Path
    la_data_in[2] = 1; //  Enable Received Path
-   la_data_in[3] = 1; //  Enable Received Path
-   la_data_in[15:4] = ((uart_divisor+1)/16)-1; //  Divisor value
-   la_data_in[17:16] = 2'b00; //  priority mode, 0 -> nop, 1 -> Even, 2 -> Odd
+   la_data_in[3] = 1; //  Tx Stop
+   la_data_in[4] = 0; //  Rx Stop
+   la_data_in[6:5] = 2'b00; //  priority mode, 0 -> nop, 1 -> Even, 2 -> Odd
+   la_data_in[19:8] = ((uart_divisor+1)/16)-1; //  Divisor value
 
    #100;
 
@@ -144,7 +147,7 @@ begin
 
    tb_master_uart.debug_mode = 0; // disable debug display
    tb_master_uart.uart_init;
-   tb_master_uart.control_setup (uart_data_bit, uart_stop_bits, uart_parity_en, uart_even_odd_parity, 
+   tb_master_uart.control_setup (uart_data_bit, uart_tx_stop_bits, uart_rx_stop_bits, uart_parity_en, uart_even_odd_parity, 
 	                          uart_stick_parity, uart_timeout, uart_divisor);
 
 
