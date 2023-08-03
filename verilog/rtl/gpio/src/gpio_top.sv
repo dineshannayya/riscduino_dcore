@@ -69,7 +69,6 @@ module gpio_top  (
 
 logic  [31:0]  gpio_prev_indata         ;// previously captured GPIO I/P pins data
 logic  [31:0]  cfg_gpio_out_data        ;// GPIO statuc O/P data from config reg
-logic  [31:0]  cfg_multi_func_sel       ;// GPIO Multi function type
 logic  [31:0]  cfg_gpio_posedge_int_sel ;// select posedge interrupt
 logic  [31:0]  cfg_gpio_negedge_int_sel ;// select negedge interrupt
 logic  [31:00] cfg_gpio_data_in         ;
@@ -131,7 +130,6 @@ gpio_reg  u_reg (
                .cfg_gpio_out_type            (cfg_gpio_out_type       ),
                .cfg_gpio_posedge_int_sel     (cfg_gpio_posedge_int_sel),
                .cfg_gpio_negedge_int_sel     (cfg_gpio_negedge_int_sel),
-               .cfg_multi_func_sel           (cfg_multi_func_sel      ),
 	           .cfg_gpio_data_in             (cfg_gpio_data_in        ),
 
                .gpio_intr                    (gpio_intr               )
