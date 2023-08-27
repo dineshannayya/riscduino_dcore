@@ -31,6 +31,7 @@ set ::env(CLOCK_PORT) "mclk"
 
 set ::env(SYNTH_MAX_FANOUT) 4
 set ::env(SYNTH_BUFFERING) {0}
+set ::env(SYNTH_AUTONAME) {1}
 
 ## CTS BUFFER
 set ::env(CTS_CLK_MAX_WIRE_LENGTH) {250}

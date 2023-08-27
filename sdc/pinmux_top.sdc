@@ -1,6 +1,6 @@
 ###############################################################################
 # Created by write_sdc
-# Thu Jun 15 17:34:28 2023
+# Thu Aug 24 03:30:49 2023
 ###############################################################################
 current_design pinmux_top
 ###############################################################################
@@ -566,8 +566,6 @@ set_load -pin_load 0.0334 [get_ports {strap_sticky[3]}]
 set_load -pin_load 0.0334 [get_ports {strap_sticky[2]}]
 set_load -pin_load 0.0334 [get_ports {strap_sticky[1]}]
 set_load -pin_load 0.0334 [get_ports {strap_sticky[0]}]
-set_load -pin_load 0.0334 [get_ports {strap_uartm[1]}]
-set_load -pin_load 0.0334 [get_ports {strap_uartm[0]}]
 set_load -pin_load 0.0334 [get_ports {uart_rst_n[1]}]
 set_load -pin_load 0.0334 [get_ports {uart_rst_n[0]}]
 set_load -pin_load 0.0334 [get_ports {uart_rxd[1]}]
