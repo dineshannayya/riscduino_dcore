@@ -1,3 +1,4 @@
+#Note: -i switch vvp make  all output to <stdout> to be unbuffered.
 
 # ---- Include Partitioned Makefiles ----
 
@@ -283,7 +284,7 @@ ifeq ($(SIM),RTL)
 	-o $(top_module).vvp; \
 	printf "" > $(test_results); \
         iverilog-vpi ../../../common/vpi/system/system.c; \
-	vvp  -M. -msystem  $(top_module).vvp \
+	vvp -i  -M. -msystem  $(top_module).vvp \
 	+risc_core_id=$(RISC_CORE) \
 	+test_info=$(test_info) \
 	+test_results=$(test_results) \
@@ -301,7 +302,7 @@ ifeq ($(SIM),RTL)
 	-o $(top_module).vvp; \
 	printf "" > $(test_results); \
         iverilog-vpi ../../../common/vpi/system/system.c; \
-	vvp  -M. -msystem  $(top_module).vvp \
+	vvp  -i -M. -msystem  $(top_module).vvp \
 	+risc_core_id=$(RISC_CORE) \
 	+test_info=$(test_info) \
 	+test_results=$(test_results) \
@@ -320,7 +321,7 @@ else
 	-o $(top_module).vvp; \
 	printf "" > $(test_results); \
         iverilog-vpi ../../../common/vpi/system/system.c; \
-	vvp  -M. -msystem  $(top_module).vvp \
+	vvp -i  -M. -msystem  $(top_module).vvp \
 	+risc_core_id=$(RISC_CORE) \
 	+test_info=$(test_info) \
 	+test_results=$(test_results) \
@@ -337,7 +338,7 @@ else
 	-o $(top_module).vvp; \
 	printf "" > $(test_results); \
         iverilog-vpi ../../../common/vpi/system/system.c; \
-	vvp  -M. -msystem  $(top_module).vvp \
+	vvp  -i -M. -msystem  $(top_module).vvp \
 	+risc_core_id=$(RISC_CORE) \
 	+test_info=$(test_info) \
 	+test_results=$(test_results) \

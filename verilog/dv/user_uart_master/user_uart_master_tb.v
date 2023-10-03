@@ -102,6 +102,7 @@ reg 	       uart_fifo_enable     ;	// fifo mode disable
 
 reg            flag;
 reg  [15:0]    strap_in;
+reg  [7:0]     step;
 
 
 integer i,j;
@@ -111,7 +112,7 @@ integer i,j;
 initial begin
    $dumpfile("risc_boot.vcd");
    $dumpvars(1, `TB_TOP);
-   $dumpvars(1, `TB_TOP.u_top.u_wb_host);
+   $dumpvars(0, `TB_TOP.u_top.u_wb_host);
    $dumpvars(1, `TB_TOP.u_top.u_intercon);
    $dumpvars(1, `TB_TOP.u_top.u_pinmux);
 end
@@ -120,6 +121,7 @@ end
 initial
 begin
    strap_in = 0;
+   step     = 0;
    strap_in[`PSTRAP_UARTM_CFG] = 2'b00; // uart master config control - load from LA
    apply_strap(strap_in);
 
@@ -150,8 +152,8 @@ begin
    tb_master_uart.control_setup (uart_data_bit, uart_tx_stop_bits, uart_rx_stop_bits, uart_parity_en, uart_even_odd_parity, 
 	                          uart_stick_parity, uart_timeout, uart_divisor);
 
-
-    tb_master_uart.write_char(8'h0A); // for uart baud auto detect purpose - New Line Character \n
+   step     = 1;
+   tb_master_uart.write_char(8'h0A); // for uart baud auto detect purpose - New Line Character \n
    //$write ("\n(%t)Response:\n",$time);
    flag = 0;
    while(flag == 0)
@@ -168,6 +170,7 @@ begin
    #1;
 
    $display("Monitor: Writing  expected value");
+   step     = 2;
    
    test_fail = 0;
    uartm_reg_write(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_0,32'h11223344);
@@ -177,6 +180,8 @@ begin
    uartm_reg_write(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_4,32'h55667788);
    uartm_reg_write(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_5,32'h66778899);
 
+   // Single Burst Read
+   step     = 3;
    uartm_reg_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_0,32'h11223344);
    uartm_reg_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_1,32'h22334455);
    uartm_reg_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_2,32'h33445566);
@@ -184,7 +189,41 @@ begin
    uartm_reg_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_4,32'h55667788);
    uartm_reg_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_5,32'h66778899);
    
+   // Multi Burst Read 
+   step     = 4;
+   uartm_three_burst_reg_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_0,32'h11223344,32'h22334455,32'h33445566);
+   uartm_three_burst_reg_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_3,32'h44556677,32'h55667788,32'h66778899);
+
+   // Burst Write
+   step     = 5;
+   uartm_three_burst_reg_write(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_0,32'h01234567, 32'h89abcdef , 32'hfedcba98 );
+   uartm_three_burst_reg_write(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_3,32'h01020304, 32'h05060708 , 32'h090A0B0C );
    
+   // Burst Readback and verify
+   step     = 6;
+   uartm_three_burst_reg_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_0,32'h01234567, 32'h89abcdef , 32'hfedcba98 );
+   uartm_three_burst_reg_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_3,32'h01020304, 32'h05060708 , 32'h090A0B0C );
+
+   // Byte Write
+   step     = 7;
+   uartm_byte_reg_write(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_0+0,8'h11);
+   uartm_byte_reg_write(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_0+1,8'h22);
+   uartm_byte_reg_write(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_0+2,8'h33);
+   uartm_byte_reg_write(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_0+3,8'h44);
+
+   uartm_byte_reg_write(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_1+0,8'h22);
+   uartm_byte_reg_write(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_1+1,8'h33);
+   uartm_byte_reg_write(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_1+2,8'h44);
+   uartm_byte_reg_write(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_1+3,8'h55);
+
+   uartm_byte_reg_write(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_2+0,8'h33);
+   uartm_byte_reg_write(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_2+1,8'h44);
+   uartm_byte_reg_write(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_2+2,8'h55);
+   uartm_byte_reg_write(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_2+3,8'h66);
+
+   // Burst Readback and verify
+   step     = 8;
+   uartm_three_burst_reg_read_check(`ADDR_SPACE_GLBL+`GLBL_CFG_SOFT_REG_0,32'h44332211,32'h55443322,32'h66554433);
    
    $display("###################################################");
    if(test_fail == 0) begin

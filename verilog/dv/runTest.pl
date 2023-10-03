@@ -25,7 +25,6 @@ my $parse_testlogs = 0;
 my $testlog_name = "";
 my $parse_options = "all";
 my $cur_dir = cwd();
-my %testcases = ();
 my $log_name = "";
 my $tst_stats = "";
 
@@ -48,6 +47,7 @@ sub parse_logfile{
   my $test_status = "";
   my $tests_line = "";
   my $test_name = "";
+  my $test_domain = "";
   my $testcase_dir = "";
   my $sim_time = "";
   my @test_args = ();
@@ -72,15 +72,13 @@ sub parse_logfile{
   while ($tests_line = <$TESTS_H>) {
    if ($tests_line !~ /^\/|^#|^\s+/) { # if line not commented
      chomp($tests_line);
-     ($test_name,@test_args) = split(/\s+/,$tests_line);
-     $testcase_dir = $test_name;
-     if (exists($testcases{$test_name})) {
-       $testcases{$test_name}++;
-       $testcase_dir .= "_$testcases{$test_name}";
-     } else {
-       $testcases{$test_name} = 0;
-     }
-     &parse_testlog("$run_dir/$testcase_dir/$testlog_name",\$test_status,\$sim_time,\$n_warns,\$n_errors);
+     #($test_name,$testcase_dir) = split(/,/,$tests_line);
+     my @test_data = split(/,/,$tests_line);
+     $test_domain = $test_data[0];
+     $test_name = $test_data[1];
+     $testcase_dir = $test_data[2];
+     #$testcase_dir = $test_name;
+     &parse_testlog("$test_name","$run_dir/$testcase_dir/$testlog_name",\$test_status,\$sim_time,\$n_warns,\$n_errors);
      $test_config = "";
      $test_config = `cat $run_dir/$testcase_dir/tc_config` if (-e "$run_dir/$testcase_dir/tc_config");
      $total_testcases++;
@@ -108,13 +106,13 @@ sub parse_logfile{
   write();
 
 format STATUS_HEADER =
-   -----------------------------------------------------------------------------
-     Testcase                          |    Status  |   SimTime   | Warns | Config |
-   -----------------------------------------------------------------------------
+   -------------------------------------------------------------------------------------------------------------------------
+      Domain                           |   Testcase                         |    Status  |   SimTime   | Warns | Config |
+   -------------------------------------------------------------------------------------------------------------------------
 .
 format STATUS_BODY =
-   @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  | @||||||||| | @|||||||||| | @#### | @*
-   $testcase_dir,$test_status,$sim_time,$n_warns,$test_config
+   @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  |@<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  | @||||||||| | @|||||||||| | @#### | @*
+   $test_domain,$test_name,$test_status,$sim_time,$n_warns,$test_config
 .
 format STATUS_FOOTER =
    --------------------------------------------------------------------
@@ -172,23 +170,24 @@ sub check_file_list{
 # SUBROUTINE: parse_testlog
 #------------------------------------------------------------------------------
 sub parse_testlog{
-  my ($testcase,$test_status,$sim_time,$n_warns,$n_errors) = @_;
+  my ($testName,$testLog,$test_status,$sim_time,$n_warns,$n_errors) = @_;
   my $TEST_H = new FileHandle;
   my $test_line = "";
   my @lines = ();
   my $line_count = 0;
   $$test_status = "unk";
   $$sim_time = "-1";
-  #print $testcase;
-  if (-e "$testcase") {
-     open($TEST_H,"<$testcase") || die "couldn't open $testcase";
+  #print $testName;
+  #print "Monitor.*\Q$testName\E.*Passed";
+  if (-e "$testLog") {
+     open($TEST_H,"<$testLog") || die "couldn't open $testLog";
      @lines = reverse <$TEST_H>;
      #while($test_line = <$TEST_H>) {
      for($line_count = 0; ($line_count<=100) && ($line_count <= $#lines) ;$line_count++){
       $test_line = $lines[$line_count];
-      if ($test_line =~ /Monitor.*Passed/) {
+      if ($test_line =~ /Monitor.*\Q$testName\E.*Passed/) {
         $$test_status = "PASS";
-      }elsif ($test_line =~ /Monitor.*Failed/) {
+      }elsif ($test_line =~ /Monitor.*\Q$testName\E.*Failed/) {
         $$test_status = "FAIL";
       }elsif ($test_line =~ /finish at simulation time\s+(\d+)/g) {
         $$sim_time = $1;
@@ -202,7 +201,7 @@ sub parse_testlog{
   }else {
     $$test_status = "notrun";
   }
-  #print "parse_testlog: $testcase,$$test_status\n";
+  #print "parse_testlog: $testLog,$$test_status\n";
 }
 
 

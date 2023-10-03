@@ -1,59 +1,206 @@
-   -----------------------------------------------------------------------------
-     Testcase                          |    Status  |   SimTime   | Warns | Config |
-   -----------------------------------------------------------------------------
-   user_random                         |    PASS    |     -1      |     0 |
-   user_uart                           |    PASS    |     -1      |     0 |
-   user_uart1                          |    PASS    |     -1      |     0 |
-   user_risc_boot                      |    PASS    |     -1      |     0 |
-   user_qspi                           |    PASS    |     -1      |     0 |
-   user_sspi                           |    PASS    |     -1      |     0 |
-   user_i2cm                           |    PASS    |     -1      |     0 |
-   user_usb                            |    PASS    |     -1      |     0 |
-   user_gpio                           |    PASS    |     -1      |     0 |
-   user_basic                          |    PASS    |     -1      |     0 |
-   user_spi_isp                        |    PASS    |     -1      |     0 |
-   user_timer                          |    PASS    |     -1      |     0 |
-   user_uart_master                    |    PASS    |     -1      |     0 |
-   user_sram_exec                      |    PASS    |     -1      |     0 |
-   user_cache_bypass                   |    PASS    |     -1      |     0 |
-   user_pwm                            |    PASS    |     -1      |     0 |
-   user_sema                           |    PASS    |     -1      |     0 |
-   risc_boot                           |    PASS    |     -1      |     0 |
-   uart_master_test1                   |    PASS    |     -1      |     0 |
-   uart_master_test2                   |    PASS    |     -1      |     0 |
-   wb_port                             |    PASS    |     -1      |     0 |
-   arduino_arrays                      |    PASS    |     -1      |     0 |
-   arduino_risc_boot                   |    PASS    |     -1      |     0 |
-   arduino_timer_intr                  |    PASS    |     -1      |     0 |
-   arduino_ascii_table                 |    PASS    |     -1      |     0 |
-   arduino_gpio_intr                   |    PASS    |     -1      |     0 |
-   arduino_i2c_wr_rd                   |    PASS    |     -1      |     0 |
-   arduino_string                      |    PASS    |     -1      |     0 |
-   arduino_ws281x                      |    PASS    |     -1      |     0 |
-   arduino_character_analysis          |    PASS    |     -1      |     0 |
-   arduino_hello_world                 |    PASS    |     -1      |     0 |
-   arduino_multi_serial                |    PASS    |     -1      |     0 |
-   arduino_switchCase2                 |    PASS    |     -1      |     0 |
-   user_aes_core                       |    PASS    |     -1      |     0 |
-   user_fpu_core                       |    PASS    |     -1      |     0 |
-   user_aes                            |    PASS    |     -1      |     0 |
-   user_rtc                            |    PASS    |     -1      |     0 |
-   user_ir_tx                          |    PASS    |     -1      |     0 |
-   user_ir_rx                          |    PASS    |     -1      |     0 |
-   step_motor_controller               |    PASS    |     -1      |     0 |
-   caravel_hkspi                       |    PASS    |     -1      |     0 |
-   user_qspis                          |    PASS    |     -1      |     0 |
-   user_cpu_clkgate                    |    PASS    |     -1      |     0 |
-   arduino_digital_port_control        |    PASS    |     -1      |     0 |
-   arduino_i2c_scaner                  |    PASS    |     -1      |     0 |
-   user_mcore_test1                    |    PASS    |     -1      |     0 |
-   user_mcore_test2                    |    PASS    |     -1      |     0 |
-   arduino_line_follower               |    PASS    |     -1      |     0 |
+   -------------------------------------------------------------------------------------------------------------------------
+      Domain                           |   Testcase                         |    Status  |   SimTime   | Warns | Config |
+   -------------------------------------------------------------------------------------------------------------------------
+   soc                                 |user_random                         |    PASS    |     -1      |     0 |
+   soc                                 |user_uart                           |    PASS    |     -1      |     0 |
+   soc                                 |user_uart1                          |    PASS    |     -1      |     0 |
+   soc                                 |user_risc_boot                      |    PASS    |     -1      |     0 |
+   soc                                 |user_qspi                           |    PASS    |     -1      |     0 |
+   soc                                 |user_sspi                           |    PASS    |     -1      |     0 |
+   soc                                 |user_i2cm                           |    PASS    |     -1      |     0 |
+   soc                                 |user_usb                            |    PASS    |     -1      |     0 |
+   soc                                 |user_gpio                           |    PASS    |     -1      |     0 |
+   soc                                 |user_basic                          |    PASS    |     -1      |     0 |
+   soc                                 |user_spi_isp                        |    PASS    |     -1      |     0 |
+   soc                                 |user_timer                          |    PASS    |     -1      |     0 |
+   soc                                 |user_uart_master                    |    PASS    |     -1      |     0 |
+   soc                                 |user_sram_exec                      |    PASS    |     -1      |     0 |
+   soc                                 |user_cache_bypass                   |    PASS    |     -1      |     0 |
+   soc                                 |user_pwm                            |    PASS    |     -1      |     0 |
+   soc                                 |user_sema                           |    PASS    |     -1      |     0 |
+   full_chip                           |risc_boot                           |    PASS    |     -1      |     0 |
+   full_chip                           |uart_master_test1                   |    PASS    |     -1      |     0 |
+   full_chip                           |uart_master_test2                   |    PASS    |     -1      |     0 |
+   full_chip                           |wb_port                             |    PASS    |     -1      |     0 |
+   arduino                             |arduino_arrays                      |    PASS    |     -1      |     0 |
+   arduino                             |arduino_risc_boot                   |    PASS    |     -1      |     0 |
+   arduino                             |arduino_timer_intr                  |    PASS    |     -1      |     0 |
+   arduino                             |arduino_ascii_table                 |    PASS    |     -1      |     0 |
+   arduino                             |arduino_gpio_intr                   |    PASS    |     -1      |     0 |
+   arduino                             |arduino_i2c_wr_rd                   |    PASS    |     -1      |     0 |
+   arduino                             |arduino_string                      |    PASS    |     -1      |     0 |
+   arduino                             |arduino_ws281x                      |    PASS    |     -1      |     0 |
+   arduino                             |arduino_character_analysis          |    PASS    |     -1      |     0 |
+   arduino                             |arduino_hello_world                 |    PASS    |     -1      |     0 |
+   arduino                             |arduino_multi_serial                |    PASS    |     -1      |     0 |
+   arduino                             |arduino_switchCase2                 |    PASS    |     -1      |     0 |
+   soc                                 |user_aes_core                       |    PASS    |     -1      |     0 |
+   soc                                 |user_fpu_core                       |    PASS    |     -1      |     0 |
+   soc                                 |user_aes                            |    PASS    |     -1      |     0 |
+   soc                                 |user_rtc                            |    PASS    |     -1      |     0 |
+   soc                                 |user_ir_tx                          |    PASS    |     -1      |     0 |
+   soc                                 |user_ir_rx                          |    PASS    |     -1      |     0 |
+   soc                                 |step_motor_controller               |    PASS    |     -1      |     0 |
+   caravel                             |caravel_hkspi                       |    PASS    |     -1      |     0 |
+   soc                                 |user_qspis                          |    PASS    |     -1      |     0 |
+   soc                                 |user_cpu_clkgate                    |    PASS    |     -1      |     0 |
+   arduino                             |arduino_digital_port_control        |    PASS    |     -1      |     0 |
+   arduino                             |arduino_i2c_scaner                  |    PASS    |     -1      |     0 |
+   mcore                               |user_mcore_test1                    |    PASS    |     -1      |     0 |
+   mcore                               |user_mcore_test2                    |    PASS    |     -1      |     0 |
+   arduino                             |arduino_line_follower               |    PASS    |     -1      |     0 |
+   arduino                             |arduino_gpio_output                 |    PASS    |     -1      |     0 |
+   arduino                             |arduino_gpio_input                  |    FAIL    |     -1      |     0 |
+   arduino                             |arduino_sprintf                     |    PASS    |     -1      |     0 |
+   riscv                               |add                                 |    unk     |     -1      |     0 |
+   riscv                               |addi                                |    unk     |     -1      |     0 |
+   riscv                               |and                                 |    unk     |     -1      |     0 |
+   riscv                               |andi                                |    unk     |     -1      |     0 |
+   riscv                               |auipc                               |    unk     |     -1      |     0 |
+   riscv                               |beq                                 |    unk     |     -1      |     0 |
+   riscv                               |bge                                 |    unk     |     -1      |     0 |
+   riscv                               |bgeu                                |    unk     |     -1      |     0 |
+   riscv                               |blt                                 |    unk     |     -1      |     0 |
+   riscv                               |bltu                                |    unk     |     -1      |     0 |
+   riscv                               |bne                                 |    unk     |     -1      |     0 |
+   riscv                               |csr                                 |    unk     |     -1      |     0 |
+   riscv                               |fence_i                             |    unk     |     -1      |     0 |
+   riscv                               |illegal                             |    unk     |     -1      |     0 |
+   riscv                               |jal                                 |    unk     |     -1      |     0 |
+   riscv                               |jalr                                |    unk     |     -1      |     0 |
+   riscv                               |lb                                  |    unk     |     -1      |     0 |
+   riscv                               |lbu                                 |    unk     |     -1      |     0 |
+   riscv                               |lh                                  |    unk     |     -1      |     0 |
+   riscv                               |lhu                                 |    unk     |     -1      |     0 |
+   riscv                               |lui                                 |    unk     |     -1      |     0 |
+   riscv                               |lw                                  |    unk     |     -1      |     0 |
+   riscv                               |ma_addr                             |    unk     |     -1      |     0 |
+   riscv                               |ma_fetch                            |    unk     |     -1      |     0 |
+   riscv                               |mcsr                                |    unk     |     -1      |     0 |
+   riscv                               |or                                  |    unk     |     -1      |     0 |
+   riscv                               |ori                                 |    unk     |     -1      |     0 |
+   riscv                               |sb                                  |    unk     |     -1      |     0 |
+   riscv                               |sbreak                              |    unk     |     -1      |     0 |
+   riscv                               |scall                               |    unk     |     -1      |     0 |
+   riscv                               |sh                                  |    unk     |     -1      |     0 |
+   riscv                               |shamt                               |    unk     |     -1      |     0 |
+   riscv                               |simple                              |    unk     |     -1      |     0 |
+   riscv                               |sll                                 |    unk     |     -1      |     0 |
+   riscv                               |slli                                |    unk     |     -1      |     0 |
+   riscv                               |slt                                 |    unk     |     -1      |     0 |
+   riscv                               |slti                                |    unk     |     -1      |     0 |
+   riscv                               |sltiu                               |    unk     |     -1      |     0 |
+   riscv                               |sltu                                |    unk     |     -1      |     0 |
+   riscv                               |sra                                 |    unk     |     -1      |     0 |
+   riscv                               |srai                                |    unk     |     -1      |     0 |
+   riscv                               |srl                                 |    unk     |     -1      |     0 |
+   riscv                               |srli                                |    unk     |     -1      |     0 |
+   riscv                               |sub                                 |    unk     |     -1      |     0 |
+   riscv                               |sw                                  |    unk     |     -1      |     0 |
+   riscv                               |xor                                 |    unk     |     -1      |     0 |
+   riscv                               |xori                                |    unk     |     -1      |     0 |
+   riscv                               |div                                 |    unk     |     -1      |     0 |
+   riscv                               |divu                                |    unk     |     -1      |     0 |
+   riscv                               |mul                                 |    unk     |     -1      |     0 |
+   riscv                               |mulh                                |    unk     |     -1      |     0 |
+   riscv                               |mulhsu                              |    unk     |     -1      |     0 |
+   riscv                               |mulhu                               |    unk     |     -1      |     0 |
+   riscv                               |rem                                 |    unk     |     -1      |     0 |
+   riscv                               |remu                                |    unk     |     -1      |     0 |
+   riscv                               |rvc                                 |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-ADDI-01                |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-RF_x0-01               |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-ADD-01                 |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-SLLI-01                |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-SLT-01                 |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-ORI-01                 |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-SUB-01                 |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-LH-01                  |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-XORI-01                |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-JAL-01                 |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-ENDIANESS-01           |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-BNE-01                 |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-RF_width-01            |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-LBU-01                 |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-IO-01                  |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-SLL-01                 |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-SLTI-01                |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-BLT-01                 |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-BGE-01                 |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-SRLI-01                |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-DELAY_SLOTS-01         |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-LHU-01                 |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-RF_size-01             |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-OR-01                  |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-SH-01                  |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-LW-01                  |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-ANDI-01                |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-SW-01                  |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-BLTU-01                |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-SRAI-01                |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-SRA-01                 |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-SLTU-01                |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-NOP-01                 |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-BEQ-01                 |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-LUI-01                 |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-SLTIU-01               |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-JALR-01                |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-AUIPC-01               |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-BGEU-01                |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-XOR-01                 |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-AND-01                 |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-SRL-01                 |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-SB-01                  |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-LB-01                  |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-CSRRSI-01              |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-CSRRCI-01              |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-CSRRWI-01              |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-CSRRC-01               |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-CSRRS-01               |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-CSRRW-01               |    unk     |     -1      |     0 |
+   riscv                               |compliance_I-FENCE.I-01             |    unk     |     -1      |     0 |
+   riscv                               |compliance_MULHU                    |    unk     |     -1      |     0 |
+   riscv                               |compliance_MULH                     |    unk     |     -1      |     0 |
+   riscv                               |compliance_DIVU                     |    unk     |     -1      |     0 |
+   riscv                               |compliance_MULHSU                   |    unk     |     -1      |     0 |
+   riscv                               |compliance_REMU                     |    unk     |     -1      |     0 |
+   riscv                               |compliance_MUL                      |    unk     |     -1      |     0 |
+   riscv                               |compliance_DIV                      |    unk     |     -1      |     0 |
+   riscv                               |compliance_REM                      |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-OR                     |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-ANDI                   |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-SRLI                   |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-SW                     |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-J                      |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-ADDI4SPN               |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-ADDI                   |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-JR                     |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-SUB                    |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-JAL                    |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-LWSP                   |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-LI                     |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-ADDI16SP               |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-BEQZ                   |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-ADD                    |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-BNEZ                   |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-SWSP                   |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-SLLI                   |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-LW                     |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-LUI                    |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-SRAI                   |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-AND                    |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-XOR                    |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-JALR                   |    unk     |     -1      |     0 |
+   riscv                               |compliance_C-MV                     |    unk     |     -1      |     0 |
+   riscv                               |isr_sample                          |    unk     |     -1      |     0 |
+   riscv                               |coremark                            |    unk     |     -1      |     0 |
+   riscv                               |dhrystone21                         |    unk     |     -1      |     0 |
+   riscv                               |hello                               |    unk     |     -1      |     0 |
    --------------------------------------------------------------------
-             total testcases :    48
-             total pass      :    48 (100.00%)
-             total fail      :     0 (  0.00%)
-             total unk       :     0 (  0.00%)
+             total testcases :   195
+             total pass      :    50 ( 25.64%)
+             total fail      :     1 (  0.51%)
+             total unk       :   144 ( 73.85%)
              run directory   :              ./
    --------------------------------------------------------------------
 

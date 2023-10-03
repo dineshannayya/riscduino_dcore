@@ -204,8 +204,8 @@ module `TB_TOP;
               arduino_gpio[i] = 1'b1; 
               $display("STATUS: Setting Pin: %d High",i+2);
               // Wait for UART Response from RISCV 
-              flag = 0;
-              while(flag == 0)
+              read_data = 0;
+              while(read_data != 32'hA)
               begin
                  tb_uart.read_char(read_data,flag);
 		         if(flag == 0)  begin

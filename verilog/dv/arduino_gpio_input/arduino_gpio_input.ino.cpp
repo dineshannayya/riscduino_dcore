@@ -19,17 +19,19 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  //for (int row = 0; row < numRows; row++) {
+  //      while(digitalRead(rowPins[row]) != LOW);
+  //      Serial.print("Digital Input Pin:");
+  //      Serial.write(rowPins[row]);
+  //      Serial.println(" LOW");
+  //}
   for (int row = 0; row < numRows; row++) {
-        while(digitalRead(rowPins[row]) != LOW);
+        if(digitalRead(rowPins[row]) == HIGH) {
         Serial.print("Digital Input Pin:");
-        Serial.write(rowPins[row]);
-        Serial.println(" LOW");
-  }
-  for (int row = 0; row < numRows; row++) {
-        while(digitalRead(rowPins[row]) != HIGH);
-        Serial.print("Digital Input Pin:");
-        Serial.write(rowPins[row]);
+        Serial.print(rowPins[row]);
         Serial.println(" HIGH");
+    }
   }
 }
+
 

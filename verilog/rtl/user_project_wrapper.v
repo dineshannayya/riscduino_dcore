@@ -354,6 +354,9 @@
 ////          A. Seperated Stop bit for uart tx and rx                                           ////
 ////              recomended setting rx = 0, tx = 1                                              ////
 ////          B. Bug Fix: Added Support for partital byte based write access at SPI SRAM         ////
+////    6.15 - Oct 3, 2023, Dinesh A                                                             ////
+////          A. Burst Write and Read access support at uart message handler                     ////
+////          B. Byte Write is supported in uart message handler
 ////                                                                                             ////
 ////                                                                                             ////
 /////////////////////////////////////////////////////////////////////////////////////////////////////

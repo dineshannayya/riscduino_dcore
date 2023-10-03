@@ -24,7 +24,7 @@ set ::env(FP_PDN_CORE_RING) "0"
 set ::env(CLOCK_PERIOD) "10"
 set ::env(CLOCK_PORT) "clk"
 
-set ::env(SYNTH_MAX_FANOUT) 4
+set ::env(SYNTH_MAX_FANOUT) 8
 set ::env(SYNTH_BUFFERING) {0}
 
 ## CTS BUFFER
@@ -81,7 +81,7 @@ set ::env(FP_PIN_ORDER_CFG) $::env(DESIGN_DIR)/pin_order.cfg
 set ::env(FP_SIZING) absolute
 set ::env(DIE_AREA) "0 0 530 900 "
 
-set ::env(PL_TARGET_DENSITY) 0.52
+set ::env(PL_TARGET_DENSITY) 0.50
 set ::env(CELL_PAD) "4"
 
 ## Routing
