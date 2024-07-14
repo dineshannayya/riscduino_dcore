@@ -699,7 +699,7 @@ always_comb begin
      else if(cfg_sm_enb)             digital_io_oen[3]   = 1'b0;
      else if(cfg_port_a_dir_sel[3])  digital_io_oen[3]   = 1'b0;
 
-     if(cfg_tap_enb)                 digital_io_oen[4]   = riscv_tdo_en; // riscv_tdo - output
+     if(cfg_tap_enb)                 digital_io_oen[4]   = !riscv_tdo_en; // riscv_tdo - output
      else if(cfg_port_a_dir_sel[4])  digital_io_oen[4]   = 1'b0;
 end
 

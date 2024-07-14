@@ -321,6 +321,11 @@ static int adbg_wb_burst_read(int word_count, uint32_t start_address, void *data
 
 	/* Look for the start bit in the first (STATUS_BYTES * 8) bits */
 	int shift = find_status_bit(in_buffer, STATUS_BYTES);
+    if(shift == -1) {
+         printf("Error: Invalid Shift value detected\n");
+         exit(0);
+
+    }
 
 	buffer_shr(in_buffer, (word_count * 4) + CRC_LEN + STATUS_BYTES, shift);
 
@@ -384,21 +389,31 @@ int main(int argc, char *argv[])
 	if (jtag_vpi_init())
 		return -1;
 
+    printf("\n Status : Jtag Init completed \n");
+
 	jtag_vpi_reset();
+
+    printf("\n Status : Jtag Reset completed \n");
 
 	/* Enable the debug unit */
 	bits = OR1K_TAP_INST_DEBUG;
 	jtag_ir_scan(&bits, 4);
+    
+    printf("\n Status : Jtag IR scan completed \n");
 
 	/* Select the wishbone module */
 	adbg_select_module(DC_WISHBONE);
 	/* Write the buffer at address 0 */
 	adbg_wb_burst_write(out_buffer, TEST_BUFFER_LEN, 0);
 
+    printf("\n Status : Jtag Write completed \n");
+
 	/* Set the read buffer to 0 */
 	memset(in_buffer, 0, sizeof(in_buffer));
 	/* Read the buffer at address 0 */
 	adbg_wb_burst_read(TEST_BUFFER_LEN, 0, in_buffer);
+
+    printf("\n Status : Jtag Read completed \n");
 
 	for (i = 0; i < TEST_BUFFER_LEN; i++)
 		if (in_buffer[i] != out_buffer[i]) {

@@ -54,7 +54,7 @@ vvp:  ${PATTERN:=.vvp}
 %.vvp: %_tb.v
 	@echo '##### Building ######'
 	$(Q)iverilog-vpi --name=jtag_vpi $(IVERILOG_VPI_SRC) 
-	openocd -f riscduino.cfg
+	openocd -f openocd.cfg
 ifeq ($(SIM),RTL)
    ifeq ($(DUMP),OFF)
 	iverilog -g2012 -DFUNCTIONAL -DSIM -I $(PDK_PATH) \

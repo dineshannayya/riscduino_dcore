@@ -221,9 +221,9 @@ clk_ctl #(11) u_clk_ctl (
 //###################################
 reset_sync  u_app_rst (
 	      .scan_mode  (1'b0           ),
-              .dclk       (app_clk        ), // Destination clock domain
+          .dclk       (app_clk        ), // Destination clock domain
 	      .arst_n     (arst_n         ), // active low async reset
-              .srst_n     (app_reset_n    )
+          .srst_n     (app_reset_n    )
           );
 
 //###################################
@@ -231,9 +231,9 @@ reset_sync  u_app_rst (
 //###################################
 reset_sync  u_line_rst (
 	      .scan_mode  (1'b0           ),
-              .dclk       (line_clk_16x   ), // Destination clock domain
+          .dclk       (line_clk_16x   ), // Destination clock domain
 	      .arst_n     (arst_n         ), // active low async reset
-              .srst_n     (line_reset_n   )
+          .srst_n     (line_reset_n   )
           );
 
 

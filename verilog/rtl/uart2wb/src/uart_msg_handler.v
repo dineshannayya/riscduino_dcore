@@ -310,28 +310,28 @@ begin
              // Note: One Byte will equal to two character
              case({RxMsgCnt[3:0],reg_addr[1:0]})
               // One Byte
-              4'b001000 :  begin reg_be <= 4'b0001; reg_wdata <= {24'h0,reg_wdata[7:0]}; end
-              4'b001001 :  begin reg_be <= 4'b0010; reg_wdata <= {16'h0,reg_wdata[7:0],8'h0}; end
-              4'b001010 :  begin reg_be <= 4'b0100; reg_wdata <= {8'h0,reg_wdata[7:0],16'h0}; end
-              4'b001011 :  begin reg_be <= 4'b1000; reg_wdata <= {reg_wdata[7:0],24'h0}; end
+              6'b001000 :  begin reg_be <= 4'b0001; reg_wdata <= {24'h0,reg_wdata[7:0]}; end
+              6'b001001 :  begin reg_be <= 4'b0010; reg_wdata <= {16'h0,reg_wdata[7:0],8'h0}; end
+              6'b001010 :  begin reg_be <= 4'b0100; reg_wdata <= {8'h0,reg_wdata[7:0],16'h0}; end
+              6'b001011 :  begin reg_be <= 4'b1000; reg_wdata <= {reg_wdata[7:0],24'h0}; end
 
               // Two Byte
-              4'b010000 :  begin reg_be <= 4'b0011; reg_wdata <= {16'h0,reg_wdata[15:0]}; end
-              4'b010001 :  begin reg_be <= 4'b0110; reg_wdata <= {8'h0,reg_wdata[15:0],8'h0}; end
-              4'b010010 :  begin reg_be <= 4'b1100; reg_wdata <= {reg_wdata[15:0],16'h0}; end
-              4'b010011 :  begin reg_be <= 4'b1001; reg_wdata <= 'h0; end // Invalid combination
+              6'b010000 :  begin reg_be <= 4'b0011; reg_wdata <= {16'h0,reg_wdata[15:0]}; end
+              6'b010001 :  begin reg_be <= 4'b0110; reg_wdata <= {8'h0,reg_wdata[15:0],8'h0}; end
+              6'b010010 :  begin reg_be <= 4'b1100; reg_wdata <= {reg_wdata[15:0],16'h0}; end
+              6'b010011 :  begin reg_be <= 4'b1001; reg_wdata <= 'h0; end // Invalid combination
 
               // Three Byte
-              4'b011000 :  begin reg_be <= 4'b0111; reg_wdata <= {8'h0,reg_wdata[23:0]}; end
-              4'b011001 :  begin reg_be <= 4'b1110; reg_wdata <= {reg_wdata[23:0],8'h0}; end
-              4'b011010 :  begin reg_be <= 4'b1101; reg_wdata <= 'h0; end // Invalid combination
-              4'b011011 :  begin reg_be <= 4'b1011; reg_wdata <= 'h0; end // Invalid combination
+              6'b011000 :  begin reg_be <= 4'b0111; reg_wdata <= {8'h0,reg_wdata[23:0]}; end
+              6'b011001 :  begin reg_be <= 4'b1110; reg_wdata <= {reg_wdata[23:0],8'h0}; end
+              6'b011010 :  begin reg_be <= 4'b1101; reg_wdata <= 'h0; end // Invalid combination
+              6'b011011 :  begin reg_be <= 4'b1011; reg_wdata <= 'h0; end // Invalid combination
 
               // Four Byte
-              4'b011000 :  begin reg_be <= 4'b1111; reg_wdata <=  reg_wdata; end
-              4'b011001 :  begin reg_be <= 4'b1111; reg_wdata <= 'h0; end // Invalid combination
-              4'b011010 :  begin reg_be <= 4'b1111; reg_wdata <= 'h0; end // Invalid combination
-              4'b011011 :  begin reg_be <= 4'b1111; reg_wdata <= 'h0; end // Invalid combination
+              6'b011000 :  begin reg_be <= 4'b1111; reg_wdata <=  reg_wdata; end
+              6'b011001 :  begin reg_be <= 4'b1111; reg_wdata <= 'h0; end // Invalid combination
+              6'b011010 :  begin reg_be <= 4'b1111; reg_wdata <= 'h0; end // Invalid combination
+              6'b011011 :  begin reg_be <= 4'b1111; reg_wdata <= 'h0; end // Invalid combination
               default   :  begin reg_be <= 4'b1111; reg_wdata <= reg_wdata; end
 
              endcase
@@ -343,28 +343,28 @@ begin
              // Note: One Byte will equal to two character
              case({RxMsgCnt[3:0],reg_addr[1:0]})
               // One Byte
-              4'b001000 :  begin reg_be <= 4'b0001; reg_wdata <= {24'h0,reg_wdata[7:0]}; end
-              4'b001001 :  begin reg_be <= 4'b0010; reg_wdata <= {16'h0,reg_wdata[7:0],8'h0}; end
-              4'b001010 :  begin reg_be <= 4'b0100; reg_wdata <= {8'h0,reg_wdata[7:0],16'h0}; end
-              4'b001011 :  begin reg_be <= 4'b1000; reg_wdata <= {reg_wdata[7:0],24'h0}; end
+              6'b001000 :  begin reg_be <= 4'b0001; reg_wdata <= {24'h0,reg_wdata[7:0]}; end
+              6'b001001 :  begin reg_be <= 4'b0010; reg_wdata <= {16'h0,reg_wdata[7:0],8'h0}; end
+              6'b001010 :  begin reg_be <= 4'b0100; reg_wdata <= {8'h0,reg_wdata[7:0],16'h0}; end
+              6'b001011 :  begin reg_be <= 4'b1000; reg_wdata <= {reg_wdata[7:0],24'h0}; end
 
               // Two Byte
-              4'b010000 :  begin reg_be <= 4'b0011; reg_wdata <= {16'h0,reg_wdata[15:0]}; end
-              4'b010001 :  begin reg_be <= 4'b0110; reg_wdata <= {8'h0,reg_wdata[15:0],8'h0}; end
-              4'b010010 :  begin reg_be <= 4'b1100; reg_wdata <= {reg_wdata[15:0],16'h0}; end
-              4'b010011 :  begin reg_be <= 4'b1001; reg_wdata <= 'h0; end // Invalid combination
+              6'b010000 :  begin reg_be <= 4'b0011; reg_wdata <= {16'h0,reg_wdata[15:0]}; end
+              6'b010001 :  begin reg_be <= 4'b0110; reg_wdata <= {8'h0,reg_wdata[15:0],8'h0}; end
+              6'b010010 :  begin reg_be <= 4'b1100; reg_wdata <= {reg_wdata[15:0],16'h0}; end
+              6'b010011 :  begin reg_be <= 4'b1001; reg_wdata <= 'h0; end // Invalid combination
 
               // Three Byte
-              4'b011000 :  begin reg_be <= 4'b0111; reg_wdata <= {8'h0,reg_wdata[23:0]}; end
-              4'b011001 :  begin reg_be <= 4'b1110; reg_wdata <= {reg_wdata[23:0],8'h0}; end
-              4'b011010 :  begin reg_be <= 4'b1101; reg_wdata <= 'h0; end // Invalid combination
-              4'b011011 :  begin reg_be <= 4'b1011; reg_wdata <= 'h0; end // Invalid combination
+              6'b011000 :  begin reg_be <= 4'b0111; reg_wdata <= {8'h0,reg_wdata[23:0]}; end
+              6'b011001 :  begin reg_be <= 4'b1110; reg_wdata <= {reg_wdata[23:0],8'h0}; end
+              6'b011010 :  begin reg_be <= 4'b1101; reg_wdata <= 'h0; end // Invalid combination
+              6'b011011 :  begin reg_be <= 4'b1011; reg_wdata <= 'h0; end // Invalid combination
 
               // Four Byte
-              4'b011000 :  begin reg_be <= 4'b1111; reg_wdata <=  reg_wdata; end
-              4'b011001 :  begin reg_be <= 4'b1111; reg_wdata <= 'h0; end // Invalid combination
-              4'b011010 :  begin reg_be <= 4'b1111; reg_wdata <= 'h0; end // Invalid combination
-              4'b011011 :  begin reg_be <= 4'b1111; reg_wdata <= 'h0; end // Invalid combination
+              6'b011000 :  begin reg_be <= 4'b1111; reg_wdata <=  reg_wdata; end
+              6'b011001 :  begin reg_be <= 4'b1111; reg_wdata <= 'h0; end // Invalid combination
+              6'b011010 :  begin reg_be <= 4'b1111; reg_wdata <= 'h0; end // Invalid combination
+              6'b011011 :  begin reg_be <= 4'b1111; reg_wdata <= 'h0; end // Invalid combination
               default   :  begin reg_be <= 4'b1111; reg_wdata <= reg_wdata; end
 
              endcase

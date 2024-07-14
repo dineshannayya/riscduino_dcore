@@ -117,7 +117,7 @@ parameter real XTAL_PERIOD = 6;
 	`ifdef WFDUMP
 	   initial begin
 	   	$dumpfile("simx.vcd");
-	   	$dumpvars(1, `TB_TOP);
+	   	$dumpvars(0, `TB_TOP);
 	   	$dumpvars(0, `TB_TOP.tb_uart);
 	   	//$dumpvars(0, `TB_TOP.u_top.u_riscv_top.i_core_top_0);
 	   	//$dumpvars(0, `TB_TOP.u_top.u_riscv_top.u_connect);
